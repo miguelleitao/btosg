@@ -257,6 +257,8 @@ int main()
 	double z_bola = 10.;
 	double v_bola = 0.;
 	osg::Matrix myMatrix;
+        
+    myWorld.dynamic->setGravity(btVector3(0., -9.8, 0.));
 
      // Box
     btVector3 posBody = btVector3(-2.,0.,3.);
@@ -419,8 +421,8 @@ suspFR->setUpperLinLimit(maxSuspZ);
 
     // Plane 2
     btosgPlane *myRamp = new btosgPlane();
-    myRamp->setRotation(0.,0.1,0.,1.);
-    myRamp->setPosition(-1.,0.,0.);
+    myRamp->setRotation(osg::Quat(-osg::PI/2,osg::Vec3(1.,0.,0.)));
+    myRamp->setPosition(0.,-10.,0.);
     myWorld.addObject( myRamp );
     myRamp->setName("Ramp");
     myRamp->body->setFriction(100.);
