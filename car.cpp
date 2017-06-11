@@ -27,46 +27,6 @@ btosgBox *myBox;
 
 
 
-// class to handle events
-class EventHandler : public osgGA::GUIEventHandler
-{
-	public:
-	bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
-	{
-		osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>(&aa);
-		if (!viewer) return false;
-		switch(ea.getEventType())
-		{
-			case(osgGA::GUIEventAdapter::KEYUP):
-				switch ( ea.getKey() ) {
-					case 'S':
-						std::cout << "tecla S" << std::endl;
-						return false;
-                                        case 'f':
-                                                std::cout << "adding force" << std::endl;
-                                                myBox->body->activate(true);
-                                                myBox->body->applyCentralImpulse(btVector3(100.,0.,0.));
-                                                return false;
-                                        case 'F':
-                                                std::cout << "adding force" << std::endl;
-                                                myBox->body->activate(true);
-                                                myBox->body->applyCentralImpulse(btVector3(-200.,0.,0.));
-                                                return false;
-                                        case 'R':
-					case 'r':
-						ResetFlag = 1;
-						std::cout << "tecla R" << std::endl;
-						break;
-						
-				}
-			case(osgGA::GUIEventAdapter::MOVE):
-				std::cout << "mouse move" << ea.getX()<< " " << ea.getY()<< std::endl;
-				return false;
-			default:
-				return false;
-		}
-	}
-};
 
 
 
@@ -97,7 +57,8 @@ class btosgWheel : public btosgCylinder {
 class btosgVehicle: public btosgObject {
     public:
 	float dx,dy,dz;
-	btosgVehicle(osg::Vec3 dim = osg::Vec3(1.6,4,1.), double m=800. ) {
+        btRaycastVehicle *vehicle;
+	btosgVehicle(osg::Vec3 dim = osg::Vec3(1.6,0.4,4.), double m=800. ) {
             dx = dim[0];
             dy = dim[1];
             dz = dim[2];
@@ -119,19 +80,26 @@ class btosgVehicle: public btosgObject {
             if ( !shape ) fprintf(stderr,"Error creating btShape\n");
             
             createRigidBody();
+            myWorld.addObject(this);
             
             btDefaultVehicleRaycaster *rayCaster = new btDefaultVehicleRaycaster(myWorld.dynamic);
             
             btRaycastVehicle::btVehicleTuning tuning;
-            btRaycastVehicle *vehicle = new btRaycastVehicle(tuning, body, rayCaster);
+            vehicle = new btRaycastVehicle(tuning, body, rayCaster);
     
+            body->setActivationState(DISABLE_DEACTIVATION);
+            myWorld.dynamic->addVehicle(this->vehicle);
             
-            
+            //Adds the wheels to the vehicle
+            btVector3 halfExtents = btVector3(dim[0],dim[1],dim[2]);
+            addWheels(&halfExtents, this->vehicle, tuning);
             
             printf("vehicle body created\n");
+            return;
             
+            
+            /////////////////////////////////////////////////////////////////////
             float connectionHeight = 1.2f;
-            bool isFrontWheel = true;
             int rightIndex = 0;
             int upIndex = 1;
             int forwardIndex = 2;
@@ -146,6 +114,7 @@ class btosgVehicle: public btosgObject {
         
         btVector3 wheelAxleCS(-1,0,0); 
         
+            bool isFrontWheel = true;
             btVector3 connectionPointCS0;                                
    float suspensionRestLength = 0.6f;//0.6
    
@@ -154,26 +123,26 @@ class btosgVehicle: public btosgObject {
 
          
             // front left
-            connectionPointCS0 = btVector3(3.-(0.3*wheelWidth), 3*1-wheelRadius, connectionHeight);
+            connectionPointCS0 = btVector3(3.-(0.3*wheelWidth), connectionHeight, 3*1-wheelRadius);
             printf("definiu connection point 1\n");
             vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, isFrontWheel);
             printf("adicionou roda 1\n");
             
             // front right
-            connectionPointCS0 = btVector3(-3+(0.3*wheelWidth),  3*1-wheelRadius, connectionHeight);
+            connectionPointCS0 = btVector3(-3+(0.3*wheelWidth), connectionHeight,  3*1-wheelRadius);
             vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, isFrontWheel);
             
             isFrontWheel = false;
             // rear right
-            connectionPointCS0 = btVector3(-3+(0.3*wheelWidth),  -3*1+wheelRadius, connectionHeight);
+            connectionPointCS0 = btVector3(-3+(0.3*wheelWidth), connectionHeight,  -3*1+wheelRadius);
             vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, isFrontWheel);
             // rear left
-            connectionPointCS0 = btVector3(3-(0.3*wheelWidth),  -3*1+wheelRadius, connectionHeight);
+            connectionPointCS0 = btVector3(3-(0.3*wheelWidth), connectionHeight,  -3*1+wheelRadius);
             vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, isFrontWheel);
             
             printf("wheels created\n");
 
-        
+     /*   
         for (int i = 0; i < vehicle->getNumWheels(); i++)
         {
             btWheelInfo& wheel = vehicle->getWheelInfo(i);
@@ -183,6 +152,20 @@ class btosgVehicle: public btosgObject {
             wheel.m_frictionSlip = 1000.;
             wheel.m_rollInfluence = 0.01;
         }
+       */ 
+        
+       	for (int i = 0; i < vehicle->getNumWheels(); i++)
+	{
+		btWheelInfo& wheel = vehicle->getWheelInfo(i);
+		wheel.m_suspensionStiffness = 50.;
+		wheel.m_wheelsDampingCompression = btScalar(0.3) * 2 * btSqrt(wheel.m_suspensionStiffness);//btScalar(0.8);
+		wheel.m_wheelsDampingRelaxation =  btScalar(0.5) * 2 * btSqrt(wheel.m_suspensionStiffness);//1;
+		//Larger friction slips will result in better handling
+		wheel.m_frictionSlip = btScalar(1.2);
+		wheel.m_rollInfluence = 1;
+	}
+
+        
             printf("vehicle created\n");
             
             vehicle->setSteeringValue(0.,0);
@@ -249,6 +232,106 @@ class btosgVehicle: public btosgObject {
 
         }
         */
+    
+    void addWheels(
+	btVector3* halfExtents,
+	btRaycastVehicle* vehicle,
+	btRaycastVehicle::btVehicleTuning tuning)
+{
+	//The direction of the raycast, the btRaycastVehicle uses raycasts instead of simiulating the wheels with rigid bodies
+	btVector3 wheelDirectionCS0(0, -1, 0);
+
+	//The axis which the wheel rotates arround
+	btVector3 wheelAxleCS(-1, 0, 0);
+
+	btScalar suspensionRestLength(0.7);
+
+	btScalar wheelWidth(0.4);
+
+	btScalar wheelRadius(0.5);
+
+	//The height where the wheels are connected to the chassis
+	btScalar connectionHeight(1.2);
+
+	//All the wheel configuration assumes the vehicle is centered at the origin and a right handed coordinate system is used
+	btVector3 wheelConnectionPoint(halfExtents->x() - wheelRadius, connectionHeight, halfExtents->z() - wheelWidth);
+
+	//Adds the front wheels
+	vehicle->addWheel(wheelConnectionPoint, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
+
+	vehicle->addWheel(wheelConnectionPoint * btVector3(-1, 1, 1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
+
+	//Adds the rear wheels
+	vehicle->addWheel(wheelConnectionPoint* btVector3(1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);
+
+	vehicle->addWheel(wheelConnectionPoint * btVector3(-1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);
+
+	//Configures each wheel of our vehicle, setting its friction, damping compression, etc.
+	//For more details on what each parameter does, refer to the docs
+	for (int i = 0; i < vehicle->getNumWheels(); i++)
+	{
+		btWheelInfo& wheel = vehicle->getWheelInfo(i);
+		wheel.m_suspensionStiffness = 50;
+		wheel.m_wheelsDampingCompression = btScalar(0.3) * 2 * btSqrt(wheel.m_suspensionStiffness);//btScalar(0.8);
+		wheel.m_wheelsDampingRelaxation = btScalar(0.5) * 2 * btSqrt(wheel.m_suspensionStiffness);//1;
+		//Larger friction slips will result in better handling
+		wheel.m_frictionSlip = btScalar(1.2);
+		wheel.m_rollInfluence = 1;
+	}
+}
+    
+    
+    
+};
+
+
+
+
+    btosgVehicle *myVehicle;
+
+// class to handle events
+class EventHandler : public osgGA::GUIEventHandler
+{
+	public:
+	bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
+	{
+		osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>(&aa);
+		if (!viewer) return false;
+		switch(ea.getEventType())
+		{
+			case(osgGA::GUIEventAdapter::KEYUP):
+				switch ( ea.getKey() ) {
+					case 'S':
+						std::cout << "tecla S" << std::endl;
+						return false;
+                                        case 'f':
+                                                std::cout << "adding force" << std::endl;
+                                                myBox->body->activate(true);
+                                                myBox->body->applyCentralImpulse(btVector3(100.,0.,0.));
+                                                return false;
+                                        case 'F':
+                                                std::cout << "adding force" << std::endl;
+                                                //myBox->body->activate(true);
+                                                //myBox->body->applyCentralImpulse(btVector3(-200.,0.,0.));
+                                                
+                                                myVehicle->vehicle->applyEngineForce(5000, 2);
+                                                myVehicle->vehicle->applyEngineForce(5000, 3);
+                                               // handled = true;
+                                                return false;
+                                        case 'R':
+					case 'r':
+						ResetFlag = 1;
+						std::cout << "tecla R" << std::endl;
+						break;
+						
+				}
+			case(osgGA::GUIEventAdapter::MOVE):
+				std::cout << "mouse move" << ea.getX() << " " << ea.getY() << std::endl;
+				return false;
+			default:
+				return false;
+		}
+	}
 };
 
 
@@ -263,19 +346,19 @@ int main()
      // Box
     btVector3 posBody = btVector3(-2.,0.,3.);
     
-    btosgVehicle *myVehicle;
+
     myVehicle = new btosgVehicle();
     myVehicle->setPosition(btVector3(2.,0.,2.));
     myVehicle->setName("Vehicle");
     myWorld.addObject( myVehicle );
     
-
+/*
     myBox = new btosgBox(osg::Vec3(4.,1.6,1.),800.);
     myBox->setPosition(posBody);
     myBox->setName("Body");
     myWorld.addObject( myBox );
         
-        
+  */      
     // Rodas
     osg::Material* matCylinder = new osg::Material;
     matCylinder->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 0.,  0.,  1.0));
@@ -311,7 +394,7 @@ int main()
     wheelFL->setTexture("beachball.png");
     myWorld.addObject( wheelFL );
     */
- 
+ /*
     btosgWheel *wheelBR = new btosgWheel(posBody+btVector3(-1.5,-1.,1.), -M_PI/2.);
     wheelBR->setName("WheelBR");
     myWorld.addObject( wheelBR );
@@ -405,9 +488,15 @@ suspFR->setUpperLinLimit(maxSuspZ);
     myWorld.dynamic->addConstraint(suspBR);
     myWorld.dynamic->addConstraint(suspFR);
     
+    */
+    
+    
+    
+  /*  
     // Plane 1
     btosgPlane *myPlane = new btosgPlane();
     myPlane->setName("Plane");
+    myPlane->setPosition(0.,0.,10.);
     myWorld.addObject( myPlane );
 
     osg::Material* mat = new osg::Material;
@@ -417,12 +506,12 @@ suspFR->setUpperLinLimit(maxSuspZ);
     mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
     myPlane->model->getOrCreateStateSet()->
         setAttributeAndModes(mat, osg::StateAttribute::ON);
-    
+    */
 
     // Plane 2
     btosgPlane *myRamp = new btosgPlane();
     myRamp->setRotation(osg::Quat(-osg::PI/2,osg::Vec3(1.,0.,0.)));
-    myRamp->setPosition(0.,-10.,0.);
+    myRamp->setPosition(0.,-1.,0.);
     myWorld.addObject( myRamp );
     myRamp->setName("Ramp");
     myRamp->body->setFriction(100.);
@@ -441,7 +530,7 @@ suspFR->setUpperLinLimit(maxSuspZ);
 
 	// Setup camera
 	osg::Matrix matrix;
-	matrix.makeLookAt( osg::Vec3(0.,-8.,5.), osg::Vec3(0.,0.,1.), osg::Vec3(0.,0.,1.) );
+	matrix.makeLookAt( osg::Vec3(0.,8.,5.), osg::Vec3(0.,0.,1.), osg::Vec3(0.,1.,0.) );
 	viewer.getCamera()->setViewMatrix(matrix);
 
 	// add the Event handler
@@ -449,7 +538,7 @@ suspFR->setUpperLinLimit(maxSuspZ);
 
         // Light
         osg::ref_ptr<osg::LightSource> ls = new osg::LightSource;
-        ls->getLight()->setPosition(osg::Vec4(2.5,-10, 20, 1)); // make 4th coord 1 for point
+        ls->getLight()->setPosition(osg::Vec4(2.5,20, -10, 1)); // make 4th coord 1 for point
         ls->getLight()->setAmbient(osg::Vec4(0.1, 0.1, 0.1, 1.0));
         ls->getLight()->setDiffuse(osg::Vec4(1.0, 1.0, 1.0, 1.0));
         ls->getLight()->setSpecular(osg::Vec4(0.2, 0.2, 0.2, 1.0));
@@ -461,8 +550,8 @@ suspFR->setUpperLinLimit(maxSuspZ);
         viewer.setCameraManipulator( manipulator );
 
         // Set the desired home coordinates for the manipulator
-        osg::Vec3d eye(0.0, -5.0, 10.0);
-        osg::Vec3d center(1.0, 1.0, 0.0);
+        osg::Vec3d eye(0.0, 15.0, -5.0);
+        osg::Vec3d center(0.0, 0.0, 1.0);
         osg::Vec3d up(0.0, 1.0, 0.0);
 
         // Make sure that OSG is not overriding our home position
@@ -481,8 +570,10 @@ suspFR->setUpperLinLimit(maxSuspZ);
 	double frame_time = 0.;
     
     
-    suspBL->enableFeedback(1);
-    
+    //suspBL->enableFeedback(1);
+                                                  
+        myVehicle->vehicle->setSteeringValue(0, 0);
+        myVehicle->vehicle->setSteeringValue(0, 1);
     
         while( !viewer.done() )
 	{
@@ -493,8 +584,8 @@ suspFR->setUpperLinLimit(maxSuspZ);
 	  	frame_time = timenow - last_time;
 	  	last_time = timenow;
         
-        float impulse = suspBL->getAppliedImpulse();
-        printf("  imp %f   force=%f\n",impulse,impulse/frame_time);
+//        float impulse = suspBL->getAppliedImpulse();
+        //printf("  imp %f   force=%f\n",impulse,impulse/frame_time);
         
         
 		if (ResetFlag>0) {
