@@ -15,6 +15,12 @@ car.o: car.cpp btosg.h
 
 btosg.o: btosg.cpp btosg.h
 	g++ -std=c++11 -Wall -O2 -c ${INC_BULLET} ${INC_OSG} $<
+	
+
+CarHandlingDemo.o: CarHandlingDemo.cpp
+	g++ -std=c++11 -Wall -O2 -c ${INC_BULLET} ${INC_OSG} -I /home/jml/bullet3/examples/CommonInterfaces -I /home/jml/bullet3/src  $<
+
+
 
 push: *.cpp *.h Makefile
 	git add $^

@@ -46,7 +46,7 @@ void btosgWorld::addObject(btosgObject *obj)  {
     objects.push_front(obj);
     if ( obj->body )  dynamic->addRigidBody(obj->body);
 		else if ( _DEBUG_ ) fprintf(stderr,"Adding object without rigid body\n");
-printf("adding\n");
+printf("adding object to World\n");
     if ( obj->model ) scene->addChild(obj->model);
 		else if ( _DEBUG_ ) fprintf(stderr,"Adding object without visual model\n");
     

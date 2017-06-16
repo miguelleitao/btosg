@@ -58,13 +58,13 @@ class btosgVehicle: public btosgObject {
     public:
 	float dx,dy,dz;
         btRaycastVehicle *vehicle;
-	btosgVehicle(osg::Vec3 dim = osg::Vec3(1.6,0.4,4.), double m=800. ) {
+	btosgVehicle(osg::Vec3 dim = osg::Vec3(1.1,0.5,2.2), double m=1200. ) {
             dx = dim[0];
             dy = dim[1];
             dz = dim[2];
             osg::Geode *geo = new osg::Geode();
             if ( geo ) {
-                osg::Shape *sp = new osg::Box( osg::Vec3(0.,0.,0.), dim[0], dim[1], dim[2] );
+                osg::Shape *sp = new osg::Box( osg::Vec3(0.,0.,0.), dim[0]/2, dim[1]/2, dim[2]/2 );
                 if ( sp) {
                     osg::ShapeDrawable *sd = new osg::ShapeDrawable(sp);
                     if ( sd ) 
@@ -76,11 +76,21 @@ class btosgVehicle: public btosgObject {
             model->addChild(geo);
             model->setNodeMask(CastsShadowTraversalMask);
             mass = m;
-            shape = new btBoxShape( osg2bt_Vec3(dim/2.) );
+            
+            btTransform shift(btQuaternion::getIdentity(), btVector3(0.f, 0.55f, 0.f));
+            btCollisionShape* boxShape = new btBoxShape(osg2bt_Vec3(dim/2.));
+            btCompoundShape* chassisShape = new btCompoundShape();
+            chassisShape->addChildShape(shift, boxShape);
+            shape = chassisShape;
+            //shape->calculateLocalInertia(mass, inertia);
+            
+            
+            
+            //shape = new btBoxShape( osg2bt_Vec3(dim/2.) );
             if ( !shape ) fprintf(stderr,"Error creating btShape\n");
             
             createRigidBody();
-            myWorld.addObject(this);
+            //myWorld.addObject(this);
             
             btDefaultVehicleRaycaster *rayCaster = new btDefaultVehicleRaycaster(myWorld.dynamic);
             
@@ -252,10 +262,13 @@ class btosgVehicle: public btosgObject {
 
 	//The height where the wheels are connected to the chassis
 	btScalar connectionHeight(1.2);
+        
+        
 
 	//All the wheel configuration assumes the vehicle is centered at the origin and a right handed coordinate system is used
 	btVector3 wheelConnectionPoint(halfExtents->x() - wheelRadius, connectionHeight, halfExtents->z() - wheelWidth);
 
+        printf( "halfExtents %f %f %f\n",halfExtents->x(),halfExtents->y(),halfExtents->z()); 
 	//Adds the front wheels
 	vehicle->addWheel(wheelConnectionPoint, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
 
@@ -266,6 +279,7 @@ class btosgVehicle: public btosgObject {
 
 	vehicle->addWheel(wheelConnectionPoint * btVector3(-1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);
 
+        printf( "num wheels %d\n",vehicle->getNumWheels()); 
 	//Configures each wheel of our vehicle, setting its friction, damping compression, etc.
 	//For more details on what each parameter does, refer to the docs
 	for (int i = 0; i < vehicle->getNumWheels(); i++)
@@ -278,9 +292,22 @@ class btosgVehicle: public btosgObject {
 		wheel.m_frictionSlip = btScalar(1.2);
 		wheel.m_rollInfluence = 1;
 	}
+	
 }
     
-    
+    virtual void update() {
+        
+               
+        if (body) {
+            btTransform wTrans;
+            //body->getMotionState()->getWorldTransform(wTrans);
+            wTrans = vehicle->getChassisWorldTransform();
+            if ( model ) {
+                model->setAttitude(bt2osg_Quat(wTrans.getRotation()));
+                model->setPosition(bt2osg_Vec3(wTrans.getOrigin()));
+            }
+        }
+    }
     
 };
 
@@ -299,6 +326,27 @@ class EventHandler : public osgGA::GUIEventHandler
 		if (!viewer) return false;
 		switch(ea.getEventType())
 		{
+                    
+                        case(osgGA::GUIEventAdapter::KEYDOWN):
+				switch ( ea.getKey() ) {
+                                    case osgGA::GUIEventAdapter::KEY_Down:
+                                        myVehicle->vehicle->setBrake(500, 2);
+                                        myVehicle->vehicle->setBrake(500, 3);
+                                        return false;
+                                    case osgGA::GUIEventAdapter::KEY_Up:
+                                        myVehicle->vehicle->applyEngineForce(500, 2);
+                                        myVehicle->vehicle->applyEngineForce(500, 3);
+                                        return false;
+                                    case osgGA::GUIEventAdapter::KEY_Left:
+                                        myVehicle->vehicle->setSteeringValue(btScalar(-0.5), 0);
+                                        myVehicle->vehicle->setSteeringValue(btScalar(-0.5), 1);
+                                        return false;
+                                    case osgGA::GUIEventAdapter::KEY_Right:
+                                        myVehicle->vehicle->setSteeringValue(btScalar(0.5), 0);
+                                        myVehicle->vehicle->setSteeringValue(btScalar(0.5), 1);
+                                        return false;
+                                }
+                                break;
 			case(osgGA::GUIEventAdapter::KEYUP):
 				switch ( ea.getKey() ) {
 					case 'S':
@@ -310,12 +358,19 @@ class EventHandler : public osgGA::GUIEventHandler
                                                 myBox->body->applyCentralImpulse(btVector3(100.,0.,0.));
                                                 return false;
                                         case 'F':
-                                                std::cout << "adding force" << std::endl;
+                                                std::cout << "adding Force" << std::endl;
                                                 //myBox->body->activate(true);
                                                 //myBox->body->applyCentralImpulse(btVector3(-200.,0.,0.));
                                                 
-                                                myVehicle->vehicle->applyEngineForce(5000, 2);
-                                                myVehicle->vehicle->applyEngineForce(5000, 3);
+                                                myVehicle->vehicle->applyEngineForce(500, 2);
+                                                myVehicle->vehicle->applyEngineForce(500, 3);
+                                                
+                                                int i;
+                                                for( i=0 ; i<myVehicle->vehicle->getNumWheels() ; i++) {
+                                                    btWheelInfo& wheel = myVehicle->vehicle->getWheelInfo(i);
+                                                    printf(" wheel %d, radius %f, rotation %f, eforce %f, steer %f\n", i, wheel.m_wheelsRadius, wheel.m_rotation, wheel.m_engineForce,wheel.m_steering);
+                                                }
+                                                
                                                // handled = true;
                                                 return false;
                                         case 'R':
@@ -509,8 +564,9 @@ suspFR->setUpperLinLimit(maxSuspZ);
     */
 
     // Plane 2
+    printf("plano2\n");
     btosgPlane *myRamp = new btosgPlane();
-    myRamp->setRotation(osg::Quat(-osg::PI/2,osg::Vec3(1.,0.,0.)));
+    myRamp->setRotation(osg::Quat(-osg::PI/2.,osg::Vec3(1.,0.,0.)));
     myRamp->setPosition(0.,-1.,0.);
     myWorld.addObject( myRamp );
     myRamp->setName("Ramp");
@@ -542,7 +598,7 @@ suspFR->setUpperLinLimit(maxSuspZ);
         ls->getLight()->setAmbient(osg::Vec4(0.1, 0.1, 0.1, 1.0));
         ls->getLight()->setDiffuse(osg::Vec4(1.0, 1.0, 1.0, 1.0));
         ls->getLight()->setSpecular(osg::Vec4(0.2, 0.2, 0.2, 1.0));
-        myWorld.scene->addChild(ls.get());
+//        myWorld.scene->addChild(ls.get());
 
         viewer.setSceneData( myWorld.scene );
         
@@ -577,7 +633,16 @@ suspFR->setUpperLinLimit(maxSuspZ);
     
         while( !viewer.done() )
 	{
-	 	myWorld.stepSimulation(frame_time,10);
+               // myVehicle->vehicle->updateVehicle(frame_time);
+	 	//myWorld.stepSimulation(frame_time,10);
+                myWorld.dynamic->stepSimulation(frame_time,10);
+                
+                
+                myVehicle->vehicle->updateVehicle(frame_time);
+                btTransform mbt = myVehicle->vehicle->getChassisWorldTransform();
+                printf("   pos %f %f %f\n", mbt.getOrigin()[0], mbt.getOrigin()[1], mbt.getOrigin()[2]);
+        myVehicle->update();
+        
 
 	  	viewer.frame();
 	  	timenow = myTimer.time_s();

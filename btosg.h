@@ -143,7 +143,8 @@ class btosgObject  {
                 body->setLinearVelocity(btVector3(0,0,0));
                 body->setAngularVelocity(btVector3(0,0,0));
             }
-            else {  // Not required for dynamic objects.
+            //else
+            {  // Not required for dynamic objects.
                 if ( _DEBUG_ ) printf("set Position in non dynamic object\n");
                 if (model) {
                     model->setPosition(bt2osg_Vec3(p));
@@ -165,7 +166,8 @@ class btosgObject  {
                 body->setLinearVelocity(btVector3(0,0,0));
                 body->setAngularVelocity(btVector3(0,0,0));
             }
-            else {  // Not required for dynamic objects.
+            //else 
+            {  // Not required for dynamic objects.
                 if ( _DEBUG_ ) printf("setRotation in non dynamic object\n");
                 if (model) {
                         model->setAttitude(osg::Quat(x,y,z,w));
@@ -178,6 +180,7 @@ class btosgObject  {
         }
 	
 	void setTexture(char const *fname);
+        
 	virtual void update() {
         if (body) {
             btTransform wTrans;
@@ -187,7 +190,6 @@ class btosgObject  {
                 model->setAttitude(bt2osg_Quat(wTrans.getRotation()));
                 model->setPosition(bt2osg_Vec3(wTrans.getOrigin()));
             }
-
         }
     }
     void reset() {
@@ -229,6 +231,7 @@ class btosgObject  {
 		btVector3 inertia(0,0,0);
 		shape->calculateLocalInertia(mass,inertia);
 		btRigidBody::btRigidBodyConstructionInfo cInfo(mass,mState,shape,inertia);
+                printf("mass: %f\n",mass);
 		cInfo.m_restitution = 0.9f;
 		cInfo.m_friction = 10.f;
 		body = new btRigidBody(cInfo);
