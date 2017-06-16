@@ -56,9 +56,10 @@ class btosgWheel : public btosgCylinder {
 
 class btosgVehicle: public btosgObject {
     public:
-	float dx,dy,dz;
+        float dx,dy,dz;
         btRaycastVehicle *vehicle;
-	btosgVehicle(osg::Vec3 dim = osg::Vec3(1.1,0.5,2.2), double m=1200. ) {
+        
+        btosgVehicle(osg::Vec3 dim = osg::Vec3(1.1,0.5,2.2), double m=1200. ) {
             dx = dim[0];
             dy = dim[1];
             dz = dim[2];
@@ -82,18 +83,11 @@ class btosgVehicle: public btosgObject {
             btCompoundShape* chassisShape = new btCompoundShape();
             chassisShape->addChildShape(shift, boxShape);
             shape = chassisShape;
-            //shape->calculateLocalInertia(mass, inertia);
-            
-            
-            
-            //shape = new btBoxShape( osg2bt_Vec3(dim/2.) );
             if ( !shape ) fprintf(stderr,"Error creating btShape\n");
             
             createRigidBody();
-            //myWorld.addObject(this);
             
             btDefaultVehicleRaycaster *rayCaster = new btDefaultVehicleRaycaster(myWorld.dynamic);
-            
             btRaycastVehicle::btVehicleTuning tuning;
             vehicle = new btRaycastVehicle(tuning, body, rayCaster);
     
@@ -244,69 +238,73 @@ class btosgVehicle: public btosgObject {
         */
     
     void addWheels(
-	btVector3* halfExtents,
-	btRaycastVehicle* vehicle,
-	btRaycastVehicle::btVehicleTuning tuning)
-{
-	//The direction of the raycast, the btRaycastVehicle uses raycasts instead of simiulating the wheels with rigid bodies
-	btVector3 wheelDirectionCS0(0, -1, 0);
+        btVector3* halfExtents,
+        btRaycastVehicle* vehicle,
+        btRaycastVehicle::btVehicleTuning tuning)
+    {
+        //The direction of the raycast, the btRaycastVehicle uses raycasts instead of simiulating the wheels with rigid bodies
+        btVector3 wheelDirectionCS0(0, -1, 0);
 
-	//The axis which the wheel rotates arround
-	btVector3 wheelAxleCS(-1, 0, 0);
+        //The axis which the wheel rotates arround
+        btVector3 wheelAxleCS(-1, 0, 0);
+        btScalar suspensionRestLength(0.7);
+        btScalar wheelWidth(0.4);
+        btScalar wheelRadius(0.5);
+        //The height where the wheels are connected to the chassis
+        btScalar connectionHeight(1.2);
 
-	btScalar suspensionRestLength(0.7);
+        //All the wheel configuration assumes the vehicle is centered at the origin and a right handed coordinate system is used
+        btVector3 wheelConnectionPoint(halfExtents->x() - wheelRadius, connectionHeight, halfExtents->z() - wheelWidth);
 
-	btScalar wheelWidth(0.4);
+            printf( "halfExtents %f %f %f\n",halfExtents->x(),halfExtents->y(),halfExtents->z()); 
+        //Adds the front wheels
+        vehicle->addWheel(wheelConnectionPoint, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
 
-	btScalar wheelRadius(0.5);
+        vehicle->addWheel(wheelConnectionPoint * btVector3(-1, 1, 1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
 
-	//The height where the wheels are connected to the chassis
-	btScalar connectionHeight(1.2);
-        
-        
+        //Adds the rear wheels
+        vehicle->addWheel(wheelConnectionPoint* btVector3(1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);
 
-	//All the wheel configuration assumes the vehicle is centered at the origin and a right handed coordinate system is used
-	btVector3 wheelConnectionPoint(halfExtents->x() - wheelRadius, connectionHeight, halfExtents->z() - wheelWidth);
+        vehicle->addWheel(wheelConnectionPoint * btVector3(-1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);
 
-        printf( "halfExtents %f %f %f\n",halfExtents->x(),halfExtents->y(),halfExtents->z()); 
-	//Adds the front wheels
-	vehicle->addWheel(wheelConnectionPoint, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
-
-	vehicle->addWheel(wheelConnectionPoint * btVector3(-1, 1, 1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
-
-	//Adds the rear wheels
-	vehicle->addWheel(wheelConnectionPoint* btVector3(1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);
-
-	vehicle->addWheel(wheelConnectionPoint * btVector3(-1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);
-
-        printf( "num wheels %d\n",vehicle->getNumWheels()); 
-	//Configures each wheel of our vehicle, setting its friction, damping compression, etc.
-	//For more details on what each parameter does, refer to the docs
-	for (int i = 0; i < vehicle->getNumWheels(); i++)
-	{
-		btWheelInfo& wheel = vehicle->getWheelInfo(i);
-		wheel.m_suspensionStiffness = 50;
-		wheel.m_wheelsDampingCompression = btScalar(0.3) * 2 * btSqrt(wheel.m_suspensionStiffness);//btScalar(0.8);
-		wheel.m_wheelsDampingRelaxation = btScalar(0.5) * 2 * btSqrt(wheel.m_suspensionStiffness);//1;
-		//Larger friction slips will result in better handling
-		wheel.m_frictionSlip = btScalar(1.2);
-		wheel.m_rollInfluence = 1;
-	}
+            printf( "num wheels %d\n",vehicle->getNumWheels()); 
+        //Configures each wheel of our vehicle, setting its friction, damping compression, etc.
+        //For more details on what each parameter does, refer to the docs
+        for (int i = 0; i < vehicle->getNumWheels(); i++)
+        {
+            btWheelInfo& wheel = vehicle->getWheelInfo(i);
+            wheel.m_suspensionStiffness = 50;
+            wheel.m_wheelsDampingCompression = btScalar(0.3) * 2 * btSqrt(wheel.m_suspensionStiffness);//btScalar(0.8);
+            wheel.m_wheelsDampingRelaxation = btScalar(0.5) * 2 * btSqrt(wheel.m_suspensionStiffness);//1;
+            //Larger friction slips will result in better handling
+            wheel.m_frictionSlip = btScalar(1.2);
+            wheel.m_rollInfluence = 1;
+        }
 	
 }
     
-    virtual void update() {
-        
+   virtual void update()
+    {
+        // Not required.
+        // Vehicle dynamics is updated in stepSimulation();
+        // updateVehicle requires frame_time that may not be available.
+        // vehicle->updateVehicle(frame_time);
                
+        // Visual update
+        // Standard btosgObject::update() can be used.
+        btosgObject::update();
+        printf("printf using btosgVehicle::update()\n");
+        /*
         if (body) {
             btTransform wTrans;
-            //body->getMotionState()->getWorldTransform(wTrans);
-            wTrans = vehicle->getChassisWorldTransform();
+            body->getMotionState()->getWorldTransform(wTrans);
+            //wTrans = vehicle->getChassisWorldTransform();
             if ( model ) {
                 model->setAttitude(bt2osg_Quat(wTrans.getRotation()));
                 model->setPosition(bt2osg_Vec3(wTrans.getOrigin()));
             }
         }
+        */
     }
     
 };
@@ -327,53 +325,76 @@ class EventHandler : public osgGA::GUIEventHandler
 		switch(ea.getEventType())
 		{
                     
-                        case(osgGA::GUIEventAdapter::KEYDOWN):
+            case(osgGA::GUIEventAdapter::KEYDOWN):
 				switch ( ea.getKey() ) {
-                                    case osgGA::GUIEventAdapter::KEY_Down:
-                                        myVehicle->vehicle->setBrake(500, 2);
-                                        myVehicle->vehicle->setBrake(500, 3);
-                                        return false;
-                                    case osgGA::GUIEventAdapter::KEY_Up:
-                                        myVehicle->vehicle->applyEngineForce(500, 2);
-                                        myVehicle->vehicle->applyEngineForce(500, 3);
-                                        return false;
-                                    case osgGA::GUIEventAdapter::KEY_Left:
-                                        myVehicle->vehicle->setSteeringValue(btScalar(-0.5), 0);
-                                        myVehicle->vehicle->setSteeringValue(btScalar(-0.5), 1);
-                                        return false;
-                                    case osgGA::GUIEventAdapter::KEY_Right:
-                                        myVehicle->vehicle->setSteeringValue(btScalar(0.5), 0);
-                                        myVehicle->vehicle->setSteeringValue(btScalar(0.5), 1);
-                                        return false;
-                                }
-                                break;
+                    case osgGA::GUIEventAdapter::KEY_Down:
+                        myVehicle->vehicle->applyEngineForce(-3000, 2);
+                        myVehicle->vehicle->applyEngineForce(-3000, 3);
+                        return false;
+                    case osgGA::GUIEventAdapter::KEY_Up:
+                        myVehicle->vehicle->applyEngineForce(1500, 2);
+                        myVehicle->vehicle->applyEngineForce(1500, 3);
+                        return false;
+                    case osgGA::GUIEventAdapter::KEY_Left:
+                        myVehicle->vehicle->setSteeringValue(btScalar(0.5), 0);
+                        myVehicle->vehicle->setSteeringValue(btScalar(0.5), 1);
+                        return false;
+                    case osgGA::GUIEventAdapter::KEY_Right:
+                        myVehicle->vehicle->setSteeringValue(btScalar(-0.5), 0);
+                        myVehicle->vehicle->setSteeringValue(btScalar(-0.5), 1);
+                        return false;
+                        
+                    case 'b':
+                    case '0':
+                    case osgGA::GUIEventAdapter::KEY_Control_R:
+                        myVehicle->vehicle->setBrake(1500, 2);
+                        myVehicle->vehicle->setBrake(1500, 3);
+                        return false;
+                }
+                break;
 			case(osgGA::GUIEventAdapter::KEYUP):
 				switch ( ea.getKey() ) {
+                    case osgGA::GUIEventAdapter::KEY_Down:
+                    case osgGA::GUIEventAdapter::KEY_Up:
+                        myVehicle->vehicle->applyEngineForce(5, 2);
+                        myVehicle->vehicle->applyEngineForce(5, 3);
+                        return false;
+                    case osgGA::GUIEventAdapter::KEY_Left:
+                    case osgGA::GUIEventAdapter::KEY_Right:
+                        myVehicle->vehicle->setSteeringValue(btScalar(0), 0);
+                        myVehicle->vehicle->setSteeringValue(btScalar(0), 1);
+                        return false;
+                    case '0':
+                    case 'b':
+                    case osgGA::GUIEventAdapter::KEY_Control_R:
+                        myVehicle->vehicle->setBrake(5, 2);
+                        myVehicle->vehicle->setBrake(5, 3);
+                        return false;
 					case 'S':
 						std::cout << "tecla S" << std::endl;
 						return false;
-                                        case 'f':
-                                                std::cout << "adding force" << std::endl;
-                                                myBox->body->activate(true);
-                                                myBox->body->applyCentralImpulse(btVector3(100.,0.,0.));
-                                                return false;
-                                        case 'F':
-                                                std::cout << "adding Force" << std::endl;
-                                                //myBox->body->activate(true);
-                                                //myBox->body->applyCentralImpulse(btVector3(-200.,0.,0.));
-                                                
-                                                myVehicle->vehicle->applyEngineForce(500, 2);
-                                                myVehicle->vehicle->applyEngineForce(500, 3);
-                                                
-                                                int i;
-                                                for( i=0 ; i<myVehicle->vehicle->getNumWheels() ; i++) {
-                                                    btWheelInfo& wheel = myVehicle->vehicle->getWheelInfo(i);
-                                                    printf(" wheel %d, radius %f, rotation %f, eforce %f, steer %f\n", i, wheel.m_wheelsRadius, wheel.m_rotation, wheel.m_engineForce,wheel.m_steering);
-                                                }
-                                                
-                                               // handled = true;
-                                                return false;
-                                        case 'R':
+                    case 'f':
+                            std::cout << "adding force" << std::endl;
+                            myBox->body->activate(true);
+                            myBox->body->applyCentralImpulse(btVector3(100.,0.,0.));
+                            return false;
+                    case 'F':
+                            std::cout << "adding Force" << std::endl;
+                            //myBox->body->activate(true);
+                            //myBox->body->applyCentralImpulse(btVector3(-200.,0.,0.));
+                            
+                            myVehicle->vehicle->applyEngineForce(500, 2);
+                            myVehicle->vehicle->applyEngineForce(500, 3);
+                            
+                            int i;
+                            for( i=0 ; i<myVehicle->vehicle->getNumWheels() ; i++) {
+                                btWheelInfo& wheel = myVehicle->vehicle->getWheelInfo(i);
+                                printf(" wheel %d, radius %f, rotation %f, eforce %f, steer %f\n", i, wheel.m_wheelsRadius, wheel.m_rotation, wheel.m_engineForce,wheel.m_steering);
+                            }
+                            
+                            // handled = true;
+                            return false;
+                    case 'R':
 					case 'r':
 						ResetFlag = 1;
 						std::cout << "tecla R" << std::endl;
@@ -628,21 +649,13 @@ suspFR->setUpperLinLimit(maxSuspZ);
     
     //suspBL->enableFeedback(1);
                                                   
-        myVehicle->vehicle->setSteeringValue(0, 0);
-        myVehicle->vehicle->setSteeringValue(0, 1);
-    
-        while( !viewer.done() )
+    myVehicle->vehicle->setSteeringValue(0, 0);
+    myVehicle->vehicle->setSteeringValue(0, 1);
+
+    while( !viewer.done() )
 	{
-               // myVehicle->vehicle->updateVehicle(frame_time);
-	 	//myWorld.stepSimulation(frame_time,10);
-                myWorld.dynamic->stepSimulation(frame_time,10);
-                
-                
-                myVehicle->vehicle->updateVehicle(frame_time);
-                btTransform mbt = myVehicle->vehicle->getChassisWorldTransform();
-                printf("   pos %f %f %f\n", mbt.getOrigin()[0], mbt.getOrigin()[1], mbt.getOrigin()[2]);
-        myVehicle->update();
-        
+              
+	 	myWorld.stepSimulation(frame_time,10);
 
 	  	viewer.frame();
 	  	timenow = myTimer.time_s();

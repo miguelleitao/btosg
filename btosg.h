@@ -25,6 +25,15 @@
 #define _DEBUG_ (1)
 
 
+/* Direct update of positions and orientations can be avoided for dynamic objects
+ * or normal objects that are syncronized during btosgWorld::update.
+ * Direct update can be enabled to allow setPosition and setOrientation methods to 
+ * update the graphics model directly.
+ * This can be used in special cases like objects not belonging to the stepped 
+ * btosgWorld or Worlds that are not stepped through btosgWorld::stepSimulation().
+ */
+#define AVOID_DIRECT_MODEL_UPDATE
+
 osg::Vec3 bt2osg_Vec3(btVector3 bv);
 osg::Vec4 bt2osg_Vec4(btVector4 bv);
 btVector3 osg2bt_Vec3(osg::Vec3 bv);
@@ -36,7 +45,7 @@ const int CastsShadowTraversalMask = 0x2;
 
 class btosgNode {
     // Not used
-    // previsto para possibilitar futura herarqui de DynamicBodies
+    // previsto para possibilitar futura herarquia de DynamicBodies
     std::forward_list<class btosgNode*> children;
     class btosgNode* parent;
     void addChild(class btosgNode* node) {
@@ -143,7 +152,9 @@ class btosgObject  {
                 body->setLinearVelocity(btVector3(0,0,0));
                 body->setAngularVelocity(btVector3(0,0,0));
             }
-            //else
+            #ifdef AVOID_DIRECT_MODEL_UPDATE
+            else
+            #endif
             {  // Not required for dynamic objects.
                 if ( _DEBUG_ ) printf("set Position in non dynamic object\n");
                 if (model) {
@@ -166,7 +177,9 @@ class btosgObject  {
                 body->setLinearVelocity(btVector3(0,0,0));
                 body->setAngularVelocity(btVector3(0,0,0));
             }
-            //else 
+            #ifdef AVOID_DIRECT_MODEL_UPDATE
+            else 
+            #endif
             {  // Not required for dynamic objects.
                 if ( _DEBUG_ ) printf("setRotation in non dynamic object\n");
                 if (model) {
@@ -177,7 +190,7 @@ class btosgObject  {
 	
 	void setRotation(osg::Quat q) {
             setRotation(q[0],q[1],q[2],q[3]);
-        }
+    }
 	
 	void setTexture(char const *fname);
         
