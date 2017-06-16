@@ -155,7 +155,7 @@ class btosgObject  {
             #ifdef AVOID_DIRECT_MODEL_UPDATE
             else
             #endif
-            {  // Not required for dynamic objects.
+            {   // Not required for dynamic objects.
                 if ( _DEBUG_ ) printf("set Position in non dynamic object\n");
                 if (model) {
                     model->setPosition(bt2osg_Vec3(p));
@@ -180,7 +180,7 @@ class btosgObject  {
             #ifdef AVOID_DIRECT_MODEL_UPDATE
             else 
             #endif
-            {  // Not required for dynamic objects.
+            {   // Not required for dynamic objects.
                 if ( _DEBUG_ ) printf("setRotation in non dynamic object\n");
                 if (model) {
                         model->setAttitude(osg::Quat(x,y,z,w));
@@ -396,13 +396,14 @@ class btosgCylinder : public btosgObject {
                     else fprintf(stderr,"Error creating osg::Shape\n");
                 } else fprintf(stderr,"Error creating osg::Shape\n");
             } else fprintf(stderr,"Error creating Geode\n");
-            if (  !model)	model = new osg::PositionAttitudeTransform;
+            if ( !model )	model = new osg::PositionAttitudeTransform;
             osg::PositionAttitudeTransform *center_pos = new osg::PositionAttitudeTransform;
             center_pos->setPosition(osg::Vec3(0.,0., 0.));
             center_pos->addChild(geo);
             model->addChild(center_pos);
             model->setNodeMask(ReceivesShadowTraversalMask);
             mass = 1.;
+            // btCylinderShapeZ is centered at origin
             shape = new btCylinderShapeZ(btVector3(r, r, h/2.));
             if ( !shape ) fprintf(stderr,"Error creating btShape\n");
             createRigidBody();
