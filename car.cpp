@@ -29,9 +29,6 @@ btosgBox *myBox;
 
 
 
-
-
-
 class btosgWheel : public btosgCylinder {
     public:
         btosgWheel(btVector3 pos, double ang) : btosgCylinder(0.4, 0.2) {
@@ -61,7 +58,7 @@ class btosgVehicle: public btosgObject {
         float dx,dy,dz;
         btRaycastVehicle *vehicle;
         osg::PositionAttitudeTransform *wheel[4];
-        
+        double wheelRotation[4];
         btosgVehicle(osg::Vec3 dim = osg::Vec3(2.,0.4,4.), double m=800. ) {
             dx = dim[0];
             dy = dim[1];
@@ -286,17 +283,18 @@ class btosgVehicle: public btosgObject {
             iWheel.m_wheelsDampingCompression = btScalar(0.3) * 2. * btSqrt(iWheel.m_suspensionStiffness);//btScalar(0.8);
             iWheel.m_wheelsDampingRelaxation = btScalar(0.5) * 2. * btSqrt(iWheel.m_suspensionStiffness);//1;
             //Larger friction slips will result in better handling
-            iWheel.m_frictionSlip = btScalar(1.2);
+            iWheel.m_frictionSlip = btScalar(1000.2);
             iWheel.m_rollInfluence = 1;
             
             wheel[i] = new  osg::PositionAttitudeTransform;
+            wheelRotation[i] = 0.;
             if ( wheel[i] ) {
 
                 wheel[i]->addChild(gen_wheel);
                 //wheel[i]->setPosition(osg::Vec3(bt2osg_Vec3(*halfExtents)));
                 osg::Vec3 iPos = bt2osg_Vec3(iWheel.m_chassisConnectionPointCS);
                 wheel[i]->setPosition(iPos);
-printf("  roda %d, %f %f %f\n",i,iPos[0],iPos[1],iPos[2]);
+                //printf("  roda %d, %f %f %f\n",i,iPos[0],iPos[1],iPos[2]);
                 model->addChild( wheel[i] );
             }
         }
@@ -318,11 +316,23 @@ printf("  roda %d, %f %f %f\n",i,iPos[0],iPos[1],iPos[2]);
         // Update Wheels
         for (int i = 0; i < vehicle->getNumWheels(); i++)
         {
+            // btRaycastVehicle::updateVehicle() calls updateWheelTransform fot every wheel.
+            // Do not call vehicle->updateWheelTransform() here if btRaycastVehicle::updateVehicle() is called elsewhere.
+            //vehicle->updateWheelTransform(i,true);
             btWheelInfo& iWheel = vehicle->getWheelInfo(i);
             if ( wheel[i] ) {
                 osg::Vec3 iPos =    bt2osg_Vec3(iWheel.m_chassisConnectionPointCS) -
                                     osg::Vec3(0.,iWheel.m_raycastInfo.m_suspensionLength,0.);
                 wheel[i]->setPosition(iPos);
+                wheelRotation[i] -= iWheel.m_deltaRotation*100.;
+                wheel[i]->setAttitude(osg::Quat(iWheel.m_rotation,osg::Vec3(1.,0.,0.)));
+                printf("  rotation %f\n", iWheel.m_rotation);
+                //wheel[i]->setAttitude(osg::Quat(iWheel.m_steering,osg::Vec3(0.,1.,0.)));
+                
+               // btTransform wTrans = iWheel.m_worldTransform;
+                
+                //btTransform wTrans = vehicle->getWheelTransformWS(i);
+                //wheel[i]->setAttitude(bt2osg_Quat(wTrans.getRotation()));
             }
         }   
         
@@ -441,22 +451,18 @@ class EventHandler : public osgGA::GUIEventHandler
 			default:
 				return false;
 		}
+		return true;
 	}
 };
 
 
 int main()
 {
-	double z_bola = 10.;
-	double v_bola = 0.;
-	osg::Matrix myMatrix;
+    osg::Matrix myMatrix;
         
     myWorld.dynamic->setGravity(btVector3(0., -9.8, 0.));
 
-     // Box
-    btVector3 posBody = btVector3(-2.,0.,3.);
-    
-
+     // Car
     myVehicle = new btosgVehicle();
     myVehicle->setPosition(btVector3(0.,3.,0.));
     myVehicle->setName("Vehicle");
@@ -558,7 +564,7 @@ int main()
         while( !viewer.done() )
 	{
 	 	myWorld.stepSimulation(frame_time,10);
-
+                myVehicle->vehicle->updateVehicle(frame_time);
 	  	viewer.frame();
 	  	timenow = myTimer.time_s();
 	  	frame_time = timenow - last_time;
