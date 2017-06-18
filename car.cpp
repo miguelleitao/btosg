@@ -21,6 +21,7 @@
 
 
 int ResetFlag=0;
+double frame_time = 0.;
 
 // Create World
 btosgWorld myWorld;
@@ -80,7 +81,7 @@ class btosgVehicle: public btosgObject {
             mass = m;
             
             // Center-of-gravity is shifted by shift ????
-            btTransform shift(btQuaternion::getIdentity(), btVector3(0.f, -1.0, 0.f));
+            btTransform shift(btQuaternion::getIdentity(), btVector3(0.f, 0.f, 0.f));
             // Box for collisions and center-of-gravity definition
             btCollisionShape* boxShape = new btBoxShape(osg2bt_Vec3(dim/2.));
             btCompoundShape* chassisShape = new btCompoundShape();
@@ -102,103 +103,19 @@ class btosgVehicle: public btosgObject {
             addWheels(&halfExtents, this->vehicle, tuning);
             
             printf("vehicle body created\n");
+            
+            // vehicle->setCoordinateSystem(rightIndex, upIndex, forwardIndex); // 0, 1, 2
+            vehicle->setCoordinateSystem( 0, 1, 2 );
             return;
-            
-            
-            /////////////////////////////////////////////////////////////////////
-    
-           // vehicle->setCoordinateSystem(rightIndex, upIndex, forwardIndex); // 0, 1, 2
 
-
-     /*   
-        for (int i = 0; i < vehicle->getNumWheels(); i++)
-        {
-            btWheelInfo& wheel = vehicle->getWheelInfo(i);
-            wheel.m_suspensionStiffness = 14.0;
-            wheel.m_wheelsDampingRelaxation = 0.2;
-            wheel.m_wheelsDampingCompression = 0.2;
-            wheel.m_frictionSlip = 1000.;
-            wheel.m_rollInfluence = 0.01;
-        }
-       */ 
-        
-       	for (int i = 0; i < vehicle->getNumWheels(); i++)
-	{
-		btWheelInfo& wheel = vehicle->getWheelInfo(i);
-		wheel.m_suspensionStiffness = 50.;
-		wheel.m_wheelsDampingCompression = btScalar(0.3) * 2 * btSqrt(wheel.m_suspensionStiffness);//btScalar(0.8);
-		wheel.m_wheelsDampingRelaxation =  btScalar(0.5) * 2 * btSqrt(wheel.m_suspensionStiffness);//1;
-		//Larger friction slips will result in better handling
-		wheel.m_frictionSlip = btScalar(1.2);
-		wheel.m_rollInfluence = 1;
-	}
-
-        
             printf("vehicle created\n");
             
             vehicle->setSteeringValue(0.,0);
             vehicle->setSteeringValue(0.,1);
 	}
-  
     
     /*
-    
     wheelShape = new btCylinderShapeX(btVector3(wheelWidth, wheelRadius, wheelRadius));
-    {
-        vehicleRayCaster = new btDefaultVehicleRaycaster(dynamicsWorld);
-        vehicle = new btRaycastVehicle(vehicleTuning, vehicleRigidBody, vehicleRayCaster);
-
-        // never deactivate vehicle
-        vehicleRigidBody->setActivationState(DISABLE_DEACTIVATION);
-        dynamicsWorld->addVehicle(vehicle);
-
-        float connectionHeight = 1.2f;
-        bool isFrontWheel = true;
-
-        rightIndex = , upIndex, forwardIndex)
-        vehicle->setCoordinateSystem(rightIndex, upIndex, forwardIndex); // 0, 1, 2
-
-        // add wheels
-        // front left
-        btVector3 connectionPointCS0;
-        connectionPointCS0 = byVector3(CUBE_HALF_EXTENT-(0.3*wheelWidth), connectionHeight, 2*CUBE_HALF_EXTENT-wheelRadius);
-        vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, vehicleTuning, isFrontWheel);
-        // front right
-        connectionPointCS0 = btVector3(-CUBE_HALF_EXTENT+(0.3*wheelWidth), connectionHeight, 2*CUBE_HALF_EXTENT-wheelRadius);
-        vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, vehicleTuning, isFrontWheel);
-        isFrontWheel = false;
-        // rear right
-        connectionPointCS0 = btVector3(-CUBE_HALF_EXTENT+(0.3*wheelWidth), connectionHeight, -2*CUBE_HALF_EXTENT+wheelRadius);
-        vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, vehicleTuning, isFrontWheel);
-        // rear left
-        connectionPointCS0 = btVector3(CUBE_HALF_EXTENT-(0.3*wheelWidth), connectionHeight, -2*CUBE_HALF_EXTENT+wheelRadius);
-        vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, vehicleTuning, isFrontWheel);
-
-        for (int i = 0; i < vehicle->getNumWheels(); i++)
-        {
-            btWheelInfo& wheel = vehicle->getWheelInfo(i);
-            wheel.m_suspensionStiffness = suspensionStiffness;
-            wheel.m_wheelsDampingRelaxation = suspensionDamping;
-            wheel.m_wheelsDampingCompression = suspensionCompression;
-            wheel.m_frictionSlip = wheelFriction;
-            wheel.m_rollInfluence = rollInfluence;
-        }
-
-
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-
-    // Orientation and Position of Falling body
-    fallMotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(-1, 5, 0)));
-    btScalar mass = 1;
-    btVector3 fallInertia(0, 0, 0);
-    fallShape->calculateLocalInertia(mass, fallInertia);
-    btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(mass, fallMotionState, fallShape, fallInertia);
-    fallRigidBody = new btRigidBody(fallRigidBodyCI);
-    dynamicsWorld->addRigidBody(fallRigidBody);
-
-        }
         */
     
     void addWheels(
@@ -212,11 +129,13 @@ class btosgVehicle: public btosgObject {
 
         //The axis which the wheel rotates arround
         btVector3 wheelAxleCS(-1, 0, 0);
-        btScalar suspensionRestLength(0.7);
-        btScalar wheelWidth(0.4);
-        btScalar wheelRadius(0.5);
+        // center-of mass height if mass=0
+        // height = suspensionRestLength-mass.g/m_suspensionStiffness
+        btScalar suspensionRestLength(0.80);
+        btScalar wheelWidth(0.2);
+        btScalar wheelRadius(0.3);
         //The height where the wheels are connected to the chassis
-        btScalar connectionHeight(-0.5);
+        btScalar connectionHeight(0.4);
 
         //All the wheel configuration assumes the vehicle is centered at the origin and a right handed coordinate system is used
         btVector3 wheelConnectionPoint(halfExtents->x() + wheelWidth/2., connectionHeight, halfExtents->z() - wheelRadius);
@@ -225,14 +144,14 @@ class btosgVehicle: public btosgObject {
         //Adds the front wheels
         vehicle->addWheel(wheelConnectionPoint, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
 
-        vehicle->addWheel(wheelConnectionPoint * btVector3(-1, 1, 1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
+        vehicle->addWheel(wheelConnectionPoint*btVector3(-1, 1, 1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
 
         //Adds the rear wheels
-        vehicle->addWheel(wheelConnectionPoint* btVector3(1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);
+        vehicle->addWheel(wheelConnectionPoint*btVector3(1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);
 
-        vehicle->addWheel(wheelConnectionPoint * btVector3(-1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);
+        vehicle->addWheel(wheelConnectionPoint*btVector3(-1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);
 
-        // Create one wheel
+        // Create one graphics wheel
         osg::Geode *geo = new osg::Geode;
         osg::Shape *sp = new osg::Cylinder( osg::Vec3(0.,0.,0.), wheelRadius, wheelWidth);
         if ( sp) {
@@ -240,7 +159,7 @@ class btosgVehicle: public btosgObject {
             if ( sd ) {
                 geo->addDrawable(sd);
                 // ---------------------------------------
-                // Set up a StateSet to texture the wheel
+                // Set up a StateSet to texture the body
                 // ---------------------------------------
                 osg::StateSet* stateset = new osg::StateSet();
 	
@@ -269,27 +188,31 @@ class btosgVehicle: public btosgObject {
                 //wheel[0]->setTexture("beachball.png");
       //  } else fprintf(stderr,"Error creating Geode\n");
             
-            
-            
-            
 
             printf( "num wheels %d\n",vehicle->getNumWheels()); 
         // Configures each wheel of our vehicle, setting its friction, damping compression, etc.
         // For more details on what each parameter does, refer to the docs
         for (int i = 0; i < vehicle->getNumWheels(); i++)
         {
+            
             btWheelInfo& iWheel = vehicle->getWheelInfo(i);
-            iWheel.m_suspensionStiffness = 50;
-            iWheel.m_wheelsDampingCompression = btScalar(0.3) * 2. * btSqrt(iWheel.m_suspensionStiffness);//btScalar(0.8);
-            iWheel.m_wheelsDampingRelaxation = btScalar(0.5) * 2. * btSqrt(iWheel.m_suspensionStiffness);//1;
+            /*
+             * iWheel.m_suspensionStiffness = 14.0;
+             * iWheel.m_wheelsDampingRelaxation = 0.2;
+             * iWheel.m_wheelsDampingCompression = 0.2;
+             * iWheel.m_frictionSlip = 1000.;
+             * iWheel.m_rollInfluence = 0.01;
+             */
+            // Affects rest height
+            iWheel.m_suspensionStiffness = 15.;
+            iWheel.m_wheelsDampingCompression = 0.3 * 2 * btSqrt(iWheel.m_suspensionStiffness); // 0.8;
+            iWheel.m_wheelsDampingRelaxation =  0.5 * 2 * btSqrt(iWheel.m_suspensionStiffness); // 1;
             //Larger friction slips will result in better handling
-            iWheel.m_frictionSlip = btScalar(1000.2);
+            iWheel.m_frictionSlip = 1.5;
             iWheel.m_rollInfluence = 1;
             
             wheel[i] = new  osg::PositionAttitudeTransform;
-            wheelRotation[i] = 0.;
             if ( wheel[i] ) {
-
                 wheel[i]->addChild(gen_wheel);
                 //wheel[i]->setPosition(osg::Vec3(bt2osg_Vec3(*halfExtents)));
                 osg::Vec3 iPos = bt2osg_Vec3(iWheel.m_chassisConnectionPointCS);
@@ -300,13 +223,55 @@ class btosgVehicle: public btosgObject {
         }
 	
 }
+    void printInfo() {
+        btosgPrint("Center of Mass", vehicle->getRigidBody()->getCenterOfMassPosition());
+        btosgPrint("Center of Mass", body->getCenterOfMassPosition());
+        printf("Mass: %f\n", mass);
+        for( int i=0 ; i<vehicle->getNumWheels(); i++)
+        {
+            btWheelInfo& iWheel = vehicle->getWheelInfo(i);
+            printf("Wheel %d\n",i);
+            btosgPrint("  chassisConnectionPoint", iWheel.m_chassisConnectionPointCS);
+            btosgPrint("  WheelDirection", iWheel.m_wheelDirectionCS);
+            btosgPrint("  WheelAxle", iWheel.m_wheelAxleCS);
+            /*
+            btScalar        m_suspensionRestLength1;    //const
+            btScalar        m_maxSuspensionTravelCm;
+            btScalar        getSuspensionRestLength()   const;
+            btScalar        m_wheelsRadius;             //const
+            btScalar        m_suspensionStiffness;      //const
+            btScalar        m_wheelsDampingCompression; //const
+            btScalar        m_wheelsDampingRelaxation;  //const
+            */
+        }
+    }
     
+    
+    void logPosition() {
+         if (body) {
+            btTransform wTrans;
+            body->getMotionState()->getWorldTransform(wTrans);
+            btVector3 pos;
+            pos = wTrans.getOrigin();
+            if ( name )
+                        std::cout << "Object   " << name << " position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
+            else
+                        std::cout << "Object _NO_NAME_ position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
+            return;
+            for( int i=0 ; i<4 ; i++ ) {
+                btWheelInfo& iWheel = vehicle->getWheelInfo(i);
+                std::cout << "  whell " << i << ", contact: " << iWheel.m_raycastInfo.m_isInContact ;
+                printf("  rotation %f\n", iWheel.m_rotation);
+                
+            }
+         }
+    }
    virtual void update()
     {
         // Not required.
         // Vehicle dynamics is updated in stepSimulation();
         // updateVehicle requires frame_time that may not be available.
-        // vehicle->updateVehicle(frame_time);
+        vehicle->updateVehicle(frame_time);
                
         // Visual update
         // Standard btosgObject::update() can be used.
@@ -316,7 +281,7 @@ class btosgVehicle: public btosgObject {
         // Update Wheels
         for (int i = 0; i < vehicle->getNumWheels(); i++)
         {
-            // btRaycastVehicle::updateVehicle() calls updateWheelTransform fot every wheel.
+            // btRaycastVehicle::updateVehicle() calls updateWheelTransform for every wheel.
             // Do not call vehicle->updateWheelTransform() here if btRaycastVehicle::updateVehicle() is called elsewhere.
             //vehicle->updateWheelTransform(i,true);
             btWheelInfo& iWheel = vehicle->getWheelInfo(i);
@@ -324,10 +289,20 @@ class btosgVehicle: public btosgObject {
                 osg::Vec3 iPos =    bt2osg_Vec3(iWheel.m_chassisConnectionPointCS) -
                                     osg::Vec3(0.,iWheel.m_raycastInfo.m_suspensionLength,0.);
                 wheel[i]->setPosition(iPos);
-                wheelRotation[i] -= iWheel.m_deltaRotation*100.;
-                wheel[i]->setAttitude(osg::Quat(iWheel.m_rotation,osg::Vec3(1.,0.,0.)));
-                printf("  rotation %f\n", iWheel.m_rotation);
+                
+                //wheel[i]->setAttitude(osg::Quat(iWheel.m_rotation,osg::Vec3(1.,0.,0.)));
                 //wheel[i]->setAttitude(osg::Quat(iWheel.m_steering,osg::Vec3(0.,1.,0.)));
+                
+                btQuaternion steeringOrn(iWheel.m_wheelDirectionCS,-iWheel.m_steering);
+                btMatrix3x3 steeringMat(steeringOrn);
+
+                btQuaternion rotatingOrn(iWheel.m_wheelAxleCS,-iWheel.m_rotation);
+                btMatrix3x3 rotatingMat(rotatingOrn);
+	
+                btMatrix3x3 fullMat = steeringMat*rotatingMat;
+                btQuaternion fullQuat;
+                fullMat.getRotation(fullQuat);
+                wheel[i]->setAttitude(bt2osg_Quat(fullQuat));
                 
                // btTransform wTrans = iWheel.m_worldTransform;
                 
@@ -354,6 +329,51 @@ class btosgVehicle: public btosgObject {
 };
 
 
+class BlockGreen : public btosgBox {
+    public:
+        BlockGreen(float x, float y, float z) : btosgBox( osg::Vec3(1.,1.,1.), 100. ) {
+            setPosition(btVector3(x,y,z));
+            osg::Material* mat = new osg::Material;
+            mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
+            mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.1, 0.4, 0.1, 1.0));
+            mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
+            mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
+            model->getOrCreateStateSet()->
+                setAttributeAndModes(mat, osg::StateAttribute::ON);
+        }
+       // asBox(BlockGreen) { return this; };
+};
+class BlockRed : public btosgBox {
+    public:
+        BlockRed(float x, float y, float z) : btosgBox( osg::Vec3(1.,1.,1.), 10000. ) {
+            setPosition(btVector3(x,y,z));
+            osg::Material* mat = new osg::Material;
+            mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
+            mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.4, 0.1, 0.1, 1.0));
+            mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
+            mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
+            model->getOrCreateStateSet()->
+                setAttributeAndModes(mat, osg::StateAttribute::ON);
+        }
+       // asBox(BlockGreen) { return this; };
+};
+
+
+class BlockBlue : public btosgBox {
+    public:
+        BlockBlue(float x, float y, float z) : btosgBox( osg::Vec3(1.,0.25,1.), 10000. ) {
+            setPosition(btVector3(x,y,z));
+            osg::Material* mat = new osg::Material;
+            mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
+            mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.1, 0.1, 0.5, 1.0));
+            mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
+            mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
+            model->getOrCreateStateSet()->
+                setAttributeAndModes(mat, osg::StateAttribute::ON);
+        }
+       // asBox(BlockGreen) { return this; };
+};
+
 
 
     btosgVehicle *myVehicle;
@@ -368,12 +388,11 @@ class EventHandler : public osgGA::GUIEventHandler
         if (!viewer) return false;
         switch(ea.getEventType())
         {
-                
             case(osgGA::GUIEventAdapter::KEYDOWN):
                 switch ( ea.getKey() ) {
                     case osgGA::GUIEventAdapter::KEY_Down:
-                        myVehicle->vehicle->applyEngineForce(-3000, 2);
-                        myVehicle->vehicle->applyEngineForce(-3000, 3);
+                        myVehicle->vehicle->applyEngineForce(-1500, 2);
+                        myVehicle->vehicle->applyEngineForce(-1500, 3);
                         return false;
                     case osgGA::GUIEventAdapter::KEY_Up:
                         myVehicle->vehicle->applyEngineForce(1500, 2);
@@ -387,21 +406,20 @@ class EventHandler : public osgGA::GUIEventHandler
                         myVehicle->vehicle->setSteeringValue(btScalar(-0.4), 0);
                         myVehicle->vehicle->setSteeringValue(btScalar(-0.4), 1);
                         return false;
-                        
                     case 'b':
                     case '0':
                     case osgGA::GUIEventAdapter::KEY_Control_R:
-                        myVehicle->vehicle->setBrake(1500, 2);
-                        myVehicle->vehicle->setBrake(1500, 3);
+                        myVehicle->vehicle->setBrake(10000, 2);
+                        myVehicle->vehicle->setBrake(10000, 3);
                         return false;
                 }
                 break;
-			case(osgGA::GUIEventAdapter::KEYUP):
-				switch ( ea.getKey() ) {
+	case(osgGA::GUIEventAdapter::KEYUP):
+		switch ( ea.getKey() ) {
                     case osgGA::GUIEventAdapter::KEY_Down:
                     case osgGA::GUIEventAdapter::KEY_Up:
-                        myVehicle->vehicle->applyEngineForce(5, 2);
-                        myVehicle->vehicle->applyEngineForce(5, 3);
+                        myVehicle->vehicle->applyEngineForce(0, 2);
+                        myVehicle->vehicle->applyEngineForce(0, 3);
                         return false;
                     case osgGA::GUIEventAdapter::KEY_Left:
                     case osgGA::GUIEventAdapter::KEY_Right:
@@ -414,9 +432,12 @@ class EventHandler : public osgGA::GUIEventHandler
                         myVehicle->vehicle->setBrake(5, 2);
                         myVehicle->vehicle->setBrake(5, 3);
                         return false;
-					case 'S':
-						std::cout << "tecla S" << std::endl;
-						return false;
+                    case 'S':
+			std::cout << "tecla S" << std::endl;
+			return false;
+                    case 'i':
+                        myVehicle->printInfo();
+                        break;
                     case 'f':
                             std::cout << "adding force" << std::endl;
                             myBox->body->activate(true);
@@ -467,6 +488,53 @@ int main()
     myVehicle->setPosition(btVector3(0.,3.,0.));
     myVehicle->setName("Vehicle");
     myWorld.addObject( myVehicle );
+    myVehicle->printInfo();
+    {
+    BlockGreen *myBlock;
+    myBlock = new BlockGreen(4.,0.,-4.);
+    myWorld.addObject(myBlock);
+    myBlock = new BlockGreen(6.,0.,5.);
+    myWorld.addObject(myBlock);
+    myBlock = new BlockGreen(-7.,0.,5.);
+    myWorld.addObject(myBlock);
+    myBlock = new BlockGreen(9.,0.,5.);
+    myWorld.addObject(myBlock);
+    myBlock = new BlockGreen(10.,0.,6.);
+    myWorld.addObject(myBlock);
+    myBlock = new BlockGreen(-11.,0.,6.);
+    myWorld.addObject(myBlock);
+    }
+    {
+    BlockRed *myBlock;
+    myBlock = new BlockRed(4.,0.,4.);
+    myWorld.addObject(myBlock);
+    myBlock = new BlockRed(7.,0.,5.);
+    myWorld.addObject(myBlock);
+    myBlock = new BlockRed(-8.,0.,5.);
+    myWorld.addObject(myBlock);
+    myBlock = new BlockRed(9.,0.,-5.);
+    myWorld.addObject(myBlock);
+    myBlock = new BlockRed(10.,0.,-6.);
+    myWorld.addObject(myBlock);
+    myBlock = new BlockRed(-12.,0.,6.);
+    myWorld.addObject(myBlock);
+    }
+
+    {
+    BlockBlue *myBlock;
+    myBlock = new BlockBlue(4.,0.,-4.);
+    myWorld.addObject(myBlock);
+    myBlock = new BlockBlue(7.5,0.,6.);
+    myWorld.addObject(myBlock);
+    myBlock = new BlockBlue(-8.,0.,-5.);
+    myWorld.addObject(myBlock);
+    myBlock = new BlockBlue(9.,0.,5.);
+    myWorld.addObject(myBlock);
+    myBlock = new BlockBlue(11.,0.,-6.);
+    myWorld.addObject(myBlock);
+    myBlock = new BlockBlue(-13.,0.,6.);
+    myWorld.addObject(myBlock);
+    }
     
 /*
     myBox = new btosgBox(osg::Vec3(4.,1.6,1.),800.);
@@ -503,7 +571,7 @@ int main()
     printf("plano2\n");
     btosgPlane *myRamp = new btosgPlane();
     myRamp->setRotation(osg::Quat(-osg::PI/2.,osg::Vec3(1.,0.,0.)));
-    myRamp->setPosition(0.,-1.,0.);
+    myRamp->setPosition(0.,0.,0.);
     myWorld.addObject( myRamp );
     myRamp->setName("Ramp");
     myRamp->body->setFriction(100.);
@@ -557,14 +625,14 @@ int main()
 	osg::Timer myTimer;
 	double timenow = myTimer.time_s();
 	double last_time = timenow;
-	double frame_time = 0.;
+	frame_time = 0.;
     
         //suspBL->enableFeedback(1);
 
         while( !viewer.done() )
 	{
 	 	myWorld.stepSimulation(frame_time,10);
-                myVehicle->vehicle->updateVehicle(frame_time);
+                //myVehicle->vehicle->updateVehicle(frame_time);
 	  	viewer.frame();
 	  	timenow = myTimer.time_s();
 	  	frame_time = timenow - last_time;
