@@ -61,21 +61,25 @@ class btosgNode {
 class btosgWorld {
     private:
         unsigned long steps;
+        btDbvtBroadphase* broadphase;
+        btDefaultCollisionConfiguration* collisionConfiguration;
+	btCollisionDispatcher* dispatcher;
+        btSequentialImpulseConstraintSolver* solver;
     public:
 	btDynamicsWorld *dynamic;
 #ifdef BTOSG_SHADOW
-        osgShadow::ShadowedScene *scene;
+        osg::ref_ptr<osgShadow::ShadowedScene> scene;
 #else
-	osg::Group 	*scene;
+	osg::ref_ptr<osg::Group> 	scene;
 #endif
         std::forward_list<class btosgObject*> objects;
 	btosgWorld() {
 
 		// Create dynamic world
-		btBroadphaseInterface* broadphase = new btDbvtBroadphase();
-	 	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
-	 	btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
-	 	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
+		broadphase = new btDbvtBroadphase();
+	 	collisionConfiguration = new btDefaultCollisionConfiguration();
+	 	dispatcher = new btCollisionDispatcher(collisionConfiguration);
+	 	solver = new btSequentialImpulseConstraintSolver;
 	 	dynamic = new btDiscreteDynamicsWorld(dispatcher,broadphase,solver,collisionConfiguration);
 
 		// Set Gravity
@@ -93,8 +97,9 @@ class btosgWorld {
                     scene = new osg::Group;// Creating the root node
                 #endif
 
-        steps = 0L;
+                steps = 0L;
 	};
+    ~btosgWorld(); 
     void stepSimulation(btScalar timeStep, int maxSubSteps);
     void addObject(class btosgObject *obj);
     void reset();
@@ -105,7 +110,7 @@ class btosgObject  {
    public:
 	// Main components
 	//osg::Geode *geo;
-	osg::PositionAttitudeTransform *model;
+	osg::ref_ptr<osg::PositionAttitudeTransform> model;
         char *name;
     btTransform init_state;
 	btRigidBody *body;
@@ -120,6 +125,12 @@ class btosgObject  {
                 name = NULL;
                 init_state = btTransform();
 	};
+        virtual ~btosgObject() {
+            //delete body;
+            //model = NULL;
+            //delete shape;
+            delete name;
+        }
         void setName(char const *n) {
             name = strdup(n);
         }
@@ -264,7 +275,7 @@ class btosgSphere : public btosgObject {
 	float radius;
 	btosgSphere(float r) {
 		radius = r;
-		osg::Geode *geo = new osg::Geode();
+		osg::ref_ptr<osg::Geode> geo = new osg::Geode();
 		geo->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.,0.,0.),r)));
 		if (  !model)	model = new osg::PositionAttitudeTransform;
 		model->addChild(geo);

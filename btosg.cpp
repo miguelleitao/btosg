@@ -42,6 +42,25 @@ return osg::Quat( bv.x(), bv.y(), bv.z(), bv.w() );
 }
 
 
+        btosgWorld::~btosgWorld() {
+            //delete dynamic;
+            //delete solver;
+            //delete dispatcher;
+            //delete collisionConfiguration;
+            //delete broadphase;
+            for ( auto it = objects.begin(); it != objects.end(); ++it ) {
+                btosgObject *obj = *it;
+                delete obj;
+            }
+            /*
+            while (!objects.empty())
+            {
+                objects.pop_front();
+            }
+*/
+            scene->unref();
+        }
+
 void btosgWorld::addObject(btosgObject *obj)  {
     objects.push_front(obj);
     if ( obj->body )  dynamic->addRigidBody(obj->body);

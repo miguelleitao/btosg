@@ -28,7 +28,7 @@ btosgWorld myWorld;
 
 btosgBox *myBox;
 
-osg::Vec3d up(0.0, 0.0, 1.0);
+osg::Vec3d up(0.0, 1.0, 0.0);
 
 class btosgWheel : public btosgCylinder {
     public:
@@ -62,12 +62,12 @@ class btosgVehicle: public btosgObject {
         btRaycastVehicle *vehicle;
         osg::ref_ptr<osg::PositionAttitudeTransform> wheel[4];
         double wheelRotation[4];
-        btosgVehicle(osg::Vec3 dim = osg::Vec3(2.,4.,0.4), double m=800. ) {
+        btosgVehicle(osg::Vec3 dim = osg::Vec3(2.,0.4,4.), double m=800. ) {
             dx = dim[0];
             dy = dim[1];
             dz = dim[2];
             osg::ref_ptr<osg::Geode> geo = new osg::Geode();
-            if ( geo.valid() ) {
+            if ( geo ) {
                 // Box to visualize the chassis
                 osg::ref_ptr<osg::Shape> sp = new osg::Box( osg::Vec3(0.,0.,0.), dim[0], dim[1], dim[2] );
                 if ( sp) {
@@ -77,7 +77,7 @@ class btosgVehicle: public btosgObject {
                     else fprintf(stderr,"Error creating osg::Shape\n");
                 } else fprintf(stderr,"Error creating osg::Shape\n");
             } else fprintf(stderr,"Error creating Geode\n");
-            if ( !model )	model = new osg::PositionAttitudeTransform;
+            if (  !model)	model = new osg::PositionAttitudeTransform;
             model->addChild(geo);
             model->setNodeMask(CastsShadowTraversalMask);
             mass = m;
@@ -107,7 +107,7 @@ class btosgVehicle: public btosgObject {
             printf("vehicle body created\n");
             
             // vehicle->setCoordinateSystem(rightIndex, upIndex, forwardIndex); // 0, 1, 2
-            vehicle->setCoordinateSystem( 0, 2, 1 );
+            vehicle->setCoordinateSystem( 0, 1, 2 );
             return;
 
             printf("vehicle created\n");
@@ -115,12 +115,6 @@ class btosgVehicle: public btosgObject {
             vehicle->setSteeringValue(0.,0);
             vehicle->setSteeringValue(0.,1);
 	}
-	virtual ~btosgVehicle() {
-            for( int i=0 ; i<vehicle->getNumWheels() ; i++ )
-                wheel[i]->unref();
-            delete vehicle;
-            delete rayCaster;
-        }
     
     /*
     wheelShape = new btCylinderShapeX(btVector3(wheelWidth, wheelRadius, wheelRadius));
@@ -136,7 +130,7 @@ class btosgVehicle: public btosgObject {
         btVector3 wheelDirectionCS0(-osg2bt_Vec3(up));
 
         //The axis which the wheel rotates arround
-        btVector3 wheelAxleCS(1, 0, 0);
+        btVector3 wheelAxleCS(-1, 0, 0);
         // center-of mass height if mass=0
         // height = suspensionRestLength-mass.g/m_suspensionStiffness
         btScalar suspensionRestLength(0.80);
@@ -146,7 +140,7 @@ class btosgVehicle: public btosgObject {
         btScalar connectionHeight(0.4);
 
         //All the wheel configuration assumes the vehicle is centered at the origin and a right handed coordinate system is used
-        btVector3 wheelConnectionPoint(halfExtents->x() + wheelWidth/2.,   halfExtents->y() - wheelRadius,connectionHeight);
+        btVector3 wheelConnectionPoint(halfExtents->x() + wheelWidth/2., connectionHeight, halfExtents->z() - wheelRadius);
         printf( "halfExtents %f %f %f\n",halfExtents->x(),halfExtents->y(),halfExtents->z()); 
 
         //Adds the front wheels
@@ -155,9 +149,9 @@ class btosgVehicle: public btosgObject {
         vehicle->addWheel(wheelConnectionPoint*btVector3(-1, 1, 1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
 
         //Adds the rear wheels
-        vehicle->addWheel(wheelConnectionPoint*btVector3(1, -1, 1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);
+        vehicle->addWheel(wheelConnectionPoint*btVector3(1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);
 
-        vehicle->addWheel(wheelConnectionPoint*btVector3(-1, -1, 1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);
+        vehicle->addWheel(wheelConnectionPoint*btVector3(-1, 1, -1), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);
 
         // Create one graphics wheel
         osg::ref_ptr<osg::Geode> geo = new osg::Geode;
@@ -360,6 +354,7 @@ class BlockBlue : public btosgBox {
 };
 
 
+
     btosgVehicle *myVehicle;
 
 // class to handle events
@@ -547,7 +542,7 @@ int main()
     // Plane 2
     printf("plano2\n");
     btosgPlane *myRamp = new btosgPlane();
-    myRamp->setRotation(osg::Quat(0.,osg::Vec3(1.,0.,0.)));
+    myRamp->setRotation(osg::Quat(-osg::PI/2.,osg::Vec3(1.,0.,0.)));
     myRamp->setPosition(0.,0.,0.);
     myWorld.addObject( myRamp );
     myRamp->setName("Ramp");
@@ -587,7 +582,6 @@ int main()
         viewer.setCameraManipulator( manipulator );
 
         // Set the desired home coordinates for the manipulator
-        
         osg::Vec3d eye(osg::Vec3(0., -5., -5.)+up*20.);
         osg::Vec3d center(0., 0., 0.);
 
@@ -621,8 +615,4 @@ int main()
 		    ResetFlag = 0;
 		}
 	}
-	
-	
-        //return 0;
-	//exit(0);
 }
