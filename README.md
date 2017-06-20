@@ -8,5 +8,9 @@ btosg stands on top of these two APIs but does not try to hide them. Instead, in
 The use of btosg can help the programming task because it allows to create and position both the physical and graphics definitions of small objects in one step. It also keeps track of syncronizing the graphics definitions from the state of each physical object.
 
 ### Dependences
-OpenSCeneGraph: https://github.com/openscenegraph/OpenSceneGraph http://www.openscenegraph.org/
-Bullet: https://github.com/bulletphysics/bullet3 http://bulletphysics.org/
+#### OpenSceneGraph: 
+* https://github.com/openscenegraph/OpenSceneGraph 
+* http://www.openscenegraph.org/
+#### Bullet:
+* https://github.com/bulletphysics/bullet3 
+* http://bulletphysics.org/
