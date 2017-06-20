@@ -3,7 +3,7 @@ INC_BULLET=-I/usr/include/bullet
 INC_OSG=-I/usr/include/osg
 LD_OSG=-losg -losgViewer -losgSim -losgDB -losgGA -losgShadow
 
-all: car car3 carY
+all: car carY car3
 
 car: car.o btosg.o
 	cc -O2 -o $@ $^ -L /home/jml/bullet3/src/BulletDynamics -l BulletDynamics -l BulletCollision -l LinearMath ${LD_OSG} -l stdc++ -lm

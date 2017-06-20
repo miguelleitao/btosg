@@ -28,7 +28,8 @@ btosgWorld myWorld;
 
 btosgBox *myBox;
 
-osg::Vec3d up(0.0, 0.0, 1.0);
+osg::Vec3d up(0., 0., 1.);
+osg::Vec3 front(0., 1., 0.);
 
 class btosgWheel : public btosgCylinder {
     public:
@@ -109,23 +110,8 @@ class btosgVehicle: public btosgObject {
             // vehicle->setCoordinateSystem(rightIndex, upIndex, forwardIndex); // 0, 1, 2
             vehicle->setCoordinateSystem( 0, 2, 1 );
             return;
-
-            printf("vehicle created\n");
-            
-            vehicle->setSteeringValue(0.,0);
-            vehicle->setSteeringValue(0.,1);
 	}
-	virtual ~btosgVehicle() {
-            for( int i=0 ; i<vehicle->getNumWheels() ; i++ )
-                wheel[i]->unref();
-            delete vehicle;
-            delete rayCaster;
-        }
-    
-    /*
-    wheelShape = new btCylinderShapeX(btVector3(wheelWidth, wheelRadius, wheelRadius));
-        */
-    
+
     void addWheels(
         btVector3* halfExtents,
         btRaycastVehicle* vehicle,
@@ -136,7 +122,8 @@ class btosgVehicle: public btosgObject {
         btVector3 wheelDirectionCS0(-osg2bt_Vec3(up));
 
         //The axis which the wheel rotates arround
-        btVector3 wheelAxleCS(1, 0, 0);
+        btVector3 wheelAxleCS( osg2bt_Vec3(front ^ up) );
+        
         // center-of mass height if mass=0
         // height = suspensionRestLength-mass.g/m_suspensionStiffness
         btScalar suspensionRestLength(0.80);
@@ -621,8 +608,4 @@ int main()
 		    ResetFlag = 0;
 		}
 	}
-	
-	
-        //return 0;
-	//exit(0);
 }

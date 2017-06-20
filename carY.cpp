@@ -28,7 +28,8 @@ btosgWorld myWorld;
 
 btosgBox *myBox;
 
-osg::Vec3d up(0.0, 1.0, 0.0);
+osg::Vec3 up(0., 1., 0.);
+osg::Vec3 front(0., 0., 1.);
 
 class btosgWheel : public btosgCylinder {
     public:
@@ -67,7 +68,7 @@ class btosgVehicle: public btosgObject {
             dy = dim[1];
             dz = dim[2];
             osg::ref_ptr<osg::Geode> geo = new osg::Geode();
-            if ( geo ) {
+            if ( geo.valid() ) {
                 // Box to visualize the chassis
                 osg::ref_ptr<osg::Shape> sp = new osg::Box( osg::Vec3(0.,0.,0.), dim[0], dim[1], dim[2] );
                 if ( sp) {
@@ -77,7 +78,7 @@ class btosgVehicle: public btosgObject {
                     else fprintf(stderr,"Error creating osg::Shape\n");
                 } else fprintf(stderr,"Error creating osg::Shape\n");
             } else fprintf(stderr,"Error creating Geode\n");
-            if (  !model)	model = new osg::PositionAttitudeTransform;
+            if ( !model )	model = new osg::PositionAttitudeTransform;
             model->addChild(geo);
             model->setNodeMask(CastsShadowTraversalMask);
             mass = m;
@@ -109,17 +110,8 @@ class btosgVehicle: public btosgObject {
             // vehicle->setCoordinateSystem(rightIndex, upIndex, forwardIndex); // 0, 1, 2
             vehicle->setCoordinateSystem( 0, 1, 2 );
             return;
-
-            printf("vehicle created\n");
-            
-            vehicle->setSteeringValue(0.,0);
-            vehicle->setSteeringValue(0.,1);
 	}
-    
-    /*
-    wheelShape = new btCylinderShapeX(btVector3(wheelWidth, wheelRadius, wheelRadius));
-        */
-    
+
     void addWheels(
         btVector3* halfExtents,
         btRaycastVehicle* vehicle,
@@ -130,7 +122,8 @@ class btosgVehicle: public btosgObject {
         btVector3 wheelDirectionCS0(-osg2bt_Vec3(up));
 
         //The axis which the wheel rotates arround
-        btVector3 wheelAxleCS(-1, 0, 0);
+        btVector3 wheelAxleCS( osg2bt_Vec3(front ^ up) );
+        
         // center-of mass height if mass=0
         // height = suspensionRestLength-mass.g/m_suspensionStiffness
         btScalar suspensionRestLength(0.80);
