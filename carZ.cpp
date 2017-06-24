@@ -17,9 +17,6 @@
 
 #define _DEBUG_ (1)
 
-osg::Vec3 up(0., 0., 1.);
-osg::Vec3 front(0., 1., 0.);
-
 #include "btosgVehicle.h"
 
 int ResetFlag=0;
@@ -135,8 +132,7 @@ class EventHandler : public osgGA::GUIEventHandler
 
 int main()
 {
-    osg::Matrix myMatrix;
-        
+    osg::Vec3 up(0., 0., 1.);
     myWorld.dynamic->setGravity(osg2bt_Vec3(up)*-9.8);
 
      // Car

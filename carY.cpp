@@ -18,8 +18,7 @@
 #define _DEBUG_ (1)
 
 
-osg::Vec3 up(0., 1., 0.);
-osg::Vec3 front(0., 0., 1.);
+
 
 #include "btosgVehicle.h"
 
@@ -137,14 +136,15 @@ class EventHandler : public osgGA::GUIEventHandler
 
 int main()
 {
-    osg::Matrix myMatrix;
-        
+    
+    osg::Vec3 up(0., 1., 0.);
     myWorld.dynamic->setGravity(osg2bt_Vec3(up)*-9.8);
 
      // Car
     myVehicle = new btosgVehicle(&myWorld);
     myVehicle->setPosition(osg2bt_Vec3(up*3.));
     myVehicle->setName("Vehicle");
+    myVehicle->setMass(800.);
     myWorld.addObject( myVehicle );
     myVehicle->printInfo();
     {

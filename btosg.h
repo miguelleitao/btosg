@@ -139,9 +139,9 @@ class btosgObject  {
 		bool isDynamic = (mass != 0.f);
 
     		btVector3 localInertia(0, 0, 0);
-    		if (isDynamic)
+    		if (isDynamic && shape)
         		shape->calculateLocalInertia(mass, localInertia);
-		body->setMassProps(m, localInertia); 
+		if ( body ) body->setMassProps(m, localInertia); 
 	};
     void logPosition() {
          if (body) {

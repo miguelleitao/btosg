@@ -16,8 +16,6 @@
 
 #define _DEBUG_ (1)
 
-
-
 class btosgWheel : public btosgCylinder {
     public:
         btosgWheel(btVector3 pos, double ang) : btosgCylinder(0.4, 0.2) {
@@ -48,10 +46,26 @@ class btosgVehicle: public btosgObject {
     public:
         float dx,dy,dz;
         osg::Vec3 dim;
+        osg::Vec3 up;
+        osg::Vec3 front;
         btRaycastVehicle *vehicle;
         osg::ref_ptr<osg::PositionAttitudeTransform> wheel[4];
         double wheelRotation[4];
-        btosgVehicle(btosgWorld *world, osg::Vec3 dimLocal = osg::Vec3(2.,0.4,4.), double m=800. ) {
+        btosgVehicle(btosgWorld *world, osg::Vec3 dimLocal = osg::Vec3(2.,0.4,4.), double m=1000. ) {
+            btVector3 grav = world->dynamic->getGravity();
+            int grav_axis = grav.minAxis();
+            switch ( grav_axis ) {
+                case 0:
+                    fprintf(stderr,"Gravity direction %d (%f,%f,%f) not supported\n",grav_axis,grav[0],grav[1],grav[2]);
+                case 1:
+                    up = osg::Vec3(0., 1., 0.);
+                    front = osg::Vec3(0., 0., 1.);
+                    break;
+                case 2:
+                    up = osg::Vec3(0., 0., 1.);
+                    front = osg::Vec3(0., 1., 0.);
+                    break;
+            }
             // dimLocal contains (Width,Height,Lenght)
             dim[0] = dimLocal[0];
             dim[1] = dimLocal[1]*up[1] + dimLocal[2]*front[1];
@@ -74,8 +88,8 @@ class btosgVehicle: public btosgObject {
             if ( !model )	model = new osg::PositionAttitudeTransform;
             model->addChild(geo);
             model->setNodeMask(CastsShadowTraversalMask);
-            mass = m;
-            
+            //mass = m;
+            setMass(m);
             // Center-of-gravity is shifted by shift ????
             btTransform shift(btQuaternion::getIdentity(), btVector3(0.f, 0.f, 0.f));
             // Box for collisions and center-of-gravity definition
@@ -199,6 +213,10 @@ class btosgVehicle: public btosgObject {
             iWheel.m_suspensionStiffness = 15.;
             iWheel.m_wheelsDampingCompression = 0.3 * 2 * btSqrt(iWheel.m_suspensionStiffness); // 0.8;
             iWheel.m_wheelsDampingRelaxation =  0.5 * 2 * btSqrt(iWheel.m_suspensionStiffness); // 1;
+       
+           // iWheel.m_maxSuspensionForce = 150000.; // 6000
+            printf("maxSupForce %f\n", iWheel.m_maxSuspensionForce);
+            
             //Larger friction slips will result in better handling
             iWheel.m_frictionSlip = 1.5;
             iWheel.m_rollInfluence = 1;
