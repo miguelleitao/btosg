@@ -24,7 +24,7 @@ btosg.o: btosg.cpp btosg.h
 	g++ -std=c++11 -Wall -O2 -c ${INC_BULLET} ${INC_OSG} $<
 	
 
-push: *.cpp *.h Makefile
+push: *.cpp *.h Makefile README.md
 	git add $^
 	git commit -m "update"
 	git push
