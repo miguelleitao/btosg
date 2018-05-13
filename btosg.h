@@ -22,8 +22,6 @@
 #include <forward_list>
 
 
-#define _DEBUG_ (1)
-
 
 /* Direct update of positions and orientations can be avoided for dynamic objects
  * or normal objects that are syncronized during btosgWorld::update.
@@ -48,8 +46,8 @@ inline int btosgPrint(char const *name, const btVector3&  vec) {
 }
 
 class btosgNode {
-    // Not used
-    // previsto para possibilitar futura herarquia de DynamicBodies
+    // Not used.
+    // May allow future hierarchy of DynamicBodies.
     std::forward_list<class btosgNode*> children;
     class btosgNode* parent;
     void addChild(class btosgNode* node) {
@@ -171,7 +169,9 @@ class btosgObject  {
             else
             #endif
             {   // Not required for dynamic objects.
-                if ( _DEBUG_ ) printf("set Position in non dynamic object\n");
+                #ifdef _DEBUG_
+		   printf("set Position in non dynamic object\n");
+		#endif
                 if (model) {
                     model->setPosition(bt2osg_Vec3(p));
                 }
@@ -196,7 +196,9 @@ class btosgObject  {
             else 
             #endif
             {   // Not required for dynamic objects.
-                if ( _DEBUG_ ) printf("setRotation in non dynamic object\n");
+                #ifdef  _DEBUG_
+		  printf("setRotation in non dynamic object\n");
+		#endif
                 if (model) {
                         model->setAttitude(osg::Quat(x,y,z,w));
                 }
@@ -325,29 +327,29 @@ class btosgBox : public btosgObject {
 class btosgPlane : public btosgObject {
     public:
 	float dx,dy,dz;
-    btosgPlane()  {
+    	btosgPlane()  {
 		dx = 10;
-        dy = 10;
-        dz = 0.001;
+        	dy = 10;
+        	dz = 0.001;
 		osg::Geode *geo = new osg::Geode();
-        if ( geo ) {
-            osg::Shape *sp = new osg::Box( osg::Vec3(0.,0.,0.), dx, dy, dz );
-            if ( sp) {
-                osg::ShapeDrawable *sd = new osg::ShapeDrawable(sp);
-                if ( sd ) 
-                    geo->addDrawable(sd);
-                else fprintf(stderr,"Error creating osg::Shape\n");
-            } else fprintf(stderr,"Error creating osg::Shape\n");
-        } else fprintf(stderr,"Error creating Geode\n");
-		if (  !model)	model = new osg::PositionAttitudeTransform;
-		model->addChild(geo);
-        model->setNodeMask(ReceivesShadowTraversalMask);
-		mass = 0;
-		shape = new btStaticPlaneShape(btVector3(0,0,1), 0);
-        if ( !shape ) fprintf(stderr,"Error creating btShape\n");
-        
-        createRigidBody();
-        printf("box created\n");
+		if ( geo ) {
+		    osg::Shape *sp = new osg::Box( osg::Vec3(0.,0.,0.), dx, dy, dz );
+		    if ( sp) {
+		        osg::ShapeDrawable *sd = new osg::ShapeDrawable(sp);
+		        if ( sd ) 
+		            geo->addDrawable(sd);
+		        else fprintf(stderr,"Error creating osg::Shape\n");
+		    } else fprintf(stderr,"Error creating osg::Shape\n");
+		} else fprintf(stderr,"Error creating Geode\n");
+			if (  !model)	model = new osg::PositionAttitudeTransform;
+			model->addChild(geo);
+		model->setNodeMask(ReceivesShadowTraversalMask);
+			mass = 0;
+			shape = new btStaticPlaneShape(btVector3(0,0,1), 0);
+		if ( !shape ) fprintf(stderr,"Error creating btShape\n");
+		
+		createRigidBody();
+		// printf("box created\n");
 	}
 	void createRigidBody() {
         btDefaultMotionState* mState = new 
@@ -445,7 +447,7 @@ private:
         rbody = 0.07;
         zbody = -0.02;
         
-		//shape = new  btCylinderShapeZ(btVector3(raio,raio,altura/2.));
+	//shape = new  btCylinderShapeZ(btVector3(raio,raio,altura/2.));
         
         float rhead = 0.04;
         btCompoundShape* shape = new btCompoundShape();
@@ -459,16 +461,16 @@ private:
         
         shape->setMargin( 0.0002 ) ;
         
-		btDefaultMotionState* mState = new
-		  btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0.,0.,0.)));
-          
-		btVector3 inertia(0,0,0);
-		shape->calculateLocalInertia(mass,inertia);
-		btRigidBody::btRigidBodyConstructionInfo cInfo(mass,mState,shape,inertia);
-		cInfo.m_restitution = 0.75f;
-		cInfo.m_friction = 0.3f;
-        //cInfo.m_rollingFriction = 0.99f;
-		body = new btRigidBody(cInfo);
+	btDefaultMotionState* mState = new
+	  btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0.,0.,0.)));
+  
+	btVector3 inertia(0,0,0);
+	shape->calculateLocalInertia(mass,inertia);
+	btRigidBody::btRigidBodyConstructionInfo cInfo(mass,mState,shape,inertia);
+	cInfo.m_restitution = 0.75f;
+	cInfo.m_friction = 0.3f;
+	//cInfo.m_rollingFriction = 0.99f;
+	body = new btRigidBody(cInfo);
         if ( !body ) fprintf(stderr,"Error creating btBody for BowlingPin\n");
         body->setDamping(0.,0.2);
     };

@@ -1,6 +1,6 @@
 /*
 	btosgVehicle.h
-	Miguel Leitao, ISEP, 2008
+	Miguel Leitao, 2016
 */
 
 #include <osg/Material>
@@ -14,7 +14,6 @@
 #include <osg/Material>
 #include <osg/Texture2D>
 
-#define _DEBUG_ (1)
 
 class btosgWheel : public btosgCylinder {
     public:
@@ -286,7 +285,7 @@ class btosgVehicle: public btosgObject {
         // Visual update
         // Standard btosgObject::update() can be used.
         btosgObject::update();
-        logPosition();
+        //logPosition();
         
         // Update Wheels
         for (int i = 0; i < vehicle->getNumWheels(); i++)
@@ -322,7 +321,7 @@ class BlockGreen : public btosgBox {
             setPosition(btVector3(x,y,z));
             osg::ref_ptr<osg::Material> mat = new osg::Material;
             mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
-            mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.1, 0.4, 0.1, 1.0));
+            mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.1, 0.5, 0.1, 1.0));
             mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
             mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
             model->getOrCreateStateSet()->
@@ -337,7 +336,7 @@ class BlockRed : public btosgBox {
             setPosition(btVector3(x,y,z));
             osg::ref_ptr<osg::Material> mat = new osg::Material;
             mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
-            mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.4, 0.1, 0.1, 1.0));
+            mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.6, 0.1, 0.1, 1.0));
             mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
             mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
             model->getOrCreateStateSet()->
