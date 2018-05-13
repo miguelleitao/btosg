@@ -1,9 +1,9 @@
 /*
-	bowling.cpp 
-	Miguel Leitao, ISEP, 2008
+	carY.cpp 
+	Miguel Leitao, 2012
 */
 
-///usr/include/bullet/BulletDynamics/Vehicle/btRaycastVehicle.h
+
 #include <osgViewer/Viewer> 
 #include <osg/Material>
 
@@ -15,13 +15,9 @@
 #include <osg/Material>
 #include <osg/Texture2D>
 
-#define _DEBUG_ (1)
-
-
-
+#define _DEBUG_ (0)
 
 #include "btosgVehicle.h"
-
 
 int ResetFlag=0;
 double frame_time = 0.;
@@ -102,8 +98,6 @@ class EventHandler : public osgGA::GUIEventHandler
                             return false;
                     case 'F':
                             std::cout << "adding Force" << std::endl;
-                            //myBox->body->activate(true);
-                            //myBox->body->applyCentralImpulse(btVector3(-200.,0.,0.));
                             
                             myVehicle->vehicle->applyEngineForce(500, 2);
                             myVehicle->vehicle->applyEngineForce(500, 3);
@@ -111,32 +105,31 @@ class EventHandler : public osgGA::GUIEventHandler
                             int i;
                             for( i=0 ; i<myVehicle->vehicle->getNumWheels() ; i++) {
                                 btWheelInfo& iWheel = myVehicle->vehicle->getWheelInfo(i);
-                                printf(" wheel %d, radius %f, rotation %f, eforce %f, steer %f\n", i, iWheel.m_wheelsRadius, iWheel.m_rotation, iWheel.m_engineForce,iWheel.m_steering);
+                                printf(" wheel %d, radius %f, rotation %f, eforce %f, steer %f\n",
+				 i, iWheel.m_wheelsRadius, iWheel.m_rotation, iWheel.m_engineForce,iWheel.m_steering);
                             }
                             
                             // handled = true;
                             return false;
                     case 'R':
-					case 'r':
-						ResetFlag = 1;
-						std::cout << "tecla R" << std::endl;
-						break;
-						
-				}
-			case(osgGA::GUIEventAdapter::MOVE):
-				std::cout << "mouse move" << ea.getX() << " " << ea.getY() << std::endl;
-				return false;
-			default:
-				return false;
+		    case 'r':
+			   ResetFlag = 1;
+			   std::cout << "tecla R" << std::endl;
+			   break;
 		}
-		return true;
+		case(osgGA::GUIEventAdapter::MOVE):
+			//std::cout << "mouse move " << ea.getX() << " " << ea.getY() << std::endl;
+			return false;
+		default:
+			return false;
+	    }
+	    return true;
 	}
 };
 
 
 int main()
 {
-    
     osg::Vec3 up(0., 1., 0.);
     myWorld.dynamic->setGravity(osg2bt_Vec3(up)*-9.8);
 
@@ -147,54 +140,55 @@ int main()
     myVehicle->setMass(800.);
     myWorld.addObject( myVehicle );
     myVehicle->printInfo();
+
     {
-    BlockGreen *myBlock;
-    myBlock = new BlockGreen(4.,-4.);
-    myWorld.addObject(myBlock);
-    myBlock = new BlockGreen(6.,5.);
-    myWorld.addObject(myBlock);
-    myBlock = new BlockGreen(0.,0.);
-    myWorld.addObject(myBlock);
-    myBlock = new BlockGreen(9.,5.);
-    myWorld.addObject(myBlock);
-    myBlock = new BlockGreen(10.,1.);
-    myWorld.addObject(myBlock);
-    myBlock = new BlockGreen(-11.,6.);
-    myWorld.addObject(myBlock);
+	    BlockGreen *myBlock;
+	    myBlock = new BlockGreen(4.,-4.);
+	    myWorld.addObject(myBlock);
+	    myBlock = new BlockGreen(6.,5.);
+	    myWorld.addObject(myBlock);
+	    myBlock = new BlockGreen(0.,0.);
+	    myWorld.addObject(myBlock);
+	    myBlock = new BlockGreen(9.,5.);
+	    myWorld.addObject(myBlock);
+	    myBlock = new BlockGreen(10.,1.);
+	    myWorld.addObject(myBlock);
+	    myBlock = new BlockGreen(-11.,6.);
+	    myWorld.addObject(myBlock);
     }
     {
-    BlockRed *myBlock;
-    myBlock = new BlockRed(4.,4.);
-    myWorld.addObject(myBlock);
-    myBlock = new BlockRed(7.,5.);
-    myWorld.addObject(myBlock);
-    myBlock = new BlockRed(-8.,5.);
-    myWorld.addObject(myBlock);
-    myBlock = new BlockRed(9.,-5.);
-    myWorld.addObject(myBlock);
-    myBlock = new BlockRed(10.,-6.);
-    myWorld.addObject(myBlock);
-    myBlock = new BlockRed(-12.,6.);
-    myWorld.addObject(myBlock);
+	    BlockRed *myBlock;
+	    myBlock = new BlockRed(4.,4.);
+	    myWorld.addObject(myBlock);
+	    myBlock = new BlockRed(7.,5.);
+	    myWorld.addObject(myBlock);
+	    myBlock = new BlockRed(-8.,5.);
+	    myWorld.addObject(myBlock);
+	    myBlock = new BlockRed(9.,-5.);
+	    myWorld.addObject(myBlock);
+	    myBlock = new BlockRed(10.,-6.);
+	    myWorld.addObject(myBlock);
+	    myBlock = new BlockRed(-12.,6.);
+	    myWorld.addObject(myBlock);
     }
 
     {
-    BlockBlue *myBlock;
-    myBlock = new BlockBlue(4.,-4.);
-    myWorld.addObject(myBlock);
-    myBlock = new BlockBlue(7.5,6.);
-    myWorld.addObject(myBlock);
-    myBlock = new BlockBlue(-8.,-5.);
-    myWorld.addObject(myBlock);
-    myBlock = new BlockBlue(9.,5.);
-    myWorld.addObject(myBlock);
-    myBlock = new BlockBlue(11.,-7.);
-    myWorld.addObject(myBlock);
-    myBlock = new BlockBlue(-13.,7.);
-    myWorld.addObject(myBlock);
+	    BlockBlue *myBlock;
+	    myBlock = new BlockBlue(4.,-4.);
+	    myWorld.addObject(myBlock);
+	    myBlock = new BlockBlue(7.5,6.);
+	    myWorld.addObject(myBlock);
+	    myBlock = new BlockBlue(-8.,-5.);
+	    myWorld.addObject(myBlock);
+	    myBlock = new BlockBlue(9.,5.);
+	    myWorld.addObject(myBlock);
+	    myBlock = new BlockBlue(11.,-7.);
+	    myWorld.addObject(myBlock);
+	    myBlock = new BlockBlue(-13.,7.);
+	    myWorld.addObject(myBlock);
     }
          
-    // Rodas
+    // Wheels
     osg::ref_ptr<osg::Material> matCylinder = new osg::Material;
     matCylinder->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 0.,  0.,  1.0));
     matCylinder->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.6, 0.4, 0.1, 1.0));
@@ -218,8 +212,7 @@ int main()
         setAttributeAndModes(mat, osg::StateAttribute::ON);
     */
 
-    // Plane 2
-    printf("plano2\n");
+    // Plane
     btosgPlane *myRamp = new btosgPlane();
     myRamp->setRotation(osg::Quat(-osg::PI/2.,osg::Vec3(1.,0.,0.)));
     myRamp->setPosition(0.,0.,0.);
@@ -228,7 +221,7 @@ int main()
     myRamp->body->setFriction(100.);
     osg::ref_ptr<osg::Material> matRamp = new osg::Material;
     matRamp->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
-    matRamp->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.4, 0.1, 0.1, 1.0));
+    matRamp->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.7, 0.8, 0.0, 1.0));
     matRamp->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
     matRamp->setShininess(osg::Material::FRONT_AND_BACK, 64);
     myRamp->model->getOrCreateStateSet()->
@@ -295,3 +288,4 @@ int main()
 		}
 	}
 }
+

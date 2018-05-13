@@ -1,6 +1,6 @@
 /*
 	carZ.cpp 
-	Miguel Leitao, ISEP, 2008
+	Miguel Leitao, 2012
 */
 
 
@@ -116,7 +116,6 @@ class EventHandler : public osgGA::GUIEventHandler
 			   ResetFlag = 1;
 			   std::cout << "tecla R" << std::endl;
 			   break;
-			
 		}
 		case(osgGA::GUIEventAdapter::MOVE):
 			//std::cout << "mouse move " << ea.getX() << " " << ea.getY() << std::endl;
@@ -138,6 +137,7 @@ int main()
     myVehicle = new btosgVehicle(&myWorld);
     myVehicle->setPosition(osg2bt_Vec3(up*3.));
     myVehicle->setName("Vehicle");
+    myVehicle->setMass(800.);
     myWorld.addObject( myVehicle );
     myVehicle->printInfo();
 
@@ -254,7 +254,6 @@ int main()
         viewer.setCameraManipulator( manipulator );
 
         // Set the desired home coordinates for the manipulator
-        
         osg::Vec3d eye(osg::Vec3(0., -5., -5.)+up*20.);
         osg::Vec3d center(0., 0., 0.);
 
@@ -289,3 +288,4 @@ int main()
 		}
 	}
 }
+
