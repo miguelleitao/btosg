@@ -97,7 +97,7 @@ class btosgWorld {
 
                 steps = 0L;
 	};
-    ~btosgWorld(); 
+    ~btosgWorld();
     void stepSimulation(btScalar timeStep, int maxSubSteps);
     void addObject(class btosgObject *obj);
     void reset();
@@ -210,12 +210,14 @@ class btosgObject  {
     }
 	
 	void setTexture(char const *fname);
+	void setMaterial(osg::ref_ptr<osg::Material> mat) {
+		model->getOrCreateStateSet()->setAttributeAndModes(mat, osg::StateAttribute::ON);
+	}
         
 	virtual void update() {
         if (body) {
             btTransform wTrans;
             body->getMotionState()->getWorldTransform(wTrans);
-            
             if ( model ) {
                 model->setAttitude(bt2osg_Quat(wTrans.getRotation()));
                 model->setPosition(bt2osg_Vec3(wTrans.getOrigin()));
@@ -261,7 +263,7 @@ class btosgObject  {
 		btVector3 inertia(0,0,0);
 		shape->calculateLocalInertia(mass,inertia);
 		btRigidBody::btRigidBodyConstructionInfo cInfo(mass,mState,shape,inertia);
-                printf("mass: %f\n",mass);
+                //printf("mass: %f\n",mass);
 		cInfo.m_restitution = 0.9f;
 		cInfo.m_friction = 10.f;
 		body = new btRigidBody(cInfo);
@@ -315,7 +317,7 @@ class btosgBox : public btosgObject {
             if ( !shape ) fprintf(stderr,"Error creating btShape\n");
             
             createRigidBody();
-            printf("box created\n");
+            //printf("box created\n");
 	}
 	btosgBox(float x, float y, float z) : btosgBox( osg::Vec3(x,y,z) ) {};
         btosgBox(float r)                   : btosgBox( osg::Vec3(r,r,r) ) {};
@@ -392,7 +394,7 @@ class btosgCone : public btosgObject {
             if ( !shape ) fprintf(stderr,"Error creating btShape\n");
             createRigidBody();
             body->setDamping(0.01,0.2);
-            printf("cone created\n");
+            //printf("cone created\n");
         }
 };
 
@@ -425,54 +427,9 @@ class btosgCylinder : public btosgObject {
             if ( !shape ) fprintf(stderr,"Error creating btShape\n");
             createRigidBody();
             body->setDamping(0.01,0.2);
-            printf("cylinder created\n");
+            //printf("cylinder created\n");
         }
 };
 
 
-class btosgBowlingPin : public btosgObject {
-private:
-        float height;
-        float rhead;
-        float rbody;
-        float zbody;
-    public:
-    btosgBowlingPin()  {
-        loadObjectModel("pino0.obj");
-        
-        model->setNodeMask(CastsShadowTraversalMask);
-		mass = 6.5;
-        height = 0.4;
-        rhead = 0.04;
-        rbody = 0.07;
-        zbody = -0.02;
-        
-	//shape = new  btCylinderShapeZ(btVector3(raio,raio,altura/2.));
-        
-        float rhead = 0.04;
-        btCompoundShape* shape = new btCompoundShape();
-        if ( !shape ) fprintf(stderr,"Error creating btCompoundShape\n");
-        // Neck
-        shape->addChildShape(btTransform(btQuaternion(0,0,0,1), btVector3(0,0,0)), new btCylinderShapeZ(btVector3(rbody/2, rbody/2, height/2)) );
-        // Body
-        shape->addChildShape(btTransform(btQuaternion(0,0,0,1), btVector3(0,0,zbody)), new btSphereShape(rbody) );
-        // Head
-        shape->addChildShape(btTransform(btQuaternion(0,0,0,1), btVector3(0,0,height/2-rhead)), new btSphereShape(rhead) );
-        
-        shape->setMargin( 0.0002 ) ;
-        
-	btDefaultMotionState* mState = new
-	  btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0.,0.,0.)));
-  
-	btVector3 inertia(0,0,0);
-	shape->calculateLocalInertia(mass,inertia);
-	btRigidBody::btRigidBodyConstructionInfo cInfo(mass,mState,shape,inertia);
-	cInfo.m_restitution = 0.75f;
-	cInfo.m_friction = 0.3f;
-	//cInfo.m_rollingFriction = 0.99f;
-	body = new btRigidBody(cInfo);
-        if ( !body ) fprintf(stderr,"Error creating btBody for BowlingPin\n");
-        body->setDamping(0.,0.2);
-    };
-    
-};
+

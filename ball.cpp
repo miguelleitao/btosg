@@ -1,5 +1,5 @@
 /*
-	carZ.cpp 
+	ball.cpp 
 	Miguel Leitao, 2012
 */
 
@@ -9,15 +9,14 @@
 
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
-#include <BulletDynamics/Vehicle/btRaycastVehicle.h>
-
 
 #include <osg/Material>
 #include <osg/Texture2D>
 
+#include "btosg.h"
+
 #define _DEBUG_ (0)
 
-#include "btosgVehicle.h"
 
 int ResetFlag=0;
 double frame_time = 0.;
@@ -25,11 +24,56 @@ double frame_time = 0.;
 // Create World
 btosgWorld myWorld;
 
-btosgBox *myBox;
+btosgSphere *myBall;
 
 
 
-    btosgVehicle *myVehicle;
+
+class BlockGreen : public btosgBox {
+    public:
+        BlockGreen(float x, float y, float z) : btosgBox( osg::Vec3(1.,1.,1.)*0.2, 10. ) {
+            setPosition(btVector3(x,y,z));
+            osg::ref_ptr<osg::Material> mat = new osg::Material;
+            mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
+            mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.1, 0.5, 0.1, 1.0));
+            mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
+            mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
+            model->getOrCreateStateSet()->
+                setAttributeAndModes(mat, osg::StateAttribute::ON);
+        }
+        BlockGreen(float x, float z) : BlockGreen(x,1.,z) {};
+};
+
+class BlockRed : public btosgBox {
+    public:
+        BlockRed(float x, float y, float z) : btosgBox( osg::Vec3(1.,1.,1.)*0.2, 100. ) {
+            setPosition(btVector3(x,y,z));
+            osg::ref_ptr<osg::Material> mat = new osg::Material;
+            mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
+            mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.6, 0.1, 0.1, 1.0));
+            mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
+            mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
+            model->getOrCreateStateSet()->
+                setAttributeAndModes(mat, osg::StateAttribute::ON);
+        }
+        BlockRed(float x, float z) : BlockRed(x,1.,z) {};
+};
+
+class BlockBlue : public btosgBox {
+    public:
+        BlockBlue(float x, float y, float z) : btosgBox( osg::Vec3(1.,0.25,1.)*0.2, 100. ) {
+            setPosition(btVector3(x,y,z));
+            osg::ref_ptr<osg::Material> mat = new osg::Material;
+            mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
+            mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.1, 0.1, 0.5, 1.0));
+            mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
+            mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
+            model->getOrCreateStateSet()->
+                setAttributeAndModes(mat, osg::StateAttribute::ON);
+        }
+        BlockBlue(float x, float z) : BlockBlue(x,1.,z) {};
+};
+
 
 // class to handle events
 class EventHandler : public osgGA::GUIEventHandler
@@ -44,71 +88,53 @@ class EventHandler : public osgGA::GUIEventHandler
             case(osgGA::GUIEventAdapter::KEYDOWN):
                 switch ( ea.getKey() ) {
                     case osgGA::GUIEventAdapter::KEY_Down:
-                        myVehicle->vehicle->applyEngineForce(-1500, 2);
-                        myVehicle->vehicle->applyEngineForce(-1500, 3);
                         return false;
                     case osgGA::GUIEventAdapter::KEY_Up:
-                        myVehicle->vehicle->applyEngineForce(1500, 2);
-                        myVehicle->vehicle->applyEngineForce(1500, 3);
                         return false;
                     case osgGA::GUIEventAdapter::KEY_Left:
-                        myVehicle->vehicle->setSteeringValue(btScalar(0.4), 0);
-                        myVehicle->vehicle->setSteeringValue(btScalar(0.4), 1);
                         return false;
                     case osgGA::GUIEventAdapter::KEY_Right:
-                        myVehicle->vehicle->setSteeringValue(btScalar(-0.4), 0);
-                        myVehicle->vehicle->setSteeringValue(btScalar(-0.4), 1);
                         return false;
                     case 'b':
                     case '0':
                     case osgGA::GUIEventAdapter::KEY_Control_R:
-                        myVehicle->vehicle->setBrake(10000, 2);
-                        myVehicle->vehicle->setBrake(10000, 3);
                         return false;
                 }
                 break;
 	case(osgGA::GUIEventAdapter::KEYUP):
 		switch ( ea.getKey() ) {
                     case osgGA::GUIEventAdapter::KEY_Down:
+                        myBall->body->activate(true);
+                        myBall->body->applyCentralImpulse(btVector3(0.,-1.,0.));
+                        return false;
                     case osgGA::GUIEventAdapter::KEY_Up:
-                        myVehicle->vehicle->applyEngineForce(0, 2);
-                        myVehicle->vehicle->applyEngineForce(0, 3);
+                        myBall->body->activate(true);
+                        myBall->body->applyCentralImpulse(btVector3(0.,2.,0.));
                         return false;
                     case osgGA::GUIEventAdapter::KEY_Left:
+                        myBall->body->activate(true);
+                        myBall->body->applyCentralImpulse(btVector3(-1.,0.,0.));
+                        return false;
                     case osgGA::GUIEventAdapter::KEY_Right:
-                        myVehicle->vehicle->setSteeringValue(btScalar(0), 0);
-                        myVehicle->vehicle->setSteeringValue(btScalar(0), 1);
+                        myBall->body->activate(true);
+                        myBall->body->applyCentralImpulse(btVector3(1.,0.,0.));
                         return false;
                     case '0':
                     case 'b':
                     case osgGA::GUIEventAdapter::KEY_Control_R:
-                        myVehicle->vehicle->setBrake(5, 2);
-                        myVehicle->vehicle->setBrake(5, 3);
                         return false;
                     case 'S':
 			std::cout << "tecla S" << std::endl;
 			return false;
                     case 'i':
-                        myVehicle->printInfo();
+                        
                         break;
-                    case 'f':
-                            std::cout << "adding force" << std::endl;
-                            myBox->body->activate(true);
-                            myBox->body->applyCentralImpulse(btVector3(100.,0.,0.));
-                            return false;
                     case 'F':
                             std::cout << "adding Force" << std::endl;
-                            
-                            myVehicle->vehicle->applyEngineForce(500, 2);
-                            myVehicle->vehicle->applyEngineForce(500, 3);
-                            
-                            int i;
-                            for( i=0 ; i<myVehicle->vehicle->getNumWheels() ; i++) {
-                                btWheelInfo& iWheel = myVehicle->vehicle->getWheelInfo(i);
-                                printf(" wheel %d, radius %f, rotation %f, eforce %f, steer %f\n",
-				 i, iWheel.m_wheelsRadius, iWheel.m_rotation, iWheel.m_engineForce,iWheel.m_steering);
-                            }
-                            
+
+                            myBall->body->activate(true);
+                            myBall->body->applyCentralImpulse(btVector3(100.,0.,0.));
+                           
                             // handled = true;
                             return false;
                     case 'R':
@@ -133,27 +159,54 @@ int main()
     osg::Vec3 up(0., 0., 1.);
     myWorld.dynamic->setGravity(osg2bt_Vec3(up)*-9.8);
 
-     // Car
-    myVehicle = new btosgVehicle(&myWorld);
-    myVehicle->setPosition(osg2bt_Vec3(up*3.));
-    myVehicle->setName("Vehicle");
-    myVehicle->setMass(800.);
-    myWorld.addObject( myVehicle );
-    myVehicle->printInfo();
+    // Ball
+    myBall = new btosgSphere(0.2);
+    myBall->setMass(0.01);
+    myBall->setTexture("beachball.png");
+    myBall->setPosition(0.,-1.,2.);
+    myWorld.addObject( myBall );
+
+
+    // Ball
+    myBall = new btosgSphere(0.1085);
+    myBall->setPosition(0.0, -9., 5.);
+    myBall->setTexture("ball.png");
+    myBall->setMass(6.5);
+    myBall->setName("BowlingBall");
+    myWorld.addObject(myBall);
+
+
+
+
+    // Pins
+    btosgBowlingPin *myPin[10];
+    int x,y,p = 0;
+    float space = 12 * 0.0254;  // 12 inches
+    for( y=0 ; y<4 ; y++ ) {
+        for( x=0 ; x<=y ; x++ ) {
+            myPin[p] = new btosgBowlingPin();
+            myPin[p]->setName("pin");
+            myPin[p]->setPosition(0.+(x-y/2.)*space, -1.4+(y)*space, 0.20);
+            myWorld.addObject( myPin[p] );
+            p += 1;
+        }
+    }
+
+
 
     {
 	    BlockGreen *myBlock;
 	    myBlock = new BlockGreen(4.,-4.);
 	    myWorld.addObject(myBlock);
-	    myBlock = new BlockGreen(6.,5.);
+	    myBlock = new BlockGreen(6.,-5.);
 	    myWorld.addObject(myBlock);
 	    myBlock = new BlockGreen(0.,0.);
 	    myWorld.addObject(myBlock);
-	    myBlock = new BlockGreen(9.,5.);
+	    myBlock = new BlockGreen(9.,-5.);
 	    myWorld.addObject(myBlock);
-	    myBlock = new BlockGreen(10.,1.);
+	    myBlock = new BlockGreen(1.,1.);
 	    myWorld.addObject(myBlock);
-	    myBlock = new BlockGreen(-11.,6.);
+	    myBlock = new BlockGreen(-1.,-6.);
 	    myWorld.addObject(myBlock);
     }
     {
@@ -166,9 +219,9 @@ int main()
 	    myWorld.addObject(myBlock);
 	    myBlock = new BlockRed(9.,-5.);
 	    myWorld.addObject(myBlock);
-	    myBlock = new BlockRed(10.,-6.);
+	    myBlock = new BlockRed(1.,-6.);
 	    myWorld.addObject(myBlock);
-	    myBlock = new BlockRed(-12.,6.);
+	    myBlock = new BlockRed(-2.,6.);
 	    myWorld.addObject(myBlock);
     }
 
@@ -182,40 +235,19 @@ int main()
 	    myWorld.addObject(myBlock);
 	    myBlock = new BlockBlue(9.,5.);
 	    myWorld.addObject(myBlock);
-	    myBlock = new BlockBlue(11.,-7.);
+	    myBlock = new BlockBlue(1.,-7.);
 	    myWorld.addObject(myBlock);
-	    myBlock = new BlockBlue(-13.,7.);
+	    myBlock = new BlockBlue(-3.,7.);
 	    myWorld.addObject(myBlock);
     }
-         
-    // Wheels
-    osg::ref_ptr<osg::Material> matCylinder = new osg::Material;
-    matCylinder->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 0.,  0.,  1.0));
-    matCylinder->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.6, 0.4, 0.1, 1.0));
-    matCylinder->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0.,  0.,  0.,  1.0));
-    matCylinder->setShininess(osg::Material::FRONT_AND_BACK, 64);
-  
-    
-  /*  
-    // Plane 1
-    btosgPlane *myPlane = new btosgPlane();
-    myPlane->setName("Plane");
-    myPlane->setPosition(0.,0.,10.);
-    myWorld.addObject( myPlane );
 
-    osg::Material* mat = new osg::Material;
-    mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0.01, 0.01, 0.01, 0.));
-    mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.1, 0.5, 0.1, 1.0));
-    mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0, 1.0, 1.0, 1.0));
-    mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
-    myPlane->model->getOrCreateStateSet()->
-        setAttributeAndModes(mat, osg::StateAttribute::ON);
-    */
+
+
 
     // Plane
     btosgPlane *myRamp = new btosgPlane();
     myRamp->setRotation(osg::Quat(0.,osg::Vec3(1.,0.,0.)));
-    myRamp->setPosition(0.,0.,0.);
+    myRamp->setPosition(0.,-5.,0.);
     myWorld.addObject( myRamp );
     myRamp->setName("Ramp");
     myRamp->body->setFriction(100.);
@@ -226,9 +258,49 @@ int main()
     matRamp->setShininess(osg::Material::FRONT_AND_BACK, 64);
     myRamp->model->getOrCreateStateSet()->
         setAttributeAndModes(matRamp, osg::StateAttribute::ON);
- 
 
         
+
+    btosgBox *myBox = new btosgBox(0.04,10.,0.2);
+    myBox->setPosition(1.5,-5.,0.1);
+    myBox->setMass(0.);
+    myWorld.addObject( myBox );
+
+    myBox = new btosgBox(0.04,10.,0.2);
+    myBox->setPosition(-1.5,-5.,0.1);
+    myBox->setMass(0.);
+    myWorld.addObject( myBox );
+
+/*
+    myRamp = new btosgPlane();
+    myRamp->setRotation(osg::Quat(osg::PI/4.,osg::Vec3(1.,0.,0.)));
+    myRamp->setPosition(0.,2.,0.);
+    myWorld.addObject( myRamp );
+    myRamp->setName("Ramp");
+    myRamp->body->setFriction(100.);
+    myRamp->model->getOrCreateStateSet()->
+        setAttributeAndModes(matRamp, osg::StateAttribute::ON);
+
+
+    myRamp = new btosgPlane();
+    myRamp->setRotation(osg::Quat(osg::PI/4.,osg::Vec3(0.,1.,0.)));
+    myRamp->setPosition(-2.,0.,0.);
+    myWorld.addObject( myRamp );
+    myRamp->setName("Ramp");
+    myRamp->body->setFriction(100.);
+    myRamp->model->getOrCreateStateSet()->
+        setAttributeAndModes(matRamp, osg::StateAttribute::ON);
+
+   myRamp = new btosgPlane();
+    myRamp->setRotation(osg::Quat(-osg::PI/4.,osg::Vec3(0.,1.,0.)));
+    myRamp->setPosition(2.,0.,0.);
+    myWorld.addObject( myRamp );
+    myRamp->setName("Ramp");
+    myRamp->body->setFriction(100.);
+    myRamp->model->getOrCreateStateSet()->
+        setAttributeAndModes(matRamp, osg::StateAttribute::ON);
+*/
+
         // Creating the viewer
 	osgViewer::Viewer viewer ;
 
@@ -249,6 +321,8 @@ int main()
         myWorld.scene->addChild(ls.get());
 
         viewer.setSceneData( myWorld.scene );
+
+	viewer.getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR ); 
         
         osg::ref_ptr<osgGA::TrackballManipulator> manipulator = new osgGA::TrackballManipulator;
         viewer.setCameraManipulator( manipulator );
@@ -275,7 +349,7 @@ int main()
         while( !viewer.done() )
 	{
 	 	myWorld.stepSimulation(frame_time,10);
-                //myVehicle->vehicle->updateVehicle(frame_time);
+                
 	  	viewer.frame();
 	  	timenow = myTimer.time_s();
 	  	frame_time = timenow - last_time;

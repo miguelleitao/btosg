@@ -3,30 +3,12 @@
 	Miguel Leitao, 2016
 */
 
-/*
-#include <osgViewer/Viewer>
-#include <osgDB/ReadFile>
-#include <osg/MatrixTransform>
-#include <osg/PositionAttitudeTransform>
-#include <osgGA/TrackballManipulator>
-#include <osg/ShapeDrawable>
-#include <osg/Plane>
-#include <btBulletDynamicsCommon.h>
 
- #include <osg/LightSource>
-
- #include <osgShadow/ShadowedScene>
- #include <osgShadow/ShadowMap>
-
-*/
 #include "btosg.h"
 #include <osg/Material>
 #include <osg/Texture2D>
 
 #define _DEBUG_ (1)
-
-
-
 
 osg::Vec3 bt2osg_Vec3(btVector3 bv) {
 return osg::Vec3( bv.x(), bv.y(), bv.z() );
@@ -65,7 +47,7 @@ void btosgWorld::addObject(btosgObject *obj)  {
     objects.push_front(obj);
     if ( obj->body )  dynamic->addRigidBody(obj->body);
 		else if ( _DEBUG_ ) fprintf(stderr,"Adding object without rigid body\n");
-printf("adding object to World\n");
+    //printf("adding object to World\n");
     if ( obj->model ) scene->addChild(obj->model);
 		else if ( _DEBUG_ ) fprintf(stderr,"Adding object without visual model\n");
     
@@ -73,7 +55,7 @@ printf("adding object to World\n");
 
 void btosgWorld::stepSimulation(btScalar timeStep, int maxSubSteps) {
     
-        if ( steps==0 ) {
+        if ( steps==0L ) {
             for ( auto it = objects.begin(); it != objects.end(); ++it ) {
                 btosgObject *obj = *it;
                 obj->setInitState();
@@ -101,6 +83,9 @@ void btosgObject::loadObjectModel(char const *fname) {
         return;
     }
     osg::Node* loadedModel = osgDB::readNodeFile(fname);
+    if ( ! loadedModel ) {
+	fprintf(stderr,"Error reading Object model from file '%s'\n", fname);
+    }
     if (  !model)	model = new osg::PositionAttitudeTransform;
     model->addChild(loadedModel);
 }
