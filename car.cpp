@@ -1,6 +1,8 @@
 /*
-	carZ.cpp 
+	car.cpp 
 	Miguel Leitao, 2012
+
+	Vehicle simulation example using btosg abstraction layer.
 */
 
 
@@ -131,6 +133,9 @@ class EventHandler : public osgGA::GUIEventHandler
 int main()
 {
     osg::Vec3 up(0., 0., 1.);
+    #ifdef _UP_
+	up = osg::Vec3(_UP_);
+    #endif
     myWorld.dynamic->setGravity(osg2bt_Vec3(up)*-9.8);
 
      // Car

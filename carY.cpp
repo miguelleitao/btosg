@@ -214,7 +214,7 @@ int main()
 
     // Plane
     btosgPlane *myRamp = new btosgPlane();
-    myRamp->setRotation(osg::Quat(-osg::PI/2.,osg::Vec3(1.,0.,0.)));
+    myRamp->setRotation(osg::Quat(-osg::PI/2.*up[1],osg::Vec3(1.,0.,0.)));
     myRamp->setPosition(0.,0.,0.);
     myWorld.addObject( myRamp );
     myRamp->setName("Ramp");
