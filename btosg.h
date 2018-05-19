@@ -336,10 +336,10 @@ class btosgPlane : public btosgObject {
 	float dx,dy,dz;
     	btosgPlane()  :  btosgPlane(10., 10., 0.) { };
         btosgPlane( osg::Vec3 v ) : btosgPlane( v[0], v[1], v[2] ) { };
-    	btosgPlane(float dx, float dy, float dz)  {.
+    	btosgPlane(float dx, float dy, float dz)  {
 		dx = max(dx, 0.001);
         	dy = max(dy, 0.001);
-        	dz = max(dz, 0.001);;
+        	dz = max(dz, 0.001);
 		osg::Geode *geo = new osg::Geode();
 		if ( geo ) {
 		    osg::Shape *sp = new osg::Box( osg::Vec3(0.,0.,0.), dx, dy, dz );

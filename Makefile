@@ -1,4 +1,7 @@
 
+BTOSG=btosg.o
+EXAMPLES=ball carZ carY
+
 INC_BULLET=-I/usr/include/bullet
 INC_OSG=-I/usr/include/osg
 LD_OSG=-losg -losgViewer -losgSim -losgDB -losgGA -losgShadow
@@ -6,7 +9,11 @@ LD_BULLET=-L /home/jml/bullet3/src/BulletDynamics -l BulletDynamics -l BulletCol
 
 CFLAGS=-std=c++11 -Wall -O2 -Wno-uninitialized
 
-all: carZ carY ball
+default: ${BTOSG}
+
+examples: ${EXAMPLES}
+
+all: default examples
 
 carZ: carZ.o btosg.o
 	cc -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -l stdc++ -lm
@@ -32,7 +39,7 @@ btosg.o: btosg.cpp btosg.h
 	g++ ${CFLAGS} -c ${INC_BULLET} ${INC_OSG} $<
 	
 clean:
-	rm -f *.o 
+	rm -f *.o ${EXAMPLES}
 
 push: *.cpp *.h Makefile README.md
 	git add $^
