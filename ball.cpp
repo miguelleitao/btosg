@@ -10,7 +10,6 @@
 #define _DEBUG_ (0)
 
 
-int ResetFlag=0;
 double frame_time = 0.;
 
 // Create World
@@ -21,42 +20,41 @@ btosgSphere *myBall;
 
 int main()
 {
-    osg::Vec3 up(0., 0., 1.);
-    myWorld.dynamic->setGravity(osg2bt_Vec3(up)*-9.8);
+	osg::Vec3 up(0., 0., 1.);
+	myWorld.dynamic->setGravity(osg2bt_Vec3(up)*-9.8);
 
-    // Beach Ball
-    myBall = new btosgSphere(0.2);
-    myBall->setMass(0.01);
-    myBall->setTexture("beachball.png");
-    myBall->setPosition(0.,-4.,5.);
-    myWorld.addObject( myBall );
+	// Beach Ball
+	myBall = new btosgSphere(0.2);
+	myBall->setMass(0.01);
+	myBall->setTexture("beachball.png");
+	myBall->setPosition(0.,-4.,5.);
+	myWorld.addObject( myBall );
 
-    // Plane 1
-    btosgPlane *myRamp;
-    myRamp = new btosgPlane();
-    myRamp->setRotation(osg::Quat(-osg::PI/8.,osg::Vec3(1.,0.,0.)));
-    myRamp->setPosition(0.,-5.,0.);
-    myRamp->setName("Ramp1");
-    myRamp->body->setFriction(100.);
-    osg::ref_ptr<osg::Material> matRamp = new osg::Material;
-    matRamp->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
-    matRamp->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.7, 0.8, 0.0, 1.0));
-    matRamp->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
-    matRamp->setShininess(osg::Material::FRONT_AND_BACK, 64);
-    myRamp->model->getOrCreateStateSet()->
-	setAttributeAndModes(matRamp, osg::StateAttribute::ON);  
-    myWorld.addObject( myRamp );
+	// Material for base plans
+	osg::ref_ptr<osg::Material> matRamp = new osg::Material;
+	matRamp->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
+	matRamp->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.7, 0.8, 0.0, 1.0));
+	matRamp->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
+	matRamp->setShininess(osg::Material::FRONT_AND_BACK, 64);
 
-    // Plane 2
-    myRamp = new btosgPlane();
-    myRamp->setRotation(osg::Quat(osg::PI/8.,osg::Vec3(1.,0.,0.)));
-    myRamp->setPosition(0.,0.,0.);
-    myRamp->setName("Ramp2");
-    myRamp->body->setFriction(100.);
-    myRamp->model->getOrCreateStateSet()->
-	setAttributeAndModes(matRamp, osg::StateAttribute::ON);
-    myWorld.addObject( myRamp );
+	// Plane 1
+	btosgPlane *myRamp;
+	myRamp = new btosgPlane();
+	myRamp->setRotation(osg::Quat(-osg::PI/8.,osg::Vec3(1.,0.,0.)));
+	myRamp->setPosition(0.,-5.,0.);
+	myRamp->setName("Ramp1");
+	myRamp->body->setFriction(100.);
+	myRamp->setMaterial(matRamp);
+	myWorld.addObject( myRamp );
 
+	// Plane 2
+	myRamp = new btosgPlane();
+	myRamp->setRotation(osg::Quat(osg::PI/8.,osg::Vec3(1.,0.,0.)));
+	myRamp->setPosition(0.,0.,0.);
+	myRamp->setName("Ramp2");
+	myRamp->body->setFriction(100.);
+	myRamp->setMaterial(matRamp);
+	myWorld.addObject( myRamp );
 
         // Creating the viewer
 	osgViewer::Viewer viewer ;
@@ -95,7 +93,6 @@ int main()
 	osg::Timer myTimer;
 	double timenow = myTimer.time_s();
 	double last_time = timenow;
-	frame_time = 0.;
 
         while( !viewer.done() )
 	{
