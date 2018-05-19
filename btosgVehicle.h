@@ -21,7 +21,7 @@ class btosgWheel : public btosgCylinder {
             
             setPosition(pos);
             setRotation(osg::Quat(ang,osg::Vec3(1.,0.,0.)));
-            setTexture("beachball.png");
+            setTexture("wheel.png");
             body->setFriction(100.);
         }
         virtual void update() {
@@ -34,6 +34,7 @@ class btosgWheel : public btosgCylinder {
                 model->setPosition(bt2osg_Vec3(wTrans.getOrigin()));
             }
             //logPosition();
+	    
         }
     }
 };
@@ -87,7 +88,15 @@ class btosgVehicle: public btosgObject {
             if ( !model )	model = new osg::PositionAttitudeTransform;
             model->addChild(geo);
             model->setNodeMask(CastsShadowTraversalMask);
-            //mass = m;
+		
+	    osg::ref_ptr<osg::Material> mat = new osg::Material;
+	    mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0.4, 0.3, 0., 1.0));
+	    mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.8, 0.7, 0.0, 1.0));
+	    mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0.1, 0.1, 0, 1.0));
+	    mat->setShininess(osg::Material::FRONT_AND_BACK, 12);
+	    setMaterial(mat);
+	    //setTexture("beachball.png");
+
             setMass(m);
             // Center-of-gravity is shifted by shift ????
             btTransform shift(btQuaternion::getIdentity(), btVector3(0.f, 0.f, 0.f));
@@ -126,7 +135,7 @@ class btosgVehicle: public btosgObject {
         // to sense the ground under the wheels
         btVector3 wheelDirectionCS0(-osg2bt_Vec3(up));
 
-        //The axis which the wheel rotates arround
+        // The axis which the wheel rotates arround
         btVector3 wheelAxleCS( osg2bt_Vec3(front ^ up) );
         
         // center-of mass height if mass=0
@@ -134,15 +143,15 @@ class btosgVehicle: public btosgObject {
         btScalar suspensionRestLength(0.80);
         btScalar wheelWidth(0.2);
         btScalar wheelRadius(0.3);
-        //The height where the wheels are connected to the chassis
+        // The height where the wheels are connected to the chassis
         double connectionHeight = 0.4;
         double frontAxisPos = 1.25;
         double backAxisPos = 1.25;
 
-        //All the wheel configuration assumes the vehicle is centered at the origin and a right handed coordinate system is used
+        // All the wheel configuration assumes the vehicle is centered at the origin and a right handed coordinate system is used
         btVector3 wheelConnectPoint;
                 
-        //Adds the front wheels
+        // Adds the front wheels
         wheelConnectPoint = btVector3(  halfExtents->x() + wheelWidth/2.,
                                         connectionHeight*up[1] + frontAxisPos*front[1],
                                         connectionHeight*up[2] + frontAxisPos*front[2]);
@@ -158,36 +167,57 @@ class btosgVehicle: public btosgObject {
 
         // Create one graphics wheel
         osg::ref_ptr<osg::Geode> geo = new osg::Geode;
-        osg::ref_ptr<osg::Shape> sp = new osg::Cylinder( osg::Vec3(0.,0.,0.), wheelRadius, wheelWidth);
+        osg::ref_ptr<osg::Shape> sp;
+	sp = new osg::Cylinder( osg::Vec3(0.,0.,0.), wheelRadius, wheelWidth);
         if ( sp) {
             osg::ref_ptr<osg::ShapeDrawable> sd = new osg::ShapeDrawable(sp);
             if ( sd ) {
                 geo->addDrawable(sd);
-                // ---------------------------------------
-                // Set up a StateSet to texture the body
-                // ---------------------------------------
+		// Setup tire material
+		
                 osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
+		osg::ref_ptr<osg::Material> mat = new osg::Material;
+		mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
+		mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.1, 0.1, 0.1, 1.0));
+		mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
+		mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
+		stateset->setAttribute(mat, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON); 
+
+	        stateset->setTextureAttributeAndModes(0,NULL, osg::StateAttribute::OFF);
+                sd->setStateSet( stateset ); 
+	    }   else fprintf(stderr,"Error creating osg::Shape\n");
+        } else fprintf(stderr,"Error creating osg::Shape\n");
 	
-                osg::ref_ptr<osg::Image> image = osgDB::readRefImageFile( "beachball.png" );
-                if (image)
-                {
+	sp = new osg::Cylinder( osg::Vec3(0.,0.,0.), wheelRadius*0.75, wheelWidth+0.005);
+        if ( sp) {
+            osg::ref_ptr<osg::ShapeDrawable> sd = new osg::ShapeDrawable(sp);
+            if ( sd ) {
+                geo->addDrawable(sd);
+                osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
+		// Wheel material
+		osg::ref_ptr<osg::Material> mat = new osg::Material;
+		mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0.8, 0.8, 0.8, 1.0));
+		mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.4, 0.4, 0.4, 1.0));
+		mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
+		mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
+		stateset->setAttribute(mat, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON); 
+		// Setup wheel texture
+                osg::ref_ptr<osg::Image> image = osgDB::readRefImageFile( "wheel.jpg" );
+                if (image) {
                     osg::Texture2D* texture = new osg::Texture2D;
                     texture->setImage(image);
                     texture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR);
                     stateset->setTextureAttributeAndModes(0,texture, osg::StateAttribute::ON);
                 }
-                stateset->setMode(GL_LIGHTING, osg::StateAttribute::ON);
-
-                model->setStateSet( stateset ); 
-            }
-            else fprintf(stderr,"Error creating osg::Shape\n");
+                stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
+                sd->setStateSet( stateset ); 
+            }   else fprintf(stderr,"Error creating osg::Shape\n");
         } else fprintf(stderr,"Error creating osg::Shape\n");
         
         osg::PositionAttitudeTransform *gen_wheel = new  osg::PositionAttitudeTransform;
-        gen_wheel->setPosition(osg::Vec3(0.,0., 0.));
+        gen_wheel->setPosition(osg::Vec3(0.,0.,0.));
         gen_wheel->setAttitude(osg::Quat(-osg::PI/2.,osg::Vec3(0.,1.,0.)));
-        gen_wheel->addChild(geo);
-        
+        gen_wheel->addChild(geo); 
    
                 
                 //wheel[0]->setTexture("beachball.png");
