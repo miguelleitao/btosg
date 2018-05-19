@@ -132,21 +132,21 @@ class EventHandler : public osgGA::GUIEventHandler
 
 int main()
 {
-    osg::Vec3 up(0., 0., 1.);
-    #ifdef _UP_
+	osg::Vec3 up(0., 0., 1.);
+	#ifdef _UP_
 	up = osg::Vec3(_UP_);
-    #endif
-    myWorld.dynamic->setGravity(osg2bt_Vec3(up)*-9.8);
+	#endif
+	myWorld.dynamic->setGravity(osg2bt_Vec3(up)*-9.8);
 
-     // Car
-    myVehicle = new btosgVehicle(&myWorld);
-    myVehicle->setPosition(osg2bt_Vec3(up*3.));
-    myVehicle->setName("Vehicle");
-    myVehicle->setMass(800.);
-    myWorld.addObject( myVehicle );
-    myVehicle->printInfo();
+	 // Car
+	myVehicle = new btosgVehicle(&myWorld);
+	myVehicle->setPosition(osg2bt_Vec3(up*3.));
+	myVehicle->setName("Vehicle");
+	myVehicle->setMass(800.);
+	myWorld.addObject( myVehicle );
+	myVehicle->printInfo();
 
-    {
+	{
 	    BlockGreen *myBlock;
 	    myBlock = new BlockGreen(4.,-4.);
 	    myWorld.addObject(myBlock);
@@ -160,8 +160,8 @@ int main()
 	    myWorld.addObject(myBlock);
 	    myBlock = new BlockGreen(-11.,6.);
 	    myWorld.addObject(myBlock);
-    }
-    {
+	}
+	{
 	    BlockRed *myBlock;
 	    myBlock = new BlockRed(4.,4.);
 	    myWorld.addObject(myBlock);
@@ -175,9 +175,9 @@ int main()
 	    myWorld.addObject(myBlock);
 	    myBlock = new BlockRed(-12.,6.);
 	    myWorld.addObject(myBlock);
-    }
+	}
 
-    {
+	{
 	    BlockBlue *myBlock;
 	    myBlock = new BlockBlue(4.,-4.);
 	    myWorld.addObject(myBlock);
@@ -191,32 +191,30 @@ int main()
 	    myWorld.addObject(myBlock);
 	    myBlock = new BlockBlue(-13.,7.);
 	    myWorld.addObject(myBlock);
-    }
+	}
          
-    // Wheels
-    osg::ref_ptr<osg::Material> matCylinder = new osg::Material;
-    matCylinder->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 0.,  0.,  1.0));
-    matCylinder->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.6, 0.4, 0.1, 1.0));
-    matCylinder->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0.,  0.,  0.,  1.0));
-    matCylinder->setShininess(osg::Material::FRONT_AND_BACK, 64);
+	// Wheels
+	osg::ref_ptr<osg::Material> matCylinder = new osg::Material;
+	matCylinder->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 0.,  0.,  1.0));
+	matCylinder->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.6, 0.4, 0.1, 1.0));
+	matCylinder->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0.,  0.,  0.,  1.0));
+	matCylinder->setShininess(osg::Material::FRONT_AND_BACK, 64);
   
-    // Plane
-    btosgPlane *myRamp = new btosgPlane();
-    // When using vertical Y axis, invert X axis;
-    myRamp->setRotation(osg::Quat(-osg::PI/2.*up[1],osg::Vec3(1.,0.,0.)));
-    myRamp->setPosition(0.,0.,0.);
-    myWorld.addObject( myRamp );
-    myRamp->setName("Ramp");
-    myRamp->body->setFriction(100.);
-    osg::ref_ptr<osg::Material> matRamp = new osg::Material;
-    matRamp->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
-    matRamp->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.7, 0.8, 0.0, 1.0));
-    matRamp->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
-    matRamp->setShininess(osg::Material::FRONT_AND_BACK, 64);
-    myRamp->model->getOrCreateStateSet()->
-        setAttributeAndModes(matRamp, osg::StateAttribute::ON);
+	// Plane
+	btosgPlane *myRamp = new btosgPlane();
+	// btosgPlan is faccing Z. When using vertical Y axis, rotate PI/2 around X axis;
+	myRamp->setRotation(osg::Quat(-osg::PI/2.*up[1],osg::Vec3(1.,0.,0.)));
+	myRamp->setPosition(0.,0.,0.);
+	myWorld.addObject( myRamp );
+	myRamp->setName("Ramp");
+	myRamp->body->setFriction(100.);
+	osg::ref_ptr<osg::Material> matRamp = new osg::Material;
+	matRamp->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
+	matRamp->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.7, 0.8, 0.0, 1.0));
+	matRamp->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
+	matRamp->setShininess(osg::Material::FRONT_AND_BACK, 64);
+	myRamp->setMaterial(matRamp);
  
-
         
         // Creating the viewer
 	osgViewer::Viewer viewer ;
@@ -258,8 +256,6 @@ int main()
 	double timenow = myTimer.time_s();
 	double last_time = timenow;
 	frame_time = 0.;
-    
-        //suspBL->enableFeedback(1);
 
         while( !viewer.done() )
 	{
@@ -270,7 +266,6 @@ int main()
 	  	last_time = timenow;
         
 		if (ResetFlag>0) {
-		    //Reset(); 
                     myWorld.reset();
 		    ResetFlag = 0;
 		}
