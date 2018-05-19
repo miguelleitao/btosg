@@ -14,3 +14,15 @@ The use of **btosg** can help the programming task because it allows to create a
 #### Bullet:
 * https://github.com/bulletphysics/bullet3 
 * http://bulletphysics.org/
+
+### Examples
+**btosg** is available with two working examples.
+* **ball.cpp** implements a simple simulation of ball with two planes.
+* **car.cpp** implement a basic vehicle with four wheels. It can be compiled using a Z or Y pointing up vector.
+Usage instructions are provided in source file.
+
+To compile and try the provided examples do
+   make examples 
+   ./ball
+   ./carZ
+   ./carY

@@ -146,23 +146,22 @@ class btosgObject  {
         		shape->calculateLocalInertia(mass, localInertia);
 		if ( body ) body->setMassProps(m, localInertia); 
 	};
-    void logPosition() {
-         if (body) {
-            btTransform wTrans;
+	void logPosition() {
+         	if (body) {
+            		btTransform wTrans;
 			body->getMotionState()->getWorldTransform(wTrans);
-            btVector3 pos;
-            pos = wTrans.getOrigin();
-            if ( name )
-                        std::cout << "Object   " << name << " position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
-            else
-                        std::cout << "Object _NO_NAME_ position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
-         }
-    }
+			btVector3 pos;
+            		pos = wTrans.getOrigin();
+            		if ( name )
+            		    std::cout << "Object " << name << " position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
+            		else
+            		    std::cout << "Object _NO_NAME_ position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
+         	}
+    	}
 	void setPosition(const btVector3 &p) {
 		if (body) {
                 btTransform wTrans;
-                            body->getMotionState()->getWorldTransform(wTrans);
-                //mState.setRotation(btQuaternion(0,0,0,1));
+                body->getMotionState()->getWorldTransform(wTrans);
                 wTrans.setOrigin(p);
                 body->setWorldTransform(wTrans);
                 body->getMotionState()->setWorldTransform(wTrans);
@@ -212,7 +211,7 @@ class btosgObject  {
 	
 	void setRotation(osg::Quat q) {
             setRotation(q[0],q[1],q[2],q[3]);
-    }
+	}
 	
 	void setTexture(char const *fname);
 	void setMaterial(osg::ref_ptr<osg::Material> mat) {
@@ -238,7 +237,6 @@ class btosgObject  {
                 body->setLinearVelocity(btVector3(0,0,0));
                 body->setAngularVelocity(btVector3(0,0,0));
                 body->activate();   // Required if the object was asleep
-                
             }
         }
         else { // Not required for dynamic objects.
@@ -249,12 +247,12 @@ class btosgObject  {
         }
     }
     void setInitState() {
-        // Store init state.
+        // Store current state as init state.
         // Init state is aplied by reset()
         if (body) body->getMotionState()->getWorldTransform(init_state);
     }
     void setInitState(btTransform iState) {
-        // Store init state.
+        // Store iState as init state.
         // Init state is aplied by reset()
         init_state = iState;
     }
@@ -332,11 +330,13 @@ class btosgBox : public btosgObject {
 
 
 class btosgPlane : public btosgObject {
+    // Physical infinit, axis oriented plane.
+    // Viewable as a finit, axis oriented, small depth box.
     public:
 	float dx,dy,dz;
     	btosgPlane()  :  btosgPlane(10., 10., 0.) { };
         btosgPlane( osg::Vec3 v ) : btosgPlane( v[0], v[1], v[2] ) { };
-    	btosgPlane(float dx, float dy, float dz)  {
+    	btosgPlane(float dx, float dy, float dz)  {.
 		dx = max(dx, 0.001);
         	dy = max(dy, 0.001);
         	dz = max(dz, 0.001);;
@@ -359,7 +359,6 @@ class btosgPlane : public btosgObject {
 		else if ( dy<dx && dy<dz ) norm = btVector3(0.,1.,0.);
 		shape = new btStaticPlaneShape(norm, 0);
 		if ( !shape ) fprintf(stderr,"Error creating btShape\n");
-		
 		createRigidBody();
 		// printf("box created\n");
 	}

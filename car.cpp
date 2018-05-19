@@ -3,6 +3,15 @@
 	Miguel Leitao, 2012
 
 	Vehicle simulation example using btosg abstraction layer.
+	Can use a Z pointing up (default) or Y pointing (-D_UP_=0,1,0) up world coordinates reference.
+	Vehicle can be interactively controlled from the keyboard:
+		up: positive acceleration
+		down: negative acceleration. 
+		right: steering right
+		left: steering left
+		b: brake
+		ESC: quit
+		
 */
 
 
