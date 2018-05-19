@@ -23,7 +23,7 @@ Usage instructions are provided in source file.
 
 To compile and try the provided examples do:
 
-   make examples 
-   ./ball
-   ./carZ
+    make examples 
+    ./ball
+    ./carZ
    ./carY
