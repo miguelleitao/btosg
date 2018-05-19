@@ -14,7 +14,7 @@
 #include <osg/Material>
 #include <osg/Texture2D>
 
-
+/*
 class btosgWheel : public btosgCylinder {
     public:
         btosgWheel(btVector3 pos, double ang) : btosgCylinder(0.4, 0.2) {
@@ -38,7 +38,7 @@ class btosgWheel : public btosgCylinder {
         }
     }
 };
-
+*/
 
 class btosgVehicle: public btosgObject {
     private:
