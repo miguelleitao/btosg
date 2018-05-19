@@ -12,6 +12,7 @@
 #include <osg/ShapeDrawable>
 #include <osg/Plane>
 #include <osg/LightSource>
+#include <osg/Material>
 
 #include <btBulletDynamicsCommon.h>
 
