@@ -41,7 +41,7 @@ btosg.o: btosg.cpp btosg.h
 clean:
 	rm -f *.o ${EXAMPLES}
 
-push: *.cpp *.h Makefile README.md
+push: *.cpp *.h Makefile README.md .travis.yml
 	git add $^
 	git commit -m "update"
 	git push
