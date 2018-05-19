@@ -17,11 +17,12 @@ The use of **btosg** can help the programming task because it allows to create a
 
 ### Examples
 **btosg** is available with two working examples.
-* **ball.cpp** implements a simple simulation of ball with two planes.
-* **car.cpp** implement a basic vehicle with four wheels. It can be compiled using a Z or Y pointing up vector.
+* **ball.cpp** implements a simple simulation of a ball with two planes.
+* **car.cpp** implements a basic vehicle with four wheels and suspensions. It can be compiled using a Z or Y pointing up vector.
 Usage instructions are provided in source file.
 
-To compile and try the provided examples do
+To compile and try the provided examples do:
+
    make examples 
    ./ball
    ./carZ
