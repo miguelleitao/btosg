@@ -38,6 +38,10 @@ osg::Vec4 bt2osg_Vec4(btVector4 bv);
 btVector3 osg2bt_Vec3(osg::Vec3 bv);
 osg::Quat bt2osg_Quat(btQuaternion bv);
 
+#define max(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a > _b ? _a : _b; })
 
 const int ReceivesShadowTraversalMask = 0x1;
 const int CastsShadowTraversalMask = 0x2;
@@ -330,10 +334,12 @@ class btosgBox : public btosgObject {
 class btosgPlane : public btosgObject {
     public:
 	float dx,dy,dz;
-    	btosgPlane()  {
-		dx = 10;
-        	dy = 10;
-        	dz = 0.001;
+    	btosgPlane()  :  btosgPlane(10., 10., 0.) { };
+        btosgPlane( osg::Vec3 v ) : btosgPlane( v[0], v[1], v[2] ) { };
+    	btosgPlane(float dx, float dy, float dz)  {
+		dx = max(dx, 0.001);
+        	dy = max(dy, 0.001);
+        	dz = max(dz, 0.001);;
 		osg::Geode *geo = new osg::Geode();
 		if ( geo ) {
 		    osg::Shape *sp = new osg::Box( osg::Vec3(0.,0.,0.), dx, dy, dz );
@@ -344,27 +350,30 @@ class btosgPlane : public btosgObject {
 		        else fprintf(stderr,"Error creating osg::Shape\n");
 		    } else fprintf(stderr,"Error creating osg::Shape\n");
 		} else fprintf(stderr,"Error creating Geode\n");
-			if (  !model)	model = new osg::PositionAttitudeTransform;
-			model->addChild(geo);
+		if (  !model)	model = new osg::PositionAttitudeTransform;
+		model->addChild(geo);
 		model->setNodeMask(ReceivesShadowTraversalMask);
-			mass = 0;
-			shape = new btStaticPlaneShape(btVector3(0,0,1), 0);
+		mass = 0;
+		btVector3 norm(0.,0.,1);
+		if ( dx<dy && dx<dz ) 	   norm = btVector3(1.,0.,0.);
+		else if ( dy<dx && dy<dz ) norm = btVector3(0.,1.,0.);
+		shape = new btStaticPlaneShape(norm, 0);
 		if ( !shape ) fprintf(stderr,"Error creating btShape\n");
 		
 		createRigidBody();
 		// printf("box created\n");
 	}
 	void createRigidBody() {
-        btDefaultMotionState* mState = new 
-		btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0.,0.,0.)));
+        	btDefaultMotionState* mState = new 
+			btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0.,0.,0.)));
 		btVector3 inertia(0,0,0);
 		//shape->calculateLocalInertia(mass,inertia);
 		btRigidBody::btRigidBodyConstructionInfo cInfo(mass,mState,shape,inertia);
 		cInfo.m_restitution = 0.9f;
 		cInfo.m_friction = 0.9f;
 		body = new btRigidBody(cInfo);
-        if ( !body ) fprintf(stderr,"Error creating btBody\n");
-    };
+        	if ( !body ) fprintf(stderr,"Error creating btBody\n");
+    	}
 };
 
 class btosgCone : public btosgObject {

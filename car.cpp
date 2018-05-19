@@ -201,9 +201,7 @@ int main()
 	matCylinder->setShininess(osg::Material::FRONT_AND_BACK, 64);
   
 	// Plane
-	btosgPlane *myRamp = new btosgPlane();
-	// btosgPlan is faccing Z. When using vertical Y axis, rotate PI/2 around X axis;
-	myRamp->setRotation(osg::Quat(-osg::PI/2.*up[1],osg::Vec3(1.,0.,0.)));
+	btosgPlane *myRamp = new btosgPlane(osg::Vec3(50.,50.,50.) - up*50.);
 	myRamp->setPosition(0.,0.,0.);
 	myWorld.addObject( myRamp );
 	myRamp->setName("Ramp");
