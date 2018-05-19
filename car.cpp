@@ -200,23 +200,6 @@ int main()
     matCylinder->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0.,  0.,  0.,  1.0));
     matCylinder->setShininess(osg::Material::FRONT_AND_BACK, 64);
   
-    
-  /*  
-    // Plane 1
-    btosgPlane *myPlane = new btosgPlane();
-    myPlane->setName("Plane");
-    myPlane->setPosition(0.,0.,10.);
-    myWorld.addObject( myPlane );
-
-    osg::Material* mat = new osg::Material;
-    mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0.01, 0.01, 0.01, 0.));
-    mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.1, 0.5, 0.1, 1.0));
-    mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0, 1.0, 1.0, 1.0));
-    mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
-    myPlane->model->getOrCreateStateSet()->
-        setAttributeAndModes(mat, osg::StateAttribute::ON);
-    */
-
     // Plane
     btosgPlane *myRamp = new btosgPlane();
     // When using vertical Y axis, invert X axis;
@@ -281,7 +264,6 @@ int main()
         while( !viewer.done() )
 	{
 	 	myWorld.stepSimulation(frame_time,10);
-                //myVehicle->vehicle->updateVehicle(frame_time);
 	  	viewer.frame();
 	  	timenow = myTimer.time_s();
 	  	frame_time = timenow - last_time;
