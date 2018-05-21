@@ -5,7 +5,7 @@ EXAMPLES=ball carZ carY
 INC_BULLET=-I/usr/include/bullet
 INC_OSG=-I/usr/include/osg
 LD_OSG=-losg -losgViewer -losgSim -losgDB -losgGA -losgShadow
-LD_BULLET=-L /home/jml/bullet3/src/BulletDynamics -l BulletDynamics -l BulletCollision -l LinearMath
+LD_BULLET=-l BulletDynamics -l BulletCollision -l LinearMath
 CFLAGS=-std=c++11 -Wall -O2 -Wno-uninitialized
 VERSION:=$(shell git tag)
 
