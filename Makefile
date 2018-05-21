@@ -25,7 +25,7 @@ ball: ball.o btosg.o
 	cc -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -l stdc++ -lm
 	
 carZ.o: car.cpp btosg.h btosgVehicle.h
-	g++ ${CFLAGS} -c ${INC_BULLET} ${INC_OSG} $< -o -DVERSION=${VERSION} $@
+	g++ ${CFLAGS} -c ${INC_BULLET} ${INC_OSG} $< -o $@ -DVERSION=${VERSION} 
 
 carY.o: car.cpp btosg.h btosgVehicle.h
 	g++ ${CFLAGS} -c ${INC_BULLET} ${INC_OSG} $< -o $@ -DVERSION=${VERSION} -D_UP_=0,1,0
