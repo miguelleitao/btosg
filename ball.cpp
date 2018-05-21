@@ -32,22 +32,22 @@ int main()
 
 	
 	btosgExternalObject *myObj;
-	myObj = new btosgExternalObject("cone.obj");
+	myObj = new btosgExternalObject("obj/cone.obj");
 	myObj->setMass(1.6);
 	myObj->setRotation(btQuaternion(btVector3(1.,0.,0.),osg::PI/2.));
 	myObj->setPosition(0.5,-4.5,3);
 	myWorld.addObject( myObj );
-	myObj = new btosgExternalObject("cone.obj");
+	myObj = new btosgExternalObject("obj/cone.obj");
 	myObj->setMass(1.6);
 	myObj->setRotation(btQuaternion(btVector3(1.,0.,0.),osg::PI/2.));
 	myObj->setPosition(0.5,-4.5,3);
 	myWorld.addObject( myObj );
-	myObj = new btosgExternalObject("cone.obj");
+	myObj = new btosgExternalObject("obj/cone.obj");
 	myObj->setMass(1.6);
 	myObj->setRotation(btQuaternion(btVector3(1.,0.,0.),-osg::PI/2.));
 	myObj->setPosition(1.5,-3.5,3);
 	myWorld.addObject( myObj );
-	myObj = new btosgExternalObject("cone.obj");
+	myObj = new btosgExternalObject("obj/cone.obj");
 	myObj->setMass(1.6);
 	myObj->setRotation(btQuaternion(btVector3(1.,0.,0.),-osg::PI/2.));
 	myObj->setPosition(1.5,-4.5,3);
