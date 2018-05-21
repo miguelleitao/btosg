@@ -50,7 +50,7 @@ clean:
 	rm -f *.o ${EXAMPLES}
 	make INC_BULLET=${INC_BULLET} -C loadOBJ clean
 
-push: *.cpp *.h Makefile README.md loadOBJ .gitignore .travis.yml
+push: *.cpp *.h Makefile README.md loadOBJ obj .gitignore .travis.yml
 	git add $^
 	git commit -m "update"
 	git push
