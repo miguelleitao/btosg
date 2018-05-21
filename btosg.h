@@ -16,6 +16,12 @@
 
 #include <btBulletDynamicsCommon.h>
 
+
+#include "../bullet3/examples/Importers/ImportObjDemo/LoadMeshFromObj.h"
+#include "../bullet3/examples/OpenGLWindow/GLInstanceGraphicsShape.h"
+
+//include <GLInstanceGraphicsShape.h>
+
 #ifdef BTOSG_SHADOW
 #include <osgShadow/ShadowedScene>
 #include <osgShadow/ShadowMap>
@@ -184,11 +190,11 @@ class btosgObject  {
         void setPosition(float x, float y, float z) {
 		setPosition(btVector3(x,y,z));
         }
-	void setRotation(float x, float y, float z, float w) {
+	void setRotation(btQuaternion q) {
             if (body) {
                 btTransform wTrans;
                 body->getMotionState()->getWorldTransform(wTrans);
-                wTrans.setRotation(btQuaternion(x,y,z,w));
+                wTrans.setRotation(q);
                 //wTrans.setOrigin(btVector3(x,y,z));
                 body->setWorldTransform(wTrans);
                 body->getMotionState()->setWorldTransform(wTrans);
@@ -204,9 +210,12 @@ class btosgObject  {
 		  printf("setRotation in non dynamic object\n");
 		#endif
                 if (model) {
-                        model->setAttitude(osg::Quat(x,y,z,w));
+                        model->setAttitude(bt2osg_Quat(q));
                 }
             }
+	}
+	void setRotation(float x, float y, float z, float w) {
+	    setRotation(btQuaternion(x,y,z,w));
 	}
 	
 	void setRotation(osg::Quat q) {
@@ -276,6 +285,27 @@ class btosgObject  {
         
 };
 
+class btosgExternalObject : public btosgObject {
+    public:
+	//char *fname;
+	btosgExternalObject(const char *file_name) {
+		loadObjectModel(file_name);
+
+   		GLInstanceGraphicsShape* glmesh = LoadMeshFromObj(file_name, "");
+   		printf("[INFO] Obj loaded: Extracted %d verticed from obj file [%s]\n", glmesh->m_numvertices, file_name);
+
+		const GLInstanceVertex& v = glmesh->m_vertices->at(0);
+   		btConvexHullShape* shapeH = new btConvexHullShape((const btScalar*)(&(v.xyzw[0])), glmesh->m_numvertices, sizeof(GLInstanceVertex));
+   		btVector3 color(1,1,1);
+   		btVector3 scaling(.999,.999,.999);
+   		shapeH->setLocalScaling(scaling);
+		shape = shapeH;
+
+		mass = 1.;
+                createRigidBody();
+                body->setDamping(0.01,0.1);
+	}
+};
 
 class btosgSphere : public btosgObject {
     public:
@@ -328,7 +358,6 @@ class btosgBox : public btosgObject {
 
 
 
-
 class btosgPlane : public btosgObject {
     // Physical infinit, axis oriented plane.
     // Viewable as a finit, axis oriented, small depth box.
@@ -374,6 +403,8 @@ class btosgPlane : public btosgObject {
         	if ( !body ) fprintf(stderr,"Error creating btBody\n");
     	}
 };
+
+
 
 class btosgCone : public btosgObject {
     public:

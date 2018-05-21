@@ -87,8 +87,12 @@ void btosgObject::loadObjectModel(char const *fname) {
 	fprintf(stderr,"Error reading Object model from file '%s'\n", fname);
     }
     if (  !model)	model = new osg::PositionAttitudeTransform;
-    model->addChild(loadedModel);
+    osg::PositionAttitudeTransform* obj_rot = new osg::PositionAttitudeTransform;
+    obj_rot->setAttitude(osg::Quat(-osg::PI/2.,osg::Vec3(1.,0.,0.)));
+    obj_rot->addChild(loadedModel);
+    model->addChild(obj_rot);
 }
+
 
 
 
