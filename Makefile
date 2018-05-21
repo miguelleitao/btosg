@@ -14,6 +14,8 @@ VERSION:=$(shell git tag)
 #LD_B3OBJ_IMPORT=-L loadOBJ -lloadOBJ
 B3_OBJ_LOADER=loadOBJ/libloadOBJ.a
 
+-include .config
+
 default: ${BTOSG}
 
 examples: ${EXAMPLES}
