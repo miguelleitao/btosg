@@ -17,8 +17,8 @@
 #include <btBulletDynamicsCommon.h>
 
 
-#include "../bullet3/examples/Importers/ImportObjDemo/LoadMeshFromObj.h"
-#include "../bullet3/examples/OpenGLWindow/GLInstanceGraphicsShape.h"
+#include "loadOBJ/include/LoadMeshFromObj.h"
+#include "loadOBJ/include/GLInstanceGraphicsShape.h"
 
 //include <GLInstanceGraphicsShape.h>
 
