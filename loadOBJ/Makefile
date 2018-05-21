@@ -8,3 +8,6 @@ CXXFLAGS=-I include -I include/extra -I include/extra/extra -I /usr/include/bull
 ${TARGET}: ${OBJS}
 	ar cr $@ $^
 
+clean:
+	rm -f ${TARGET} *.o
+
