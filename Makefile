@@ -2,7 +2,8 @@
 BTOSG=btosg.o
 EXAMPLES=ball carZ carY
 
-INC_BULLET=-I/usr/include/bullet 
+BULLET_DIR?=/usr
+INC_BULLET=-I${BULLET_DIR}/include/bullet 
 INC_OSG=-I/usr/include/osg
 LD_OSG=-losg -losgViewer -losgSim -losgDB -losgGA -losgShadow
 LD_BULLET=-l BulletDynamics -l BulletCollision -l Bullet3Common -l LinearMath
