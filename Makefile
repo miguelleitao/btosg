@@ -2,8 +2,8 @@
 BTOSG=btosg.o
 EXAMPLES=ball carZ carY
 
-#INC_BULLET=-I/usr/include/bullet -I ../bullet3/src
-INC_BULLET=-I ../bullet3/src
+INC_BULLET=-I/usr/include/bullet 
+#INC_BULLET=-I ../bullet3/src
 INC_OSG=-I/usr/include/osg
 LD_OSG=-losg -losgViewer -losgSim -losgDB -losgGA -losgShadow
 #LD_BULLET=-L /home/jml/bullet3/src/BulletDynamics
