@@ -3,8 +3,9 @@ BTOSG=btosg.o
 EXAMPLES=ball carZ carY
 
 BULLET_DIR?=/usr
-INC_BULLET=-I${BULLET_DIR}/include/bullet 
-INC_OSG=-I/usr/include/osg
+OSG_DIR?=/usr
+INC_BULLET?=-I${BULLET_DIR}/include/bullet 
+INC_OSG?=-I${OSG_DIR}/include/osg
 LD_OSG=-losg -losgViewer -losgSim -losgDB -losgGA -losgShadow
 LD_BULLET=-l BulletDynamics -l BulletCollision -l Bullet3Common -l LinearMath
 CFLAGS=-std=c++11 -Wall -O2 -Wno-uninitialized
@@ -47,7 +48,7 @@ ${B3_OBJ_LOADER}:
 
 clean:
 	rm -f *.o ${EXAMPLES}
-	make -C loadOBJ clean
+	make INC_BULLET=${INC_BULLET} -C loadOBJ clean
 
 push: *.cpp *.h Makefile README.md loadOBJ .gitignore .travis.yml
 	git add $^
