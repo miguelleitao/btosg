@@ -1,8 +1,9 @@
 
 
 TARGET=libloadOBJ.a
-OBJS=b3ResourcePath.o LoadMeshFromObj.o Wavefront2GLInstanceGraphicsShape.cpp tiny_obj_loader.o Wavefront2GLInstanceGraphicsShape.o
-#OBJS=b3ResourcePath.o LoadMeshFromObj.o stb_image.o Wavefront2GLInstanceGraphicsShape.cpp tiny_obj_loader.o Wavefront2GLInstanceGraphicsShape.o
+OBJS=LoadMeshFromObj.o Wavefront2GLInstanceGraphicsShape.cpp tiny_obj_loader.o Wavefront2GLInstanceGraphicsShape.o
+#OBJS=b3ResourcePath.o LoadMeshFromObj.o Wavefront2GLInstanceGraphicsShape.cpp tiny_obj_loader.o Wavefront2GLInstanceGraphicsShape.o
+
 
 CXXFLAGS=-Wall -I include -I include/extra -I include/extra/extra ${INC_BULLET} -Wno-unused-variable
 
@@ -15,7 +16,7 @@ VERSION:=$(shell git tag)
 
 
 ${TARGET}: ${OBJS}
-	ar cr $@ $^
+	$(AR) cr $@ $^
 
 clean:
 	$(RM) ${TARGET} *.o
