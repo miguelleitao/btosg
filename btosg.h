@@ -243,8 +243,8 @@ class btosgObject  {
             body->getMotionState()->setWorldTransform(init_state);
             body->clearForces();
             if ( mass>0. ) {
-                body->setLinearVelocity(btVector3(0,0,0));
-                body->setAngularVelocity(btVector3(0,0,0));
+                body->setLinearVelocity(btVector3(0.,0.,0.));
+                body->setAngularVelocity(btVector3(0.,0.,0.));
                 body->activate();   // Required if the object was asleep
             }
         }
