@@ -3,6 +3,9 @@
 	Miguel Leitao, 2016
 */
 
+#ifdef  BTOSGVEHICLE_H
+#define BTOSGVEHICLE_H 1
+
 #include <osg/Material>
 
 #include <btBulletCollisionCommon.h>
@@ -389,3 +392,6 @@ class BlockBlue : public btosgBox {
         }
         BlockBlue(float x, float z) : BlockBlue(x,1.,z) {};
 };
+
+#endif // BTOSGVEHICLE_H
+

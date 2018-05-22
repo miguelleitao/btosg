@@ -1,9 +1,12 @@
 /*
-	btosg.h 
-	Miguel Leitao, 2016
-*/
+ *	btosg.h 
+ *
+ *	(c) Miguel Leitao, 2016
+ *
+ */
 
-
+#ifndef BTOSG_H
+#define BTOSG_H 1
 
 #include <osgDB/ReadFile>
 #include <osg/MatrixTransform>
@@ -16,7 +19,6 @@
 
 #include <btBulletDynamicsCommon.h>
 
-
 #include "loadOBJ/include/LoadMeshFromObj.h"
 #include "loadOBJ/include/GLInstanceGraphicsShape.h"
 
@@ -27,8 +29,6 @@
 #include <osgShadow/ShadowMap>
 #endif
 #include <forward_list>
-
-
 
 /* Direct update of positions and orientations can be avoided for dynamic objects
  * or normal objects that are syncronized during btosgWorld::update.
@@ -471,5 +471,5 @@ class btosgCylinder : public btosgObject {
         }
 };
 
-
+#endif // BTOSG_H
 

@@ -1,3 +1,4 @@
+# btosg Makefile 
 
 BTOSG=btosg.o
 EXAMPLES=ball carZ carY objects
@@ -13,8 +14,13 @@ VERSION:=$(shell git tag)
 
 #LD_B3OBJ_IMPORT=-L loadOBJ -lloadOBJ
 B3_OBJ_LOADER=loadOBJ/libloadOBJ.a
+BTOSG_PC=btosg.pc
 
 -include .config
+
+ifeq ($(PREFIX),)
+    PREFIX := /usr/local
+endif
 
 LD_BULLET=${LIB_BULLET_DIR} -l BulletDynamics -l BulletCollision -l Bullet3Common -l LinearMath
 LD_OSG=${LIB_OSG_DIR} -l osg -losgViewer -losgSim -losgDB -losgGA -losgShadow
@@ -22,6 +28,10 @@ LD_OSG=${LIB_OSG_DIR} -l osg -losgViewer -losgSim -losgDB -losgGA -losgShadow
 default: ${BTOSG}
 
 examples: ${EXAMPLES}
+
+pc:
+	rm -f ${BTOSG_PC}
+	@make ${BTOSG_PC}
 
 btosg: ${BTOSG}
 	@echo -n ""
@@ -59,6 +69,31 @@ btosg.o: btosg.cpp btosg.h
 
 ${B3_OBJ_LOADER}:
 	make -C loadOBJ BULLET_DIR=${BULLET_DIR} OSG_DIR=${OSG_DIR}
+
+${BTOSG_PC}:
+	@echo "prefix=/usr" 			 > $@
+	@echo "exec_prefix=${prefix}/bin"	>> $@
+	@echo "includedir=${prefix}/include"	>> $@
+	@echo "libdir=${exec_prefix}/lib"	>> $@
+	@echo ""				>> $@
+	@echo "Name: btosg"			>> $@
+	@echo "Description: The foo library"	>> $@
+	@echo "Version: 1.0.0"			>> $@
+	@echo "Cflags: -I${includedir}"		>> $@
+	@echo "Libs: -L${libdir} -losg"		>> $@
+
+install: ${BTOSG} ${BTOSGPC}
+	install -d $(DESTDIR)$(PREFIX)/lib/
+	install -m 755 ${BTOSG} $(DESTDIR)$(PREFIX)/lib/
+	install -m 755 ${B3_OBJ_LOADER} $(DESTDIR)$(PREFIX)/lib/
+	install -d $(DESTDIR)$(PREFIX)/include/
+	install -m 644 $(btosg.h) $(DESTDIR)$(PREFIX)/include/
+	install -m 644 $(btosgVehicle.h) $(DESTDIR)$(PREFIX)/include/
+	install -d $(DESTDIR)$(PREFIX)/lib/pkgconfig/
+	install -m 644 ${BTOSG_PC} $(DESTDIR)$(PREFIX)/lib/pkgconfig/
+
+
+
 
 clean:
 	$(RM) *.o ${EXAMPLES}
