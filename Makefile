@@ -23,6 +23,9 @@ default: ${BTOSG}
 
 examples: ${EXAMPLES}
 
+btosg: ${BTOSG}
+	@echo -n ""
+
 all: default examples
 
 carZ: carZ.o btosg.o
