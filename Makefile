@@ -4,11 +4,11 @@ EXAMPLES=ball carZ carY objects
 
 BULLET_DIR?=/usr
 OSG_DIR?=/usr
-INC_BULLET?=`pkg-config --cflags-only-I bullet`
-INC_OSG?=`pkg-config --cflags-only-I openscenegraph-osg`
-LIB_BULLET_DIR?=`pkg-config --libs-only-L bullet`
-LIB_OSG_DIR=`pkg-config --libs-only-L openscenegraph-osg`
-CFLAGS=-std=c++11 -Wall -O2 -Wno-uninitialized
+INC_BULLET?=$(shell pkg-config --cflags-only-I bullet)
+INC_OSG?=$(shell pkg-config --cflags-only-I openscenegraph-osg)
+LIB_BULLET_DIR?=$(shell pkg-config --libs-only-L bullet)
+LIB_OSG_DIR=$(shell pkg-config --libs-only-L openscenegraph-osg)
+CXXFLAGS?=-std=c++11 -Wall -O2 -Wno-uninitialized
 VERSION:=$(shell git tag)
 
 #LD_B3OBJ_IMPORT=-L loadOBJ -lloadOBJ
@@ -38,27 +38,27 @@ objects: objects.o btosg.o ${B3_OBJ_LOADER}
 	cc -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -l stdc++ -lm
 
 carZ.o: car.cpp btosg.h btosgVehicle.h
-	g++ ${CFLAGS} -c ${INC_BULLET} ${INC_OSG} $< -o $@ -DVERSION=${VERSION} 
+	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} $< -o $@ -DVERSION=${VERSION} 
 
 carY.o: car.cpp btosg.h btosgVehicle.h
-	g++ ${CFLAGS} -c ${INC_BULLET} ${INC_OSG} $< -o $@ -DVERSION=${VERSION} -D_UP_=0,1,0
+	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} $< -o $@ -DVERSION=${VERSION} -D_UP_=0,1,0
 
 ball.o: ball.cpp btosg.h 
-	g++ ${CFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $<
+	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $<
 
 objects.o: objects.cpp btosg.h
-	g++ ${CFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $<
+	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $<
 
 #-DBTOSG_SHADOW $<
 
 btosg.o: btosg.cpp btosg.h
-	g++ ${CFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $<
+	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $<
 
 ${B3_OBJ_LOADER}:
 	make -C loadOBJ BULLET_DIR=${BULLET_DIR} OSG_DIR=${OSG_DIR}
 
 clean:
-	rm -f *.o ${EXAMPLES}
+	$(RM) *.o ${EXAMPLES}
 	make INC_BULLET=${INC_BULLET} -C loadOBJ clean
 
 push: *.cpp *.h Makefile README.md loadOBJ obj .gitignore .travis.yml
