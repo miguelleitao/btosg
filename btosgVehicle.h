@@ -3,7 +3,7 @@
 	Miguel Leitao, 2016
 */
 
-#ifdef  BTOSGVEHICLE_H
+#ifndef BTOSGVEHICLE_H
 #define BTOSGVEHICLE_H 1
 
 #include <osg/Material>
