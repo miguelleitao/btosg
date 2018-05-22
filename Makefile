@@ -71,24 +71,27 @@ ${B3_OBJ_LOADER}:
 	make -C loadOBJ BULLET_DIR=${BULLET_DIR} OSG_DIR=${OSG_DIR}
 
 ${BTOSG_PC}:
-	@echo "prefix=/usr" 			 > $@
-	@echo "exec_prefix=${prefix}/bin"	>> $@
-	@echo "includedir=${prefix}/include"	>> $@
-	@echo "libdir=${exec_prefix}/lib"	>> $@
-	@echo ""				>> $@
-	@echo "Name: btosg"			>> $@
-	@echo "Description: The foo library"	>> $@
-	@echo "Version: 1.0.0"			>> $@
-	@echo "Cflags: -I${includedir}"		>> $@
-	@echo "Libs: -L${libdir} -losg"		>> $@
+	@echo "prefix=/usr" 				 > $@
+	@echo "exec_prefix=\$${prefix}"			>> $@
+	@echo "includedir=\$${prefix}/include"		>> $@
+	@echo "libdir=\$${exec_prefix}/lib"		>> $@
+	@echo "os=$(shell uname)"			>> $@
+	@echo "machtype=$(shell gcc -dumpmachine)"	>> $@
+	@echo ""					>> $@
+	@echo "Name: btosg"				>> $@
+	@echo "Description: A library to integrate Bullet and OpenSceneGraph"	>> $@
+	@echo "Requires: bullet openscenegraph-osg"	>> $@
+	@echo "Version: ${VERSION}"			>> $@
+	@echo "Cflags: -I\$${includedir}"		>> $@
+	@echo "Libs: -L\$${libdir} -losg"		>> $@
 
 install: ${BTOSG} ${BTOSGPC}
 	install -d $(DESTDIR)$(PREFIX)/lib/
 	install -m 755 ${BTOSG} $(DESTDIR)$(PREFIX)/lib/
 	install -m 755 ${B3_OBJ_LOADER} $(DESTDIR)$(PREFIX)/lib/
 	install -d $(DESTDIR)$(PREFIX)/include/
-	install -m 644 $(btosg.h) $(DESTDIR)$(PREFIX)/include/
-	install -m 644 $(btosgVehicle.h) $(DESTDIR)$(PREFIX)/include/
+	install -m 644 btosg.h $(DESTDIR)$(PREFIX)/include/
+	install -m 644 btosgVehicle.h $(DESTDIR)$(PREFIX)/include/
 	install -d $(DESTDIR)$(PREFIX)/lib/pkgconfig/
 	install -m 644 ${BTOSG_PC} $(DESTDIR)$(PREFIX)/lib/pkgconfig/
 
