@@ -23,8 +23,11 @@ The use of **btosg** can help the programming task because it allows to create a
 
 ### Usage
 Look at provided examples. Prepare your _application.cpp_ using
+
     #include <btosg.h>
+
 Compile using
+
     g++ -c `pkg-config --cflags btosg` _application.cpp_
     g++ -o _application_ `pkg-config --libs btosg` _application.o_
 
