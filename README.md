@@ -28,8 +28,8 @@ Look at provided examples. Prepare your _application.cpp_ using
 
 Compile using
 <pre>
-    g++ -c `pkg-config --cflags btosg` <i>application.cpp</i>
-    g++ -o __application__ `pkg-config --libs btosg` _application.o_
+g++ -c `pkg-config --cflags btosg` <i>application.cpp</i>
+g++ -o <i>application</i> `pkg-config --libs btosg` <i>application.o</i>
 </pre>
 ### Examples
 **btosg** is available with two working examples.
