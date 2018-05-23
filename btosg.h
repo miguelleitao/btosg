@@ -52,6 +52,10 @@ osg::Quat bt2osg_Quat(btQuaternion bv);
 const int ReceivesShadowTraversalMask = 0x1;
 const int CastsShadowTraversalMask = 0x2;
 
+inline int btosgPrint(char const *name, const float v) {
+    return printf("%s: %f\n", name, v);
+}
+
 inline int btosgPrint(char const *name, const btVector3&  vec) {
     return printf("%s: %f %f %f\n", name, vec[0], vec[1], vec[2]);
 }
