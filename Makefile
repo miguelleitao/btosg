@@ -105,7 +105,7 @@ clean:
 	$(RM) *.o ${EXAMPLES} ${BTOSG}
 	make -C loadOBJ clean
 
-push: *.cpp *.h Makefile README.md loadOBJ obj .gitignore .travis.yml
+push: *.cpp *.h Makefile README.md loadOBJ img obj .gitignore .travis.yml
 	git add $^
 	git commit -m "update"
 	git push
