@@ -83,8 +83,9 @@ ${BTOSG_PC}:
 	@echo ""					>> $@
 	@echo "Name: btosg"				>> $@
 	@echo "Description: A visual simulation library integrating Bullet and OpenSceneGraph"	>> $@
-	@echo "Requires: bullet openscenegraph-osg openscenegraph-osgViewer openscenegraph-osgSim openscenegraph-osgDB openscenegraph-osgGA openscenegraph-osgShadow"	>> $@
 	@echo "Version: ${VERSION}"			>> $@
+	@echo "URL: https://github.com/miguelleitao/btosg"	>> $@
+	@echo "Requires: bullet openscenegraph-osg openscenegraph-osgViewer openscenegraph-osgSim openscenegraph-osgDB openscenegraph-osgGA openscenegraph-osgShadow"	>> $@
 	@echo "Cflags: -I\$${includedir}"		>> $@
 	@echo "Libs: -L\$${libdir} -losg"		>> $@
 
