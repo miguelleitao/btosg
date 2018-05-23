@@ -15,6 +15,19 @@ The use of **btosg** can help the programming task because it allows to create a
 * https://github.com/bulletphysics/bullet3 
 * http://bulletphysics.org/
 
+### Build
+    git clone https://github.com/miguelleitao/btosg.git
+    cd btosg
+    make
+    sudo make install
+
+### Usage
+Look at provided examples. Prepare your _application.cpp_ using
+    #include <btosg.h>
+Compile using
+    g++ -c `pkg-config --cflags btosg` _application.cpp_
+    g++ -o _application_ `pkg-config --libs btosg` _application.o_
+
 ### Examples
 **btosg** is available with two working examples.
 * **ball.cpp** implements a simple simulation of a ball with two planes.
