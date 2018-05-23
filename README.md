@@ -27,10 +27,10 @@ Look at provided examples. Prepare your _application.cpp_ using
     #include <btosg.h>
 
 Compile using
-
-    g++ -c `pkg-config --cflags btosg` _application.cpp_
-    g++ -o _application_ `pkg-config --libs btosg` _application.o_
-
+<pre>
+    g++ -c `pkg-config --cflags btosg` <i>application.cpp</i>
+    g++ -o __application__ `pkg-config --libs btosg` _application.o_
+</pre>
 ### Examples
 **btosg** is available with two working examples.
 * **ball.cpp** implements a simple simulation of a ball with two planes.
