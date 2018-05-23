@@ -18,7 +18,7 @@ The use of **btosg** can help the programming task because it allows to create a
 ### Examples
 **btosg** is available with two working examples.
 * **ball.cpp** implements a simple simulation of a ball with two planes.
-* **object.cpp** provides an example of creating a complete object (graphical and physical) from loading amn external Wavefron OBJ file. 
+* **objects.cpp** provides an example for creating a complete object (graphical and physical) from loading an external Wavefront OBJ file. 
 * **car.cpp** implements a basic vehicle with four wheels and suspensions. It can be compiled using a Z or Y pointing up vector.
 Usage instructions are provided in source file.
 
@@ -26,7 +26,7 @@ To compile and try the provided examples do:
 
     make examples 
     ./ball
-    ./object
+    ./objects
     ./carZ
     ./carY
 
