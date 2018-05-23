@@ -1,6 +1,6 @@
 # btosg Makefile 
 
-BTOSG=btosg.o
+BTOSG=libbtosg.a
 EXAMPLES=ball carZ carY objects
 
 BULLET_DIR?=/usr
@@ -67,6 +67,9 @@ objects.o: objects.cpp btosg.h
 btosg.o: btosg.cpp btosg.h
 	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $<
 
+${BTOSG}: btosg.o
+	$(AR) cr $@ $^
+
 ${B3_OBJ_LOADER}:
 	make -C loadOBJ BULLET_DIR=${BULLET_DIR} OSG_DIR=${OSG_DIR}
 
@@ -79,8 +82,8 @@ ${BTOSG_PC}:
 	@echo "machtype=$(shell gcc -dumpmachine)"	>> $@
 	@echo ""					>> $@
 	@echo "Name: btosg"				>> $@
-	@echo "Description: A library to integrate Bullet and OpenSceneGraph"	>> $@
-	@echo "Requires: bullet openscenegraph-osg"	>> $@
+	@echo "Description: A visual simulation library integrating Bullet and OpenSceneGraph"	>> $@
+	@echo "Requires: bullet openscenegraph-osg openscenegraph-osgViewer openscenegraph-osgSim openscenegraph-osgDB openscenegraph-osgGA openscenegraph-osgShadow"	>> $@
 	@echo "Version: ${VERSION}"			>> $@
 	@echo "Cflags: -I\$${includedir}"		>> $@
 	@echo "Libs: -L\$${libdir} -losg"		>> $@
@@ -94,9 +97,6 @@ install: ${BTOSG} ${BTOSGPC}
 	install -m 644 btosgVehicle.h $(DESTDIR)$(PREFIX)/include/
 	install -d $(DESTDIR)$(PREFIX)/lib/pkgconfig/
 	install -m 644 ${BTOSG_PC} $(DESTDIR)$(PREFIX)/lib/pkgconfig/
-
-
-
 
 clean:
 	$(RM) *.o ${EXAMPLES}
