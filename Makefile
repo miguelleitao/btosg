@@ -1,6 +1,6 @@
 # btosg Makefile 
 
-BTOSG=libbtosg.a
+BTOSG=libbtosg.a libbtosg.so
 EXAMPLES=ball carZ carY objects
 
 BULLET_DIR?=/usr
@@ -10,7 +10,7 @@ INC_OSG?=$(shell pkg-config --cflags-only-I openscenegraph-osg)
 LIB_BULLET_DIR?=$(shell pkg-config --libs-only-L bullet)
 LIB_OSG_DIR=$(shell pkg-config --libs-only-L openscenegraph-osg)
 CXXFLAGS?=-std=c++11 -Wall -O2 -Wno-uninitialized
-VERSION:=$(shell git tag)
+VERSION:=$(shell git tag |tail -1)
 
 #LD_B3OBJ_IMPORT=-L loadOBJ -lloadOBJ
 B3_OBJ_LOADER=loadOBJ/libloadOBJ.a
@@ -65,10 +65,13 @@ objects.o: objects.cpp btosg.h
 #-DBTOSG_SHADOW $<
 
 btosg.o: btosg.cpp btosg.h
-	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $<
+	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} -fPIC $<
 
-${BTOSG}: btosg.o
+libbtosg.a: btosg.o
 	$(AR) cr $@ $^
+
+libbtosg.so: btosg.o
+	$(CXX) -shared $^ -o $@
 
 ${B3_OBJ_LOADER}:
 	make -C loadOBJ BULLET_DIR=${BULLET_DIR} OSG_DIR=${OSG_DIR}
@@ -100,10 +103,10 @@ install: ${BTOSG} ${BTOSGPC}
 	install -m 644 ${BTOSG_PC} $(DESTDIR)$(PREFIX)/lib/pkgconfig/
 
 clean:
-	$(RM) *.o ${EXAMPLES}
-	make INC_BULLET=${INC_BULLET} -C loadOBJ clean
+	$(RM) *.o ${EXAMPLES} ${BTOSG}
+	make -C loadOBJ clean
 
-push: *.cpp *.h Makefile README.md loadOBJ obj .gitignore .travis.yml
+push: *.cpp *.h Makefile README.md loadOBJ img obj .gitignore .travis.yml
 	git add $^
 	git commit -m "update"
 	git push

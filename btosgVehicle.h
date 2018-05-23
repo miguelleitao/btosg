@@ -98,7 +98,6 @@ class btosgVehicle: public btosgObject {
 	    mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0.1, 0.1, 0, 1.0));
 	    mat->setShininess(osg::Material::FRONT_AND_BACK, 12);
 	    setMaterial(mat);
-	    //setTexture("beachball.png");
 
             setMass(m);
             // Center-of-gravity is shifted by shift ????
@@ -205,7 +204,7 @@ class btosgVehicle: public btosgObject {
 		mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
 		stateset->setAttribute(mat, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON); 
 		// Setup wheel texture
-                osg::ref_ptr<osg::Image> image = osgDB::readRefImageFile( "wheel.jpg" );
+                osg::ref_ptr<osg::Image> image = osgDB::readRefImageFile( "img/wheel.jpg" );
                 if (image) {
                     osg::Texture2D* texture = new osg::Texture2D;
                     texture->setImage(image);
@@ -220,19 +219,13 @@ class btosgVehicle: public btosgObject {
         osg::PositionAttitudeTransform *gen_wheel = new  osg::PositionAttitudeTransform;
         gen_wheel->setPosition(osg::Vec3(0.,0.,0.));
         gen_wheel->setAttitude(osg::Quat(-osg::PI/2.,osg::Vec3(0.,1.,0.)));
-        gen_wheel->addChild(geo); 
-   
-                
-                //wheel[0]->setTexture("beachball.png");
-      //  } else fprintf(stderr,"Error creating Geode\n");
-            
+        gen_wheel->addChild(geo);
+        printf( "num wheels %d\n",vehicle->getNumWheels()); 
 
-            printf( "num wheels %d\n",vehicle->getNumWheels()); 
         // Configures each wheel of our vehicle, setting its friction, damping compression, etc.
         // For more details on what each parameter does, refer to the docs
         for (int i = 0; i < vehicle->getNumWheels(); i++)
         {
-            
             btWheelInfo& iWheel = vehicle->getWheelInfo(i);
             /*
              * iWheel.m_suspensionStiffness = 14.0;
@@ -246,7 +239,7 @@ class btosgVehicle: public btosgObject {
             iWheel.m_wheelsDampingCompression = 0.3 * 2 * btSqrt(iWheel.m_suspensionStiffness); // 0.8;
             iWheel.m_wheelsDampingRelaxation =  0.5 * 2 * btSqrt(iWheel.m_suspensionStiffness); // 1;
        
-           // iWheel.m_maxSuspensionForce = 150000.; // 6000
+            // iWheel.m_maxSuspensionForce = 150000.; // 6000
             printf("maxSupForce %f\n", iWheel.m_maxSuspensionForce);
             
             //Larger friction slips will result in better handling
@@ -263,31 +256,20 @@ class btosgVehicle: public btosgObject {
                 model->addChild( wheel[i] );
             }
         }
-	
-}
+    }
+
     void printInfo() {
-        btosgPrint("Center of Mass", vehicle->getRigidBody()->getCenterOfMassPosition());
         btosgPrint("Center of Mass", body->getCenterOfMassPosition());
-        printf("Mass: %f\n", mass);
+        btosgPrint("Mass", mass);
         for( int i=0 ; i<vehicle->getNumWheels(); i++)
         {
             btWheelInfo& iWheel = vehicle->getWheelInfo(i);
-            printf("Wheel %d\n",i);
-            btosgPrint("  chassisConnectionPoint", iWheel.m_chassisConnectionPointCS);
+            btosgPrint("Wheel",i);
+            btosgPrint("  ChassisConnectionPoint", iWheel.m_chassisConnectionPointCS);
             btosgPrint("  WheelDirection", iWheel.m_wheelDirectionCS);
             btosgPrint("  WheelAxle", iWheel.m_wheelAxleCS);
-            /*
-            btScalar        m_suspensionRestLength1;    //const
-            btScalar        m_maxSuspensionTravelCm;
-            btScalar        getSuspensionRestLength()   const;
-            btScalar        m_wheelsRadius;             //const
-            btScalar        m_suspensionStiffness;      //const
-            btScalar        m_wheelsDampingCompression; //const
-            btScalar        m_wheelsDampingRelaxation;  //const
-            */
         }
     }
-    
     
     void logPosition() {
          if (body) {
@@ -303,17 +285,16 @@ class btosgVehicle: public btosgObject {
             for( int i=0 ; i<4 ; i++ ) {
                 btWheelInfo& iWheel = vehicle->getWheelInfo(i);
                 std::cout << "  whell " << i << ", contact: " << iWheel.m_raycastInfo.m_isInContact ;
-                printf("  rotation %f\n", iWheel.m_rotation);
-                
+                printf("  rotation %f\n", iWheel.m_rotation); 
             }
          }
     }
-   virtual void update()
+    virtual void update()
     {
         // updateVehicle is Not required.
         // Vehicle dynamics is updated in stepSimulation();
         // updateVehicle requires frame_time that may not be available.
-        //vehicle->updateVehicle(frame_time);
+        // vehicle->updateVehicle(frame_time);
                
         // Visual update
         // Standard btosgObject::update() can be used.
@@ -346,51 +327,6 @@ class btosgVehicle: public btosgObject {
         }   
     }
     
-};
-
-class BlockGreen : public btosgBox {
-    public:
-        BlockGreen(float x, float y, float z) : btosgBox( osg::Vec3(1.,1.,1.), 100. ) {
-            setPosition(btVector3(x,y,z));
-            osg::ref_ptr<osg::Material> mat = new osg::Material;
-            mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
-            mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.1, 0.5, 0.1, 1.0));
-            mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
-            mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
-            model->getOrCreateStateSet()->
-                setAttributeAndModes(mat, osg::StateAttribute::ON);
-        }
-        BlockGreen(float x, float z) : BlockGreen(x,1.,z) {};
-};
-
-class BlockRed : public btosgBox {
-    public:
-        BlockRed(float x, float y, float z) : btosgBox( osg::Vec3(1.,1.,1.), 10000. ) {
-            setPosition(btVector3(x,y,z));
-            osg::ref_ptr<osg::Material> mat = new osg::Material;
-            mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
-            mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.6, 0.1, 0.1, 1.0));
-            mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
-            mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
-            model->getOrCreateStateSet()->
-                setAttributeAndModes(mat, osg::StateAttribute::ON);
-        }
-        BlockRed(float x, float z) : BlockRed(x,1.,z) {};
-};
-
-class BlockBlue : public btosgBox {
-    public:
-        BlockBlue(float x, float y, float z) : btosgBox( osg::Vec3(1.,0.25,1.), 10000. ) {
-            setPosition(btVector3(x,y,z));
-            osg::ref_ptr<osg::Material> mat = new osg::Material;
-            mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
-            mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.1, 0.1, 0.5, 1.0));
-            mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
-            mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
-            model->getOrCreateStateSet()->
-                setAttributeAndModes(mat, osg::StateAttribute::ON);
-        }
-        BlockBlue(float x, float z) : BlockBlue(x,1.,z) {};
 };
 
 #endif // BTOSGVEHICLE_H

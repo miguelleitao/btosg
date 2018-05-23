@@ -26,7 +26,7 @@ int main()
 	// Beach Ball
 	myBall = new btosgSphere(0.2);
 	myBall->setMass(0.01);
-	myBall->setTexture("beachball.png");
+	myBall->setTexture("img/beachball.png");
 	myBall->setPosition(0.,-4.,5.);
 	myWorld.addObject( myBall );
 
