@@ -260,11 +260,11 @@ class btosgVehicle: public btosgObject {
 
     void printInfo() {
         btosgPrint("Center of Mass", body->getCenterOfMassPosition());
-        btosgPrint("Mass: %f\n", mass);
+        btosgPrint("Mass", mass);
         for( int i=0 ; i<vehicle->getNumWheels(); i++)
         {
             btWheelInfo& iWheel = vehicle->getWheelInfo(i);
-            btosgPrint("Wheel %d\n",i);
+            btosgPrint("Wheel",i);
             btosgPrint("  ChassisConnectionPoint", iWheel.m_chassisConnectionPointCS);
             btosgPrint("  WheelDirection", iWheel.m_wheelDirectionCS);
             btosgPrint("  WheelAxle", iWheel.m_wheelAxleCS);
