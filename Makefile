@@ -1,4 +1,6 @@
 # btosg Makefile 
+#
+# Miguel Leitao, 2016
 
 BTOSG=libbtosg.a libbtosg.so
 EXAMPLES=ball carZ carY objects
