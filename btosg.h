@@ -158,21 +158,18 @@ class btosgObject  {
     		if (isDynamic && shape)
         		shape->calculateLocalInertia(mass, localInertia);
 		if ( body ) body->setMassProps(m, localInertia); 
-	};
-	void logPosition() {
+	}
+	btVector3 getPosition() {
          	if (body) {
             		btTransform wTrans;
 			body->getMotionState()->getWorldTransform(wTrans);
-			btVector3 pos;
-            		pos = wTrans.getOrigin();
-            		if ( name )
-            		    std::cout << "Object " << name << " position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
-            		else
-            		    std::cout << "Object _NO_NAME_ position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
+            		return wTrans.getOrigin();
          	}
+		if (model) return osg2bt_Vec3(model->getPosition());
+		return btVector3(0.,0.,0.);
     	}
 	void setPosition(const btVector3 &p) {
-		if (body) {
+	    if (body) {
                 btTransform wTrans;
                 body->getMotionState()->getWorldTransform(wTrans);
                 wTrans.setOrigin(p);
@@ -234,6 +231,13 @@ class btosgObject  {
 		model->getOrCreateStateSet()->setAttributeAndModes(mat, osg::StateAttribute::ON);
 	}
         
+	void logPosition() {
+         	btVector3 pos = getPosition();
+       		if ( name )
+       		    std::cout << "Object " << name << " position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
+       		else
+       		    std::cout << "Object _NO_NAME_ position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
+    	}
 	virtual void update() {
         if (body) {
             btTransform wTrans;
