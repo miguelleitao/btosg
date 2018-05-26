@@ -121,15 +121,22 @@ class btosgWorld {
     void reset();
 };
 
+class btosgRigidBody : public btRigidBody {
+    public:
+	btosgRigidBody(btRigidBody::btRigidBodyConstructionInfo& ci) : btRigidBody(ci) {}; 
+	void setRestitution(float r) {
+	    m_restitution = r;
+	}
+};
 
-class btosgObject  {
+class btosgObject {
    public:
 	// Main components
 	//osg::Geode *geo;
 	osg::ref_ptr<osg::PositionAttitudeTransform> model;
 	char *name;
 	btTransform init_state;
-	btRigidBody *body;
+	btosgRigidBody *body;
 	// other
 	btCollisionShape* shape;
 	float mass;
@@ -289,7 +296,7 @@ class btosgObject  {
                 //printf("mass: %f\n",mass);
 		cInfo.m_restitution = 0.9f;
 		cInfo.m_friction = 10.f;
-		body = new btRigidBody(cInfo);
+		body = new btosgRigidBody(cInfo);
         if ( !body ) fprintf(stderr,"Error creating btBody\n");
     }
     void loadObjectModel(char const *fname);
@@ -409,7 +416,7 @@ class btosgPlane : public btosgObject {
 		btRigidBody::btRigidBodyConstructionInfo cInfo(mass,mState,shape,inertia);
 		cInfo.m_restitution = 0.9f;
 		cInfo.m_friction = 0.9f;
-		body = new btRigidBody(cInfo);
+		body = new btosgRigidBody(cInfo);
         	if ( !body ) fprintf(stderr,"Error creating btBody\n");
     	}
 };
