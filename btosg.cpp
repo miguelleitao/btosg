@@ -29,6 +29,8 @@ btQuaternion osg2bt_Quat(osg::Quat bv) {
 
 btVector3 quat2Euler(const btQuaternion& q)
 {
+	// Implementation not tested.
+
 	// roll (x-axis rotation)
 	double sinr = +2.0 * (q.w() * q.x() + q.y() * q.z());
 	double cosr = +1.0 - 2.0 * (q.x() * q.x() + q.y() * q.y());
@@ -49,7 +51,7 @@ btVector3 quat2Euler(const btQuaternion& q)
 	return btVector3(yaw,pitch,roll);
 }
 
-        btosgWorld::~btosgWorld() {
+btosgWorld::~btosgWorld() {
             //delete dynamic;
             //delete solver;
             //delete dispatcher;
@@ -66,7 +68,7 @@ btVector3 quat2Euler(const btQuaternion& q)
             }
 */
             scene->unref();
-        }
+}
 
 void btosgWorld::addObject(btosgObject *obj)  {
     objects.push_front(obj);
