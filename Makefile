@@ -105,7 +105,7 @@ install: ${BTOSG} ${BTOSGPC}
 	install -m 644 ${BTOSG_PC} $(DESTDIR)$(PREFIX)/lib/pkgconfig/
 
 clean:
-	$(RM) *.o ${EXAMPLES} ${BTOSG}
+	$(RM) *.o ${EXAMPLES} ${BTOSG} *.pc
 	make -C loadOBJ clean
 
 push: *.cpp *.h Makefile README.md loadOBJ img obj .gitignore .travis.yml

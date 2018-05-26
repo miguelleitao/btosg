@@ -1,9 +1,12 @@
 # Cone 
 # Center-of-mass: 0,0,0
+# Center-of-base: 0,-1,0
+# Top vertex: 0,3,0
 # Base radius: 1
 # Height: 4
-mtllib cone.mtl
-o Cone_Cone.001
+mtllib solids.mtl
+o Cone
+g ConeSurface
 v 0.000000 -1.000000 -1.000000
 v 0.000000 3.000000 0.000000
 v 0.195090 -1.000000 -0.980785
@@ -39,7 +42,7 @@ v -0.382682 -1.000000 -0.923880
 v -0.195089 -1.000000 -0.980786
 v  0.000000 -1.000000 0.000000
 vn 0. -1. 0.
-usemtl None
+usemtl ConeMat
 s off
 f 32 2 33
 f 1 2 3
@@ -73,6 +76,7 @@ f 7 2 8
 f 6 2 7
 f 5 2 6
 f 4 2 5
+g ConeBase
 s 0
 f 1//1 3//1 34//1
 f 3//1 4//1 34//1
