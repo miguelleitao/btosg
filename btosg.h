@@ -44,6 +44,7 @@ osg::Vec4 bt2osg_Vec4(btVector4 bv);
 btVector3 osg2bt_Vec3(osg::Vec3 bv);
 osg::Quat bt2osg_Quat(btQuaternion bv);
 btQuaternion osg2bt_Quat(osg::Quat bv);
+btVector3 quat2Euler(const btQuaternion& q);
 
 #define max(a,b) \
    ({ __typeof__ (a) _a = (a); \
@@ -187,6 +188,10 @@ class btosgObject {
 		if (model) return osg2bt_Quat(model->getAttitude());
 		return btQuaternion(0.,0.,0.,0.);
     	}
+	btVector3 getEuler() {
+		btQuaternion qt = getRotation();
+		return quat2Euler(qt);
+	}
 	void setPosition(const btVector3 &p) {
 	    if (body) {
                 btTransform wTrans;

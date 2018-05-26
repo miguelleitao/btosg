@@ -27,15 +27,16 @@ btQuaternion osg2bt_Quat(osg::Quat bv) {
 	return btQuaternion( bv.x(), bv.y(), bv.z(), bv.w() );
 }
 
-static void quat2Euler(const btQuaternion& q, double& roll, double& pitch, double& yaw)
+btVector3 quat2Euler(const btQuaternion& q)
 {
 	// roll (x-axis rotation)
 	double sinr = +2.0 * (q.w() * q.x() + q.y() * q.z());
 	double cosr = +1.0 - 2.0 * (q.x() * q.x() + q.y() * q.y());
-	roll = atan2(sinr, cosr);
+	double roll = atan2(sinr, cosr);
 
 	// pitch (y-axis rotation)
 	double sinp = +2.0 * (q.w() * q.y() - q.z() * q.x());
+	double pitch;
 	if (fabs(sinp) >= 1)
 		pitch = copysign(M_PI / 2, sinp); // use 90 degrees if out of range
 	else
@@ -44,7 +45,8 @@ static void quat2Euler(const btQuaternion& q, double& roll, double& pitch, doubl
 	// yaw (z-axis rotation)
 	double siny = +2.0 * (q.w() * q.z() + q.x() * q.y());
 	double cosy = +1.0 - 2.0 * (q.y() * q.y() + q.z() * q.z());  
-	yaw = atan2(siny, cosy);
+	double yaw = atan2(siny, cosy);
+	return btVector3(yaw,pitch,roll);
 }
 
         btosgWorld::~btosgWorld() {
