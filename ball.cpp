@@ -28,6 +28,7 @@ int main()
 	myBall->setMass(0.01);
 	myBall->setTexture("img/beachball.png");
 	myBall->setPosition(0.,-4.,5.);
+	myBall->body->setRestitution(0.95);
 	myWorld.addObject( myBall );
 
 	
