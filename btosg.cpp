@@ -14,15 +14,38 @@ osg::Vec3 bt2osg_Vec3(btVector3 bv) {
 return osg::Vec3( bv.x(), bv.y(), bv.z() );
 }
 osg::Vec4 bt2osg_Vec4(btVector4 bv) {
-return osg::Vec4( bv.x(), bv.y(), bv.z(), bv.w() );
+	return osg::Vec4( bv.x(), bv.y(), bv.z(), bv.w() );
 }
 btVector3 osg2bt_Vec3(osg::Vec3 bv) {
-return btVector3( bv.x(), bv.y(), bv.z() );
+	return btVector3( bv.x(), bv.y(), bv.z() );
 }
 osg::Quat bt2osg_Quat(btQuaternion bv) {
-return osg::Quat( bv.x(), bv.y(), bv.z(), bv.w() );
+	return osg::Quat( bv.x(), bv.y(), bv.z(), bv.w() );
 }
 
+btQuaternion osg2bt_Quat(osg::Quat bv) {
+	return btQuaternion( bv.x(), bv.y(), bv.z(), bv.w() );
+}
+
+static void quat2Euler(const btQuaternion& q, double& roll, double& pitch, double& yaw)
+{
+	// roll (x-axis rotation)
+	double sinr = +2.0 * (q.w() * q.x() + q.y() * q.z());
+	double cosr = +1.0 - 2.0 * (q.x() * q.x() + q.y() * q.y());
+	roll = atan2(sinr, cosr);
+
+	// pitch (y-axis rotation)
+	double sinp = +2.0 * (q.w() * q.y() - q.z() * q.x());
+	if (fabs(sinp) >= 1)
+		pitch = copysign(M_PI / 2, sinp); // use 90 degrees if out of range
+	else
+		pitch = asin(sinp);
+
+	// yaw (z-axis rotation)
+	double siny = +2.0 * (q.w() * q.z() + q.x() * q.y());
+	double cosy = +1.0 - 2.0 * (q.y() * q.y() + q.z() * q.z());  
+	yaw = atan2(siny, cosy);
+}
 
         btosgWorld::~btosgWorld() {
             //delete dynamic;
@@ -92,9 +115,6 @@ void btosgObject::loadObjectModel(char const *fname) {
     obj_rot->addChild(loadedModel);
     model->addChild(obj_rot);
 }
-
-
-
 
 
 void btosgObject::setTexture(char const *fname)

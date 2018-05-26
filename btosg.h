@@ -43,6 +43,7 @@ osg::Vec3 bt2osg_Vec3(btVector3 bv);
 osg::Vec4 bt2osg_Vec4(btVector4 bv);
 btVector3 osg2bt_Vec3(osg::Vec3 bv);
 osg::Quat bt2osg_Quat(btQuaternion bv);
+btQuaternion osg2bt_Quat(osg::Quat bv);
 
 #define max(a,b) \
    ({ __typeof__ (a) _a = (a); \
@@ -63,6 +64,7 @@ inline int btosgPrint(char const *name, const btVector3&  vec) {
     return printf("%s: %f %f %f\n", name, vec[0], vec[1], vec[2]);
 }
 
+/*
 class btosgNode {
     // Not used.
     // May allow future hierarchy of DynamicBodies.
@@ -73,6 +75,7 @@ class btosgNode {
         node->parent = this;
     }
 };
+*/
 
 class btosgWorld {
     private:
@@ -175,6 +178,15 @@ class btosgObject {
 		if (model) return osg2bt_Vec3(model->getPosition());
 		return btVector3(0.,0.,0.);
     	}
+	btQuaternion getRotation() {
+         	if (body) {
+            		btTransform wTrans;
+			body->getMotionState()->getWorldTransform(wTrans);
+            		return wTrans.getRotation();
+         	}
+		if (model) return osg2bt_Quat(model->getAttitude());
+		return btQuaternion(0.,0.,0.,0.);
+    	}
 	void setPosition(const btVector3 &p) {
 	    if (body) {
                 btTransform wTrans;
@@ -246,60 +258,60 @@ class btosgObject {
        		    std::cout << "Object _NO_NAME_ position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
     	}
 	virtual void update() {
-        if (body) {
-            btTransform wTrans;
-            body->getMotionState()->getWorldTransform(wTrans);
-            if ( model ) {
-                model->setAttitude(bt2osg_Quat(wTrans.getRotation()));
-                model->setPosition(bt2osg_Vec3(wTrans.getOrigin()));
+            if (body) {
+            	btTransform wTrans;
+            	body->getMotionState()->getWorldTransform(wTrans);
+            	if ( model ) {
+            	    model->setAttitude(bt2osg_Quat(wTrans.getRotation()));
+            	    model->setPosition(bt2osg_Vec3(wTrans.getOrigin()));
+            	}
+    	    }
+    	}
+    	void reset() {
+            if ( body ) {
+            	body->setWorldTransform(init_state);
+            	body->getMotionState()->setWorldTransform(init_state);
+            	body->clearForces();
+            	if ( mass>0. ) {
+            	    body->setLinearVelocity(btVector3(0.,0.,0.));
+            	    body->setAngularVelocity(btVector3(0.,0.,0.));
+            	    body->activate();   // Required if the object was asleep
+            	}
             }
-        }
-    }
-    void reset() {
-        if ( body ) {
-            body->setWorldTransform(init_state);
-            body->getMotionState()->setWorldTransform(init_state);
-            body->clearForces();
-            if ( mass>0. ) {
-                body->setLinearVelocity(btVector3(0.,0.,0.));
-                body->setAngularVelocity(btVector3(0.,0.,0.));
-                body->activate();   // Required if the object was asleep
+            else { // Not required for dynamic objects.
+            	if ( model ) {
+            	    model->setAttitude(bt2osg_Quat(init_state.getRotation()));
+            	    model->setPosition(bt2osg_Vec3(init_state.getOrigin()));
+            	}
             }
-        }
-        else { // Not required for dynamic objects.
-            if ( model ) {
-                model->setAttitude(bt2osg_Quat(init_state.getRotation()));
-                model->setPosition(bt2osg_Vec3(init_state.getOrigin()));
+    	}
+	void setInitState() {
+       	    // Store current state as init state.
+            // Init state is aplied by reset()
+            if (body) body->getMotionState()->getWorldTransform(init_state);
+    	}
+    	void setInitState(btTransform iState) {
+            // Store iState as init state.
+            // Init state is aplied by reset()
+            init_state = iState;
+    	}
+    	void createRigidBody() {
+            if ( ! shape ) {
+                fprintf(stderr,"Cannot create RigidBody without shape\n");
+                return;
             }
-        }
-    }
-    void setInitState() {
-        // Store current state as init state.
-        // Init state is aplied by reset()
-        if (body) body->getMotionState()->getWorldTransform(init_state);
-    }
-    void setInitState(btTransform iState) {
-        // Store iState as init state.
-        // Init state is aplied by reset()
-        init_state = iState;
-    }
-    void createRigidBody() {
-        if ( ! shape ) {
-            fprintf(stderr,"Cannot create RigidBody without shape\n");
-            return;
-        }
-        btDefaultMotionState* mState = new 
+            btDefaultMotionState* mState = new 
 			btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0.,0.,0.)));
-		btVector3 inertia(0,0,0);
-		shape->calculateLocalInertia(mass,inertia);
-		btRigidBody::btRigidBodyConstructionInfo cInfo(mass,mState,shape,inertia);
-                //printf("mass: %f\n",mass);
-		cInfo.m_restitution = 0.9f;
-		cInfo.m_friction = 10.f;
-		body = new btosgRigidBody(cInfo);
-        if ( !body ) fprintf(stderr,"Error creating btBody\n");
-    }
-    void loadObjectModel(char const *fname);
+	    btVector3 inertia(0,0,0);
+	    shape->calculateLocalInertia(mass,inertia);
+	    btRigidBody::btRigidBodyConstructionInfo cInfo(mass,mState,shape,inertia);
+            //printf("mass: %f\n",mass);
+	    cInfo.m_restitution = 0.9f;
+	    cInfo.m_friction = 10.f;
+	    body = new btosgRigidBody(cInfo);
+            if ( !body ) fprintf(stderr,"Error creating btBody\n");
+    	}
+    	void loadObjectModel(char const *fname);
 };
 
 class btosgExternalObject : public btosgObject {
