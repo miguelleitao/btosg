@@ -153,10 +153,23 @@ class btosgObject {
                 init_state = btTransform();
 	};
         virtual ~btosgObject() {
-            //delete body;
-            //model = NULL;
-            //delete shape;
-            delete name;
+            if (body) {
+		delete body->getMotionState();
+		delete body;
+		body = NULL;
+	    }
+	    if( model ) {
+		model->unref();
+		model = NULL;
+	    }
+            if (shape) {
+		delete shape;
+		shape = NULL;
+	    }
+            if (name) {
+		delete name;
+		name = NULL;
+	    }
         }
         void setName(char const *n) {
             name = strdup(n);

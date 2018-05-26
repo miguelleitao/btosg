@@ -30,7 +30,6 @@ int main()
 	myBall->setPosition(0.,-4.,5.);
 	myBall->body->setRestitution(0.95);
 	myWorld.addObject( myBall );
-
 	
 	// Material for base plans
 	osg::ref_ptr<osg::Material> matRamp = new osg::Material;
@@ -105,5 +104,8 @@ int main()
 	  	frame_time = timenow - last_time;
 	  	last_time = timenow;
 	}
+
+	delete manipulator;
+	
 }
 

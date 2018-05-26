@@ -11,7 +11,7 @@ INC_BULLET?=$(shell pkg-config --cflags-only-I bullet)
 INC_OSG?=$(shell pkg-config --cflags-only-I openscenegraph-osg)
 LIB_BULLET_DIR?=$(shell pkg-config --libs-only-L bullet)
 LIB_OSG_DIR=$(shell pkg-config --libs-only-L openscenegraph-osg)
-CXXFLAGS?=-std=c++11 -Wall -O2 -Wno-uninitialized
+CXXFLAGS?=-std=c++11 -Wall -Wextra -O2 -Wno-uninitialized
 VERSION:=$(shell git tag |tail -1)
 
 #LD_B3OBJ_IMPORT=-L loadOBJ -lloadOBJ

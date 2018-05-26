@@ -52,11 +52,11 @@ btVector3 quat2Euler(const btQuaternion& q)
 }
 
 btosgWorld::~btosgWorld() {
-            //delete dynamic;
-            //delete solver;
-            //delete dispatcher;
-            //delete collisionConfiguration;
-            //delete broadphase;
+            delete dynamic; // ????
+            delete solver;
+            delete dispatcher;
+            delete collisionConfiguration;
+            delete broadphase;
             for ( auto it = objects.begin(); it != objects.end(); ++it ) {
                 btosgObject *obj = *it;
                 delete obj;
