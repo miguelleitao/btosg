@@ -127,8 +127,8 @@ class btosgObject  {
 	// Main components
 	//osg::Geode *geo;
 	osg::ref_ptr<osg::PositionAttitudeTransform> model;
-        char *name;
-    btTransform init_state;
+	char *name;
+	btTransform init_state;
 	btRigidBody *body;
 	// other
 	btCollisionShape* shape;
@@ -293,7 +293,6 @@ class btosgObject  {
         if ( !body ) fprintf(stderr,"Error creating btBody\n");
     }
     void loadObjectModel(char const *fname);
-        
 };
 
 class btosgExternalObject : public btosgObject {
