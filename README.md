@@ -32,7 +32,7 @@ g++ -c `pkg-config --cflags btosg` <i>application.cpp</i>
 g++ -o <i>application</i> `pkg-config --libs btosg` <i>application.o</i>
 </pre>
 ### Examples
-**btosg** is available with two working examples.
+**btosg** is available with some working examples.
 * **ball.cpp** implements a simple simulation of a ball with two planes.
 * **objects.cpp** provides an example for creating a complete object (graphical and physical) from loading an external Wavefront OBJ file. 
 * **car.cpp** implements a basic vehicle with four wheels and suspensions. It can be compiled using a Z or Y pointing up vector.
