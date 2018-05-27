@@ -15,6 +15,9 @@ The use of **btosg** can help the programming task because it allows to create a
 * https://github.com/bulletphysics/bullet3 
 * http://bulletphysics.org/
 
+Dependences can be installed by (assuming Fedora Linux):
+    dnf install bullet openscenegraph-osg openscenegraph-osgViewer openscenegraph-osgSim openscenegraph-osgDB openscenegraph-osgGA openscenegraph-osgShadow
+
 ### Build
     git clone https://github.com/miguelleitao/btosg.git
     cd btosg
