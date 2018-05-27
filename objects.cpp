@@ -39,7 +39,7 @@ int main()
 	myWorld.addObject( myObj );
 	myObj = new btosgExternalObject("obj/cone.obj");
 	myObj->setMass(1.6);
-	myObj->setRotation(btQuaternion(btVector3(1.,0.,0.),osg::PI/2.));
+	myObj->setRotation(btQuaternion(btVector3(1.,0.,0.),osg::PI));
 	myObj->setPosition(0.5,-4.5,3);
 	myWorld.addObject( myObj );
 	myObj = new btosgExternalObject("obj/cone.obj");
@@ -49,8 +49,12 @@ int main()
 	myWorld.addObject( myObj );
 	myObj = new btosgExternalObject("obj/torus.obj");
 	myObj->setMass(1.6);
-	myObj->setRotation(btQuaternion(btVector3(1.,0.,0.),-osg::PI/2.));
-	myObj->setPosition(1.5,-4.5,3);
+	myObj->setRotation(btQuaternion(btVector3(1.,0.,0.),-0.*osg::PI/2.));
+	myObj->setPosition(1.5,-4.5,6.);
+	myWorld.addObject( myObj );
+	myObj = new btosgExternalObject("obj/octahedron.obj");
+	myObj->setMass(0.8);
+	myObj->setPosition(1.5,-4.5,3.);
 	myWorld.addObject( myObj );
 
 	// Material for base plans

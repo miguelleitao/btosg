@@ -62,7 +62,7 @@ ball.o: ball.cpp btosg.h
 	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $<
 
 objects.o: objects.cpp btosg.h
-	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $<
+	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $< 
 
 #-DBTOSG_SHADOW $<
 

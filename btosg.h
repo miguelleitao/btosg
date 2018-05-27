@@ -339,7 +339,7 @@ class btosgExternalObject : public btosgObject {
 		loadObjectModel(file_name);
 
    		GLInstanceGraphicsShape* glmesh = LoadMeshFromObj(file_name, "");
-   		printf("[INFO] Obj loaded: Extracted %d verticed from obj file [%s]\n", glmesh->m_numvertices, file_name);
+   		//printf("[INFO] Obj loaded: Extracted %d verticed from obj file [%s]\n", glmesh->m_numvertices, file_name);
 
 		const GLInstanceVertex& v = glmesh->m_vertices->at(0);
    		btConvexHullShape* shapeH = new btConvexHullShape((const btScalar*)(&(v.xyzw[0])), glmesh->m_numvertices, sizeof(GLInstanceVertex));
