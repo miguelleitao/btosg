@@ -130,10 +130,10 @@ class EventHandler : public osgGA::GUIEventHandler
 		}
 		break;
 	    case(osgGA::GUIEventAdapter::MOVE):
-			//std::cout << "mouse move " << ea.getX() << " " << ea.getY() << std::endl;
-			return false;
+		//std::cout << "mouse move " << ea.getX() << " " << ea.getY() << std::endl;
+		return false;
 	    default:
-			return false;
+		return false;
 	}
 	return true;
     }
