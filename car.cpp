@@ -78,7 +78,7 @@ class EventHandler : public osgGA::GUIEventHandler
                         return false;
                 }
                 break;
-	case(osgGA::GUIEventAdapter::KEYUP):
+	    case(osgGA::GUIEventAdapter::KEYUP):
 		switch ( ea.getKey() ) {
                     case osgGA::GUIEventAdapter::KEY_Down:
                     case osgGA::GUIEventAdapter::KEY_Up:
@@ -128,14 +128,15 @@ class EventHandler : public osgGA::GUIEventHandler
 			   std::cout << "tecla R" << std::endl;
 			   break;
 		}
-		case(osgGA::GUIEventAdapter::MOVE):
+		break;
+	    case(osgGA::GUIEventAdapter::MOVE):
 			//std::cout << "mouse move " << ea.getX() << " " << ea.getY() << std::endl;
 			return false;
-		default:
+	    default:
 			return false;
-	    }
-	    return true;
 	}
+	return true;
+    }
 };
 
 

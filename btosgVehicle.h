@@ -60,6 +60,7 @@ class btosgVehicle: public btosgObject {
             switch ( grav_axis ) {
                 case 0:
                     fprintf(stderr,"Gravity direction %d (%f,%f,%f) not supported\n",grav_axis,grav[0],grav[1],grav[2]);
+		    break;
                 case 1:
                     up = osg::Vec3(0., 1., 0.);
                     front = osg::Vec3(0., 0., 1.);
