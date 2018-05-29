@@ -118,8 +118,7 @@ class EventHandler : public osgGA::GUIEventHandler
                                 btWheelInfo& iWheel = myVehicle->vehicle->getWheelInfo(i);
                                 printf(" wheel %d, radius %f, rotation %f, eforce %f, steer %f\n",
 				 i, iWheel.m_wheelsRadius, iWheel.m_rotation, iWheel.m_engineForce,iWheel.m_steering);
-                            }
-                            
+                            }  
                             // handled = true;
                             return false;
                     case 'R':
