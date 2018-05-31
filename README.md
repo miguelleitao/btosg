@@ -1,3 +1,4 @@
+![image](https://travis-ci.org/miguelleitao/pipeline.svg?branch=master "Linux Build Status")
 # btosg
 A thin abstraction layer to integrate **Bullet** and **OpenSceneGraph**.
 
