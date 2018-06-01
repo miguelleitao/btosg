@@ -1,4 +1,4 @@
-![image](https://travis-ci.org/miguelleitao/btosg.svg?branch=master "Build Status")
+[![Build Status](https://travis-ci.org/miguelleitao/btosg.svg?branch=master "Build Status")](https://travis-ci.org/miguelleitao/btosg)
 # btosg
 A thin abstraction layer to integrate **Bullet** and **OpenSceneGraph**.
 
