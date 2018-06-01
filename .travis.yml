@@ -2,7 +2,7 @@
 language: cpp
 sudo: false # only for faster builds
 install:
-  - sudo apt update && sudo apt -y install openscenegraph libopenscenegraph-dev bullet-dev
+  - sudo apt update && sudo apt -y install openscenegraph libopenscenegraph-dev libbullet-dev
 script:
   - make all
 
