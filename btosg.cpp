@@ -8,7 +8,7 @@
 #include <osg/Material>
 #include <osg/Texture2D>
 
-#define _DEBUG_ (1)
+#define _DEBUG_ (0)
 
 osg::Vec3 bt2osg_Vec3(btVector3 bv) {
 return osg::Vec3( bv.x(), bv.y(), bv.z() );
