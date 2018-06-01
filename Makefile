@@ -2,6 +2,7 @@
 #
 # Miguel Leitao, 2016
 
+# Targets
 BTOSG=libbtosg.a libbtosg.so
 EXAMPLES=ball carZ carY objects
 
@@ -11,13 +12,14 @@ INC_BULLET?=$(shell pkg-config --cflags-only-I bullet)
 INC_OSG?=$(shell pkg-config --cflags-only-I openscenegraph-osg)
 LIB_BULLET_DIR?=$(shell pkg-config --libs-only-L bullet)
 LIB_OSG_DIR=$(shell pkg-config --libs-only-L openscenegraph-osg)
-CXXFLAGS?=-std=c++11 -Wall -Wextra -O2 -Wno-uninitialized
+CXXFLAGS?=-std=c++11 -Wall -Wextra -O2 -Wno-uninitialized -Wno-unused-parameter
 VERSION:=$(shell git tag |tail -1)
 
 #LD_B3OBJ_IMPORT=-L loadOBJ -lloadOBJ
 B3_OBJ_LOADER=loadOBJ/libloadOBJ.a
 BTOSG_PC=btosg.pc
 
+# Machine specific definitions can be used from local .config file
 -include .config
 
 ifeq ($(PREFIX),)
@@ -41,16 +43,16 @@ btosg: ${BTOSG}
 all: default examples
 
 carZ: carZ.o btosg.o
-	cc -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -l stdc++ -lm
+	$(CXX) -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -lm
 
 carY: carY.o btosg.o
-	cc -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -l stdc++ -lm
+	$(CXX) -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -lm
 
 ball: ball.o btosg.o
-	cc -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -l stdc++ -lm
+	$(CXX) -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -lm
 
 objects: objects.o btosg.o ${B3_OBJ_LOADER}
-	cc -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -l stdc++ -lm
+	$(CXX) -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -lm
 
 carZ.o: car.cpp btosg.h btosgVehicle.h
 	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} $< -o $@ -DVERSION=${VERSION} 
