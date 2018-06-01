@@ -1,6 +1,8 @@
 
-language: c
+language: cpp
 sudo: false # only for faster builds
+install:
+  - sudo apt update && sudo apt -y install openscenegraph libopenscenegraph-dev
 script:
   - make all
 
