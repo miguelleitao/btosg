@@ -3,7 +3,6 @@
 	Miguel Leitao, 2016
 */
 
-
 #include "btosg.h"
 #include <osg/Material>
 #include <osg/Texture2D>
