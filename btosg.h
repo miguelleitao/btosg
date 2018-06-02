@@ -133,11 +133,11 @@ class btosgRigidBody : public btRigidBody {
 	}
 };
 */
-class btosgObject {
+class btosgObject : public osg::PositionAttitudeTransform {
    public:
 	// Main components
 	//osg::Geode *geo;
-	osg::ref_ptr<osg::PositionAttitudeTransform> model;
+	//osg::ref_ptr<osg::PositionAttitudeTransform> model;
 	char *name;
 	btTransform init_state;
 	btRigidBody *body;
@@ -145,7 +145,7 @@ class btosgObject {
 	btCollisionShape* shape;
 	float mass;
 	btosgObject() {
-		model = NULL;
+		//model = NULL;
 		body = NULL;
 		shape = NULL; 
 		mass = 0.;
@@ -158,10 +158,12 @@ class btosgObject {
 		delete body;
 		body = NULL;
 	    }
+	    /*
 	    if( model ) {
 		model->unref();
 		model = NULL;
 	    }
+	    */
             if (shape) {
 		delete shape;
 		shape = NULL;
