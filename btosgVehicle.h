@@ -89,9 +89,9 @@ class btosgVehicle: public btosgObject {
                     else fprintf(stderr,"Error creating osg::Shape\n");
                 } else fprintf(stderr,"Error creating osg::Shape\n");
             } else fprintf(stderr,"Error creating Geode\n");
-            if ( !model )	model = new osg::PositionAttitudeTransform;
-            model->addChild(geo);
-            model->setNodeMask(CastsShadowTraversalMask);
+            //if ( !model )	model = new osg::PositionAttitudeTransform;
+            addChild(geo);
+            setNodeMask(CastsShadowTraversalMask);
 		
 	    osg::ref_ptr<osg::Material> mat = new osg::Material;
 	    mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0.4, 0.3, 0., 1.0));
@@ -254,7 +254,7 @@ class btosgVehicle: public btosgObject {
                 osg::Vec3 iPos = bt2osg_Vec3(iWheel.m_chassisConnectionPointCS);
                 wheel[i]->setPosition(iPos);
                 //printf("  roda %d, %f %f %f\n",i,iPos[0],iPos[1],iPos[2]);
-                model->addChild( wheel[i] );
+                addChild( wheel[i] );
             }
         }
     }

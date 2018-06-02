@@ -148,7 +148,7 @@ class BlockGreen : public btosgBox {
             mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.1, 0.5, 0.1, 1.0));
             mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
             mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
-            model->getOrCreateStateSet()->
+            getOrCreateStateSet()->
                 setAttributeAndModes(mat, osg::StateAttribute::ON);
         }
         BlockGreen(float x, float z) : BlockGreen(x,1.,z) {};
@@ -163,7 +163,7 @@ class BlockRed : public btosgBox {
             mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.6, 0.1, 0.1, 1.0));
             mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
             mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
-            model->getOrCreateStateSet()->
+            getOrCreateStateSet()->
                 setAttributeAndModes(mat, osg::StateAttribute::ON);
         }
         BlockRed(float x, float z) : BlockRed(x,1.,z) {};
@@ -178,7 +178,7 @@ class BlockBlue : public btosgBox {
             mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.1, 0.1, 0.5, 1.0));
             mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
             mat->setShininess(osg::Material::FRONT_AND_BACK, 64);
-            model->getOrCreateStateSet()->
+            getOrCreateStateSet()->
                 setAttributeAndModes(mat, osg::StateAttribute::ON);
         }
         BlockBlue(float x, float z) : BlockBlue(x,1.,z) {};

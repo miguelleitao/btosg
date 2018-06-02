@@ -74,8 +74,9 @@ void btosgWorld::addObject(btosgObject *obj)  {
     if ( obj->body )  dynamic->addRigidBody(obj->body);
 		else if ( _DEBUG_ ) fprintf(stderr,"Adding object without rigid body\n");
     //printf("adding object to World\n");
-    if ( obj->model ) scene->addChild(obj->model);
-		else if ( _DEBUG_ ) fprintf(stderr,"Adding object without visual model\n");
+    //if ( obj->model )
+	    scene->addChild(obj);
+//		else if ( _DEBUG_ ) fprintf(stderr,"Adding object without visual model\n");
     
 };
 
@@ -112,11 +113,11 @@ void btosgObject::loadObjectModel(char const *fname) {
     if ( ! loadedModel ) {
 	fprintf(stderr,"Error reading Object model from file '%s'\n", fname);
     }
-    if (  !model)	model = new osg::PositionAttitudeTransform;
+    //if (  !model)	model = new osg::PositionAttitudeTransform;
     osg::PositionAttitudeTransform* obj_rot = new osg::PositionAttitudeTransform;
     obj_rot->setAttitude(osg::Quat(-osg::PI/2.,osg::Vec3(1.,0.,0.)));
     obj_rot->addChild(loadedModel);
-    model->addChild(obj_rot);
+    addChild(obj_rot);
 }
 
 
@@ -137,5 +138,5 @@ void btosgObject::setTexture(char const *fname)
 	    }
 	    stateset->setMode(GL_LIGHTING, osg::StateAttribute::ON);
 
-    model->setStateSet( stateset );        
+    setStateSet( stateset );        
 }

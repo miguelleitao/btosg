@@ -191,7 +191,7 @@ class btosgObject : public osg::PositionAttitudeTransform {
 			body->getMotionState()->getWorldTransform(wTrans);
             		return wTrans.getOrigin();
          	}
-		if (model) return osg2bt_Vec3(model->getPosition());
+		return osg2bt_Vec3(osg::PositionAttitudeTransform::getPosition());
 		return btVector3(0.,0.,0.);
     	}
 	btQuaternion getRotation() {
@@ -200,7 +200,7 @@ class btosgObject : public osg::PositionAttitudeTransform {
 			body->getMotionState()->getWorldTransform(wTrans);
             		return wTrans.getRotation();
          	}
-		if (model) return osg2bt_Quat(model->getAttitude());
+		osg2bt_Quat(osg::PositionAttitudeTransform::getAttitude());
 		return btQuaternion(0.,0.,0.,0.);
     	}
 	btVector3 getEuler() {
@@ -225,9 +225,7 @@ class btosgObject : public osg::PositionAttitudeTransform {
                 #ifdef _DEBUG_
 		   printf("set Position in non dynamic object\n");
 		#endif
-                if (model) {
-                    model->setPosition(bt2osg_Vec3(p));
-                }
+		   osg::PositionAttitudeTransform::setPosition(bt2osg_Vec3(p));
             }
         }
         void setPosition(float x, float y, float z) {
@@ -252,9 +250,7 @@ class btosgObject : public osg::PositionAttitudeTransform {
                 #ifdef  _DEBUG_
 		  printf("setRotation in non dynamic object\n");
 		#endif
-                if (model) {
-                        model->setAttitude(bt2osg_Quat(q));
-                }
+		  osg::PositionAttitudeTransform::setAttitude(bt2osg_Quat(q));
             }
 	}
 	void setRotation(float x, float y, float z, float w) {
@@ -267,7 +263,7 @@ class btosgObject : public osg::PositionAttitudeTransform {
 	
 	void setTexture(char const *fname);
 	void setMaterial(osg::ref_ptr<osg::Material> mat) {
-		model->getOrCreateStateSet()->setAttributeAndModes(mat, osg::StateAttribute::ON);
+		getOrCreateStateSet()->setAttributeAndModes(mat, osg::StateAttribute::ON);
 	}
 	void logPosition() {
          	btVector3 pos = getPosition();
@@ -280,10 +276,8 @@ class btosgObject : public osg::PositionAttitudeTransform {
             if (body) {
             	btTransform wTrans;
             	body->getMotionState()->getWorldTransform(wTrans);
-            	if ( model ) {
-            	    model->setAttitude(bt2osg_Quat(wTrans.getRotation()));
-            	    model->setPosition(bt2osg_Vec3(wTrans.getOrigin()));
-            	}
+            	osg::PositionAttitudeTransform::setAttitude(bt2osg_Quat(wTrans.getRotation()));
+		osg::PositionAttitudeTransform::setPosition(bt2osg_Vec3(wTrans.getOrigin()));
     	    }
     	}
     	void reset() {
@@ -298,10 +292,8 @@ class btosgObject : public osg::PositionAttitudeTransform {
             	}
             }
             else { // Not required for dynamic objects.
-            	if ( model ) {
-            	    model->setAttitude(bt2osg_Quat(init_state.getRotation()));
-            	    model->setPosition(bt2osg_Vec3(init_state.getOrigin()));
-            	}
+            	osg::PositionAttitudeTransform::setAttitude(bt2osg_Quat(init_state.getRotation()));
+		osg::PositionAttitudeTransform::setPosition(bt2osg_Vec3(init_state.getOrigin()));
             }
     	}
 	void setInitState() {
@@ -362,9 +354,9 @@ class btosgSphere : public btosgObject {
 		radius = r;
 		osg::ref_ptr<osg::Geode> geo = new osg::Geode();
 		geo->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.,0.,0.),r)));
-		if (  !model)	model = new osg::PositionAttitudeTransform;
-		model->addChild(geo);
-                model->setNodeMask(CastsShadowTraversalMask);
+		//if (  !model)	model = new osg::PositionAttitudeTransform;
+		addChild(geo);
+                setNodeMask(CastsShadowTraversalMask);
 		shape = new btSphereShape(r);
 		mass = 1.;
                 createRigidBody();
@@ -390,9 +382,9 @@ class btosgBox : public btosgObject {
                     else fprintf(stderr,"Error creating osg::Shape\n");
                 } else fprintf(stderr,"Error creating osg::Shape\n");
             } else fprintf(stderr,"Error creating Geode\n");
-            if (  !model)	model = new osg::PositionAttitudeTransform;
-            model->addChild(geo);
-            model->setNodeMask(CastsShadowTraversalMask);
+            //if (  !model)	model = new osg::PositionAttitudeTransform;
+            addChild(geo);
+            setNodeMask(CastsShadowTraversalMask);
             mass = m;
             shape = new btBoxShape( osg2bt_Vec3(dim/2.) );
             if ( !shape ) fprintf(stderr,"Error creating btShape\n");
@@ -427,9 +419,9 @@ class btosgPlane : public btosgObject {
 		        else fprintf(stderr,"Error creating osg::Shape\n");
 		    } else fprintf(stderr,"Error creating osg::Shape\n");
 		} else fprintf(stderr,"Error creating Geode\n");
-		if (  !model)	model = new osg::PositionAttitudeTransform;
-		model->addChild(geo);
-		model->setNodeMask(ReceivesShadowTraversalMask);
+		//if (  !model)	model = new osg::PositionAttitudeTransform;
+		addChild(geo);
+		setNodeMask(ReceivesShadowTraversalMask);
 		mass = 0;
 		btVector3 norm(0.,0.,1);
 		if ( dx<dy && dx<dz ) 	   norm = btVector3(1.,0.,0.);
@@ -471,12 +463,12 @@ class btosgCone : public btosgObject {
                     else fprintf(stderr,"Error creating osg::Shape\n");
                 } else fprintf(stderr,"Error creating osg::Shape\n");
             } else fprintf(stderr,"Error creating Geode\n");
-            if (  !model)	model = new osg::PositionAttitudeTransform;
+            //if (  !model)	model = new osg::PositionAttitudeTransform;
             osg::PositionAttitudeTransform *center_pos = new osg::PositionAttitudeTransform;
             center_pos->setPosition(osg::Vec3(0.,0.,-height/4.));
             center_pos->addChild(geo);
-            model->addChild(center_pos);
-            model->setNodeMask(ReceivesShadowTraversalMask);
+            addChild(center_pos);
+            setNodeMask(ReceivesShadowTraversalMask);
             mass = 1.;
             shape = new btConeShapeZ(r, h);
             if ( !shape ) fprintf(stderr,"Error creating btShape\n");
@@ -503,12 +495,12 @@ class btosgCylinder : public btosgObject {
                     else fprintf(stderr,"Error creating osg::Shape\n");
                 } else fprintf(stderr,"Error creating osg::Shape\n");
             } else fprintf(stderr,"Error creating Geode\n");
-            if ( !model )	model = new osg::PositionAttitudeTransform;
+            //if ( !model )	model = new osg::PositionAttitudeTransform;
             osg::PositionAttitudeTransform *center_pos = new osg::PositionAttitudeTransform;
             center_pos->setPosition(osg::Vec3(0.,0., 0.));
             center_pos->addChild(geo);
-            model->addChild(center_pos);
-            model->setNodeMask(ReceivesShadowTraversalMask);
+            addChild(center_pos);
+            setNodeMask(ReceivesShadowTraversalMask);
             mass = 1.;
             // btCylinderShapeZ is centered at origin
             shape = new btCylinderShapeZ(btVector3(r, r, h/2.));
