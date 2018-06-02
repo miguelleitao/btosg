@@ -124,7 +124,7 @@ class btosgWorld {
     void addObject(class btosgObject *obj);
     void reset();
 };
-
+/*
 class btosgRigidBody : public btRigidBody {
     public:
 	btosgRigidBody(btRigidBody::btRigidBodyConstructionInfo& ci) : btRigidBody(ci) {}; 
@@ -132,7 +132,7 @@ class btosgRigidBody : public btRigidBody {
 	    m_restitution = r;
 	}
 };
-
+*/
 class btosgObject {
    public:
 	// Main components
@@ -140,7 +140,7 @@ class btosgObject {
 	osg::ref_ptr<osg::PositionAttitudeTransform> model;
 	char *name;
 	btTransform init_state;
-	btosgRigidBody *body;
+	btRigidBody *body;
 	// other
 	btCollisionShape* shape;
 	float mass;
@@ -267,7 +267,6 @@ class btosgObject {
 	void setMaterial(osg::ref_ptr<osg::Material> mat) {
 		model->getOrCreateStateSet()->setAttributeAndModes(mat, osg::StateAttribute::ON);
 	}
-        
 	void logPosition() {
          	btVector3 pos = getPosition();
        		if ( name )
@@ -326,7 +325,7 @@ class btosgObject {
             //printf("mass: %f\n",mass);
 	    cInfo.m_restitution = 0.9f;
 	    cInfo.m_friction = 10.f;
-	    body = new btosgRigidBody(cInfo);
+	    body = new btRigidBody(cInfo);
             if ( !body ) fprintf(stderr,"Error creating btBody\n");
     	}
     	void loadObjectModel(char const *fname);
@@ -446,7 +445,7 @@ class btosgPlane : public btosgObject {
 		btRigidBody::btRigidBodyConstructionInfo cInfo(mass,mState,shape,inertia);
 		cInfo.m_restitution = 0.9f;
 		cInfo.m_friction = 0.9f;
-		body = new btosgRigidBody(cInfo);
+		body = new btRigidBody(cInfo);
         	if ( !body ) fprintf(stderr,"Error creating btBody\n");
     	}
 };
