@@ -5,6 +5,7 @@
 # Targets
 BTOSG=libbtosg.a libbtosg.so
 EXAMPLES=ball carZ carY objects
+BTOSG_PC=btosg.pc
 
 BULLET_DIR?=/usr
 OSG_DIR?=/usr
@@ -12,12 +13,12 @@ INC_BULLET?=$(shell pkg-config --cflags-only-I bullet)
 INC_OSG?=$(shell pkg-config --cflags-only-I openscenegraph-osg)
 LIB_BULLET_DIR?=$(shell pkg-config --libs-only-L bullet)
 LIB_OSG_DIR=$(shell pkg-config --libs-only-L openscenegraph-osg)
-CXXFLAGS?=-std=c++11 -Wall -Wextra -O2 -Wno-uninitialized -Wno-unused-parameter
+BTOSG_LOAD_OBJ?=Y
+CXXFLAGS?=-std=c++11 -Wall -Wextra -O2 -Wno-uninitialized -Wno-unused-parameter -DBTOSG_LOAD_OBJ=${BTOSG_LOAD_OBJ}
 VERSION:=$(shell git tag |tail -1)
 
 #LD_B3OBJ_IMPORT=-L loadOBJ -lloadOBJ
 B3_OBJ_LOADER=loadOBJ/libloadOBJ.a
-BTOSG_PC=btosg.pc
 
 # Machine specific definitions can be used from local .config file
 -include .config
