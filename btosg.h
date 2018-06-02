@@ -19,8 +19,11 @@
 
 #include <btBulletDynamicsCommon.h>
 
+#ifndef NO_BTOSG_LOAD_OBJ
 #include "loadOBJ/include/LoadMeshFromObj.h"
 #include "loadOBJ/include/GLInstanceGraphicsShape.h"
+//include <GLInstanceGraphicsShape.h>
+#endif
 
 //include <GLInstanceGraphicsShape.h>
 
