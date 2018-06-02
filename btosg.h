@@ -8,6 +8,9 @@
 #ifndef BTOSG_H
 #define BTOSG_H 1
 
+#define YES 1
+#define NO  0
+
 #include <osgDB/ReadFile>
 #include <osg/MatrixTransform>
 #include <osg/PositionAttitudeTransform>
@@ -19,7 +22,7 @@
 
 #include <btBulletDynamicsCommon.h>
 
-#if NO_BTOSG_LOAD_OBJ == Y
+#if BTOSG_LOAD_OBJ==YES
 #include "loadOBJ/include/LoadMeshFromObj.h"
 #include "loadOBJ/include/GLInstanceGraphicsShape.h"
 //include <GLInstanceGraphicsShape.h>
@@ -334,6 +337,7 @@ class btosgObject {
     	void loadObjectModel(char const *fname);
 };
 
+#if BTOSG_LOAD_OBJ
 class btosgExternalObject : public btosgObject {
     public:
 	//char *fname;
@@ -355,6 +359,7 @@ class btosgExternalObject : public btosgObject {
                 body->setDamping(0.01,0.1);
 	}
 };
+#endif
 
 class btosgSphere : public btosgObject {
     public:
