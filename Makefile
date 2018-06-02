@@ -33,6 +33,8 @@ default: ${BTOSG}
 
 examples: ${EXAMPLES}
 
+test: ${BTOSG} pc ball carZ
+
 pc:
 	rm -f ${BTOSG_PC}
 	@make ${BTOSG_PC}

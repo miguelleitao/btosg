@@ -4,7 +4,7 @@ sudo: false # only for faster builds
 install:
   - sudo apt update && sudo apt -y install openscenegraph libopenscenegraph-dev libbullet-dev
 script:
-  - make all
+  - make test
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
