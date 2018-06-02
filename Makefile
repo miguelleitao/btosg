@@ -27,7 +27,8 @@ ifeq ($(PREFIX),)
     PREFIX := /usr/local
 endif
 
-LD_BULLET=${LIB_BULLET_DIR} -l BulletDynamics -l BulletCollision -l Bullet3Common -l LinearMath
+#LD_BULLET=${LIB_BULLET_DIR} -l BulletDynamics -l BulletCollision -l Bullet3Common -l LinearMath
+LD_BULLET=${LIB_BULLET_DIR} -l BulletDynamics -l BulletCollision -l LinearMath
 LD_OSG=${LIB_OSG_DIR} -l osg -losgViewer -losgSim -losgDB -losgGA -losgShadow
 
 default: ${BTOSG}
@@ -55,7 +56,7 @@ ball: ball.o btosg.o
 	$(CXX) -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -lm
 
 objects: objects.o btosg.o ${B3_OBJ_LOADER}
-	$(CXX) -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -lm
+	$(CXX) -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -lm -l Bullet3Common
 
 carZ.o: car.cpp btosg.h btosgVehicle.h
 	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} $< -o $@ -DVERSION=${VERSION} 
