@@ -153,7 +153,7 @@ class btosgObject {
 	btTransform init_state;   ///< Inital state. Applied on reset events.
 	btRigidBody *body;	  ///< object's rigid body
 	// other
-	btCollisionShape* shape;  ///< Object's colision shape.
+	btCollisionShape* shape;  ///< Object's collision shape.
 	float mass;		  ///< Mass of object
 	btosgObject() {
 		model = NULL;
@@ -340,6 +340,7 @@ class btosgObject {
             init_state = iState;
     	}
     	void createRigidBody() {
+	    /// Creates a new rigid body as a btRigidBody object.
             if ( ! shape ) {
                 fprintf(stderr,"Cannot create RigidBody without shape\n");
                 return;

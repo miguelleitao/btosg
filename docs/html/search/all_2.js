@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['geteuler',['getEuler',['../classbtosgObject.html#afef1fe06635566ab9cee134f72439e02',1,'btosgObject']]],
-  ['getposition',['getPosition',['../classbtosgObject.html#a77a1434498d7a6d00c415042a995d119',1,'btosgObject']]],
-  ['getrotation',['getRotation',['../classbtosgObject.html#a9cadb03762699412552601196950a039',1,'btosgObject']]]
+  ['createrigidbody',['createRigidBody',['../classbtosgObject.html#a029dbe9134fa94e7355799f67fb2cd6d',1,'btosgObject']]]
 ];

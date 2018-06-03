@@ -70,14 +70,11 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:afce096686d8f84afd8b8fa3f2dc161b8"><td class="memItemLeft" align="right" valign="top"><a id="afce096686d8f84afd8b8fa3f2dc161b8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>stepSimulation</b> (btScalar timeStep, int maxSubSteps)</td></tr>
+<tr class="memitem:afce096686d8f84afd8b8fa3f2dc161b8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbtosgWorld.html#afce096686d8f84afd8b8fa3f2dc161b8">stepSimulation</a> (btScalar timeStep, int maxSubSteps)</td></tr>
 <tr class="separator:afce096686d8f84afd8b8fa3f2dc161b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5b71c6319dd420479096a265a1725b7"><td class="memItemLeft" align="right" valign="top"><a id="ae5b71c6319dd420479096a265a1725b7"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>addObject</b> (class <a class="el" href="classbtosgObject.html">btosgObject</a> *obj)</td></tr>
+<tr class="memitem:ae5b71c6319dd420479096a265a1725b7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbtosgWorld.html#ae5b71c6319dd420479096a265a1725b7">addObject</a> (class <a class="el" href="classbtosgObject.html">btosgObject</a> *obj)</td></tr>
 <tr class="separator:ae5b71c6319dd420479096a265a1725b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6af4d066410a86b44fff5563667ea9a9"><td class="memItemLeft" align="right" valign="top"><a id="a6af4d066410a86b44fff5563667ea9a9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
+<tr class="memitem:a6af4d066410a86b44fff5563667ea9a9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbtosgWorld.html#a6af4d066410a86b44fff5563667ea9a9">reset</a> ()</td></tr>
 <tr class="separator:a6af4d066410a86b44fff5563667ea9a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -92,6 +89,73 @@ osg::ref_ptr&lt; osg::Group &gt;&#160;</td><td class="memItemRight" valign="bott
 std::forward_list&lt; class <a class="el" href="classbtosgObject.html">btosgObject</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>objects</b></td></tr>
 <tr class="separator:ab105aa8c0f8bdbdf323d47b902f6aca0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ae5b71c6319dd420479096a265a1725b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae5b71c6319dd420479096a265a1725b7">&#9670;&nbsp;</a></span>addObject()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void btosgWorld::addObject </td>
+          <td>(</td>
+          <td class="paramtype">class <a class="el" href="classbtosgObject.html">btosgObject</a> *&#160;</td>
+          <td class="paramname"><em>obj</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Registes the object obj into a simulation world. </p>
+
+</div>
+</div>
+<a id="a6af4d066410a86b44fff5563667ea9a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6af4d066410a86b44fff5563667ea9a9">&#9670;&nbsp;</a></span>reset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void btosgWorld::reset </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Reset all registered objects. </p>
+
+</div>
+</div>
+<a id="afce096686d8f84afd8b8fa3f2dc161b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afce096686d8f84afd8b8fa3f2dc161b8">&#9670;&nbsp;</a></span>stepSimulation()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void btosgWorld::stepSimulation </td>
+          <td>(</td>
+          <td class="paramtype">btScalar&#160;</td>
+          <td class="paramname"><em>timeStep</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>maxSubSteps</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Performs a simulation step. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="btosg_8h_source.html">btosg.h</a></li>
 <li>btosg.cpp</li>

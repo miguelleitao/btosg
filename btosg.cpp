@@ -70,6 +70,7 @@ btosgWorld::~btosgWorld() {
 }
 
 void btosgWorld::addObject(btosgObject *obj)  {
+    /// Registes the object obj into a simulation world.
     objects.push_front(obj);
     if ( obj->body )  dynamic->addRigidBody(obj->body);
 		else if ( _DEBUG_ ) fprintf(stderr,"Adding object without rigid body\n");
@@ -80,7 +81,7 @@ void btosgWorld::addObject(btosgObject *obj)  {
 };
 
 void btosgWorld::stepSimulation(btScalar timeStep, int maxSubSteps) {
-    
+    /// Performs a simulation step.
         if ( steps==0L ) {
             for ( auto it = objects.begin(); it != objects.end(); ++it ) {
                 btosgObject *obj = *it;
@@ -97,6 +98,7 @@ void btosgWorld::stepSimulation(btScalar timeStep, int maxSubSteps) {
 };
 
 void btosgWorld::reset() {
+	/// Reset all registered objects.
         for ( auto it = objects.begin(); it != objects.end(); ++it ) {
             btosgObject *obj = *it;
             obj->reset();
@@ -122,8 +124,9 @@ void btosgObject::loadObjectModel(char const *fname) {
 
 void btosgObject::setTexture(char const *fname)
 {
-    // ---------------------------------------
-    // Set up a StateSet to texture the objects
+    //! Sets the object texture from a loaded image file.
+    //---------------------------------------
+    /// Set up a StateSet to texture the objects
     // ---------------------------------------
     osg::StateSet* stateset = new osg::StateSet();
 	
