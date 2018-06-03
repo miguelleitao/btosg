@@ -141,8 +141,8 @@ class btosgRigidBody : public btRigidBody {
 */
 
 /** Main btosg object base class.
- *  Integrates a physical object (btRigisBody), a colision shape (btCollisionShape)
- *  and a graphical object (osg::PositionAttitudeTransfor).
+ *  Integrates a physical object (btRigidBody), a collision shape (btCollisionShape)
+ *  and a graphical object (osg::PositionAttitudeTransform).
  */
 class btosgObject {
    public:
@@ -151,7 +151,7 @@ class btosgObject {
 	osg::ref_ptr<osg::PositionAttitudeTransform> model;	///< Object's graphical model
 	char *name;	///< Object name
 	btTransform init_state;   ///< Inital state. Applied on reset events.
-	btRigidBody *body;	 ///< object's rigid body
+	btRigidBody *body;	  ///< object's rigid body
 	// other
 	btCollisionShape* shape;  ///< Object's colision shape.
 	float mass;		  ///< Mass of object
@@ -183,6 +183,7 @@ class btosgObject {
 	    }
         }
         void setName(char const *n) {
+	    /// Sets the object's name.
             name = strdup(n);
         }
 	void setMass(double m) {
@@ -279,11 +280,11 @@ class btosgObject {
 	}
 	
 	void setRotation(osg::Quat q) {
+	    /// Sets objects attitude from a quaternion.
             setRotation(q[0],q[1],q[2],q[3]);
 	}
 	
-	void setTexture(char const *fname);
-		/// Sets a texture from an image file.
+	void setTexture(char const *fname); //< Sets a texture from an image file.
 	void setMaterial(osg::ref_ptr<osg::Material> mat) {
 		/// Sets the material properties for the object.
 		model->getOrCreateStateSet()->setAttributeAndModes(mat, osg::StateAttribute::ON);
@@ -329,13 +330,13 @@ class btosgObject {
             }
     	}
 	void setInitState() {
-       	    // Store current state as init state.
-            // Init state is aplied by reset()
+       	    /// Stores current state as init state.
+            /// Init state is aplied by reset()
             if (body) body->getMotionState()->getWorldTransform(init_state);
     	}
     	void setInitState(btTransform iState) {
-            // Store iState as init state.
-            // Init state is aplied by reset()
+            /// Stores iState as init state.
+            /// Init state is aplied by reset()
             init_state = iState;
     	}
     	void createRigidBody() {

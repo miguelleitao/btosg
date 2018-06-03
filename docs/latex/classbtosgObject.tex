@@ -13,8 +13,7 @@ Inheritance diagram for btosg\+Object\+:\begin{figure}[H]
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classbtosgObject_ab06a1b3f357209214c6440cd5746523e}\label{classbtosgObject_ab06a1b3f357209214c6440cd5746523e}} 
-void {\bfseries set\+Name} (char const $\ast$n)
+void \hyperlink{classbtosgObject_ab06a1b3f357209214c6440cd5746523e}{set\+Name} (char const $\ast$n)
 \item 
 void \hyperlink{classbtosgObject_a91da93c82d48b86192f0cbb16054fe57}{set\+Mass} (double m)
 \item 
@@ -32,25 +31,22 @@ void \hyperlink{classbtosgObject_a656412794a971a10478aedb520f298bf}{set\+Rotatio
 \item 
 void \hyperlink{classbtosgObject_a4d21ca59b944fd26644db35d3e9ba67a}{set\+Rotation} (float x, float y, float z, float w)
 \item 
-\mbox{\Hypertarget{classbtosgObject_ae803e0566f0d7b3ffca686b968b297f8}\label{classbtosgObject_ae803e0566f0d7b3ffca686b968b297f8}} 
-void {\bfseries set\+Rotation} (osg\+::\+Quat q)
+void \hyperlink{classbtosgObject_ae803e0566f0d7b3ffca686b968b297f8}{set\+Rotation} (osg\+::\+Quat q)
 \item 
 \mbox{\Hypertarget{classbtosgObject_aff54acbc7c66811efb0cf2838107a241}\label{classbtosgObject_aff54acbc7c66811efb0cf2838107a241}} 
 void {\bfseries set\+Texture} (char const $\ast$fname)
 \item 
 void \hyperlink{classbtosgObject_a6ab7b9e0553dab398b980637788b56a8}{set\+Material} (osg\+::ref\+\_\+ptr$<$ osg\+::\+Material $>$ mat)
-\begin{DoxyCompactList}\small\item\em Sets a texture from an image file. \end{DoxyCompactList}\item 
+\item 
 void \hyperlink{classbtosgObject_acfd70fa6477c80fd7f29ad7ab9f4f067}{log\+Position} ()
 \item 
 virtual void \hyperlink{classbtosgObject_a342917817dfde62554f83da8e0d5110b}{update} ()
 \item 
 void \hyperlink{classbtosgObject_a93983f9180dd0672f8779cf2baa78580}{reset} ()
 \item 
-\mbox{\Hypertarget{classbtosgObject_ad1508a0ce28cfac83e5f0ff6245f91b5}\label{classbtosgObject_ad1508a0ce28cfac83e5f0ff6245f91b5}} 
-void {\bfseries set\+Init\+State} ()
+void \hyperlink{classbtosgObject_ad1508a0ce28cfac83e5f0ff6245f91b5}{set\+Init\+State} ()
 \item 
-\mbox{\Hypertarget{classbtosgObject_a6ceb08e59ee95acaaef389ee198d2b56}\label{classbtosgObject_a6ceb08e59ee95acaaef389ee198d2b56}} 
-void {\bfseries set\+Init\+State} (bt\+Transform i\+State)
+void \hyperlink{classbtosgObject_a6ceb08e59ee95acaaef389ee198d2b56}{set\+Init\+State} (bt\+Transform i\+State)
 \item 
 \mbox{\Hypertarget{classbtosgObject_a029dbe9134fa94e7355799f67fb2cd6d}\label{classbtosgObject_a029dbe9134fa94e7355799f67fb2cd6d}} 
 void {\bfseries create\+Rigid\+Body} ()
@@ -82,7 +78,7 @@ float \hyperlink{classbtosgObject_a2418bb2194d5e9b0f1c51c84672ba7d1}{mass}
 
 
 \subsection{Detailed Description}
-Main btosg object base class. Integrates a physical object (bt\+Rigis\+Body), a colision shape (bt\+Collision\+Shape) and a graphical object (osg\+::\+Position\+Attitude\+Transfor). 
+Main btosg object base class. Integrates a physical object (bt\+Rigid\+Body), a collision shape (bt\+Collision\+Shape) and a graphical object (osg\+::\+Position\+Attitude\+Transform). 
 
 \subsection{Member Function Documentation}
 \mbox{\Hypertarget{classbtosgObject_afef1fe06635566ab9cee134f72439e02}\label{classbtosgObject_afef1fe06635566ab9cee134f72439e02}} 
@@ -115,7 +111,19 @@ Outputs object\textquotesingle{}s position. \mbox{\Hypertarget{classbtosgObject_
 \subsubsection{\texorpdfstring{reset()}{reset()}}
 {\footnotesize\ttfamily void btosg\+Object\+::reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-Reposition object to its inital state. \mbox{\Hypertarget{classbtosgObject_a91da93c82d48b86192f0cbb16054fe57}\label{classbtosgObject_a91da93c82d48b86192f0cbb16054fe57}} 
+Reposition object to its inital state. \mbox{\Hypertarget{classbtosgObject_ad1508a0ce28cfac83e5f0ff6245f91b5}\label{classbtosgObject_ad1508a0ce28cfac83e5f0ff6245f91b5}} 
+\index{btosg\+Object@{btosg\+Object}!set\+Init\+State@{set\+Init\+State}}
+\index{set\+Init\+State@{set\+Init\+State}!btosg\+Object@{btosg\+Object}}
+\subsubsection{\texorpdfstring{set\+Init\+State()}{setInitState()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void btosg\+Object\+::set\+Init\+State (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Stores current state as init state. Init state is aplied by \hyperlink{classbtosgObject_a93983f9180dd0672f8779cf2baa78580}{reset()} \mbox{\Hypertarget{classbtosgObject_a6ceb08e59ee95acaaef389ee198d2b56}\label{classbtosgObject_a6ceb08e59ee95acaaef389ee198d2b56}} 
+\index{btosg\+Object@{btosg\+Object}!set\+Init\+State@{set\+Init\+State}}
+\index{set\+Init\+State@{set\+Init\+State}!btosg\+Object@{btosg\+Object}}
+\subsubsection{\texorpdfstring{set\+Init\+State()}{setInitState()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void btosg\+Object\+::set\+Init\+State (\begin{DoxyParamCaption}\item[{bt\+Transform}]{i\+State }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Stores i\+State as init state. Init state is aplied by \hyperlink{classbtosgObject_a93983f9180dd0672f8779cf2baa78580}{reset()} \mbox{\Hypertarget{classbtosgObject_a91da93c82d48b86192f0cbb16054fe57}\label{classbtosgObject_a91da93c82d48b86192f0cbb16054fe57}} 
 \index{btosg\+Object@{btosg\+Object}!set\+Mass@{set\+Mass}}
 \index{set\+Mass@{set\+Mass}!btosg\+Object@{btosg\+Object}}
 \subsubsection{\texorpdfstring{set\+Mass()}{setMass()}}
@@ -127,11 +135,13 @@ Sets the object\textquotesingle{}s mass. \mbox{\Hypertarget{classbtosgObject_a6a
 \subsubsection{\texorpdfstring{set\+Material()}{setMaterial()}}
 {\footnotesize\ttfamily void btosg\+Object\+::set\+Material (\begin{DoxyParamCaption}\item[{osg\+::ref\+\_\+ptr$<$ osg\+::\+Material $>$}]{mat }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
+Sets the material properties for the object. \mbox{\Hypertarget{classbtosgObject_ab06a1b3f357209214c6440cd5746523e}\label{classbtosgObject_ab06a1b3f357209214c6440cd5746523e}} 
+\index{btosg\+Object@{btosg\+Object}!set\+Name@{set\+Name}}
+\index{set\+Name@{set\+Name}!btosg\+Object@{btosg\+Object}}
+\subsubsection{\texorpdfstring{set\+Name()}{setName()}}
+{\footnotesize\ttfamily void btosg\+Object\+::set\+Name (\begin{DoxyParamCaption}\item[{char const $\ast$}]{n }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-
-Sets a texture from an image file. 
-
-Sets the material properties for the object. \mbox{\Hypertarget{classbtosgObject_ad0f76df8e8bde6c8a9d1b1d53551172b}\label{classbtosgObject_ad0f76df8e8bde6c8a9d1b1d53551172b}} 
+Sets the object\textquotesingle{}s name. \mbox{\Hypertarget{classbtosgObject_ad0f76df8e8bde6c8a9d1b1d53551172b}\label{classbtosgObject_ad0f76df8e8bde6c8a9d1b1d53551172b}} 
 \index{btosg\+Object@{btosg\+Object}!set\+Position@{set\+Position}}
 \index{set\+Position@{set\+Position}!btosg\+Object@{btosg\+Object}}
 \subsubsection{\texorpdfstring{set\+Position()}{setPosition()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
@@ -146,16 +156,22 @@ Sets objects position. \mbox{\Hypertarget{classbtosgObject_adb9f2cff0faf66dc252c
 Sets objects position. \mbox{\Hypertarget{classbtosgObject_a656412794a971a10478aedb520f298bf}\label{classbtosgObject_a656412794a971a10478aedb520f298bf}} 
 \index{btosg\+Object@{btosg\+Object}!set\+Rotation@{set\+Rotation}}
 \index{set\+Rotation@{set\+Rotation}!btosg\+Object@{btosg\+Object}}
-\subsubsection{\texorpdfstring{set\+Rotation()}{setRotation()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+\subsubsection{\texorpdfstring{set\+Rotation()}{setRotation()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
 {\footnotesize\ttfamily void btosg\+Object\+::set\+Rotation (\begin{DoxyParamCaption}\item[{bt\+Quaternion}]{q }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Sets objects attitude from a quaternion. \mbox{\Hypertarget{classbtosgObject_a4d21ca59b944fd26644db35d3e9ba67a}\label{classbtosgObject_a4d21ca59b944fd26644db35d3e9ba67a}} 
 \index{btosg\+Object@{btosg\+Object}!set\+Rotation@{set\+Rotation}}
 \index{set\+Rotation@{set\+Rotation}!btosg\+Object@{btosg\+Object}}
-\subsubsection{\texorpdfstring{set\+Rotation()}{setRotation()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+\subsubsection{\texorpdfstring{set\+Rotation()}{setRotation()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
 {\footnotesize\ttfamily void btosg\+Object\+::set\+Rotation (\begin{DoxyParamCaption}\item[{float}]{x,  }\item[{float}]{y,  }\item[{float}]{z,  }\item[{float}]{w }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-Sets objects attitude from the quaternion coords. \mbox{\Hypertarget{classbtosgObject_a342917817dfde62554f83da8e0d5110b}\label{classbtosgObject_a342917817dfde62554f83da8e0d5110b}} 
+Sets objects attitude from the quaternion coords. \mbox{\Hypertarget{classbtosgObject_ae803e0566f0d7b3ffca686b968b297f8}\label{classbtosgObject_ae803e0566f0d7b3ffca686b968b297f8}} 
+\index{btosg\+Object@{btosg\+Object}!set\+Rotation@{set\+Rotation}}
+\index{set\+Rotation@{set\+Rotation}!btosg\+Object@{btosg\+Object}}
+\subsubsection{\texorpdfstring{set\+Rotation()}{setRotation()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily void btosg\+Object\+::set\+Rotation (\begin{DoxyParamCaption}\item[{osg\+::\+Quat}]{q }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Sets objects attitude from a quaternion. \mbox{\Hypertarget{classbtosgObject_a342917817dfde62554f83da8e0d5110b}\label{classbtosgObject_a342917817dfde62554f83da8e0d5110b}} 
 \index{btosg\+Object@{btosg\+Object}!update@{update}}
 \index{update@{update}!btosg\+Object@{btosg\+Object}}
 \subsubsection{\texorpdfstring{update()}{update()}}
