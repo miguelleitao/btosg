@@ -281,9 +281,9 @@ class btosgObject {
        		    std::cout << "Object _NO_NAME_ position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
     	}
 	virtual void update() {
-	    ///< Objects's update callback.
-	    ///< This fucntion is called automatically from World::setpSimulation() for each registered object.
-	    ///< Positions graphical object from its physhical state.
+	    /// Objects's update callback.
+	    /// This function is called automatically from World::setpSimulation() for each registered object.
+	    /// Positions graphical object from its physhical state.
             if (body) {
             	btTransform wTrans;
             	body->getMotionState()->getWorldTransform(wTrans);
@@ -294,7 +294,7 @@ class btosgObject {
     	    }
     	}
     	void reset() {
-	    ///< Reposition object to its inital state.
+	    /// Reposition object to its inital state.
             if ( body ) {
             	body->setWorldTransform(init_state);
             	body->getMotionState()->setWorldTransform(init_state);
