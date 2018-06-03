@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['logposition',['logPosition',['../classbtosgObject.html#acfd70fa6477c80fd7f29ad7ab9f4f067',1,'btosgObject']]]
+  ['reset',['reset',['../classbtosgObject.html#a93983f9180dd0672f8779cf2baa78580',1,'btosgObject']]]
 ];

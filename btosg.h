@@ -143,13 +143,13 @@ class btosgObject {
    public:
 	// Main components
 	//osg::Geode *geo;
-	osg::ref_ptr<osg::PositionAttitudeTransform> model;
-	char *name;
-	btTransform init_state;
-	btRigidBody *body;
+	osg::ref_ptr<osg::PositionAttitudeTransform> model;	///< Object's graphical model
+	char *name;	///< Object name
+	btTransform init_state;   ///< Inital state. Applied on reset events.
+	btRigidBody *body;	 ///< object's rigid body
 	// other
-	btCollisionShape* shape;
-	float mass;
+	btCollisionShape* shape;  ///< Object's colision shape.
+	float mass;		  ///< Mass of object
 	btosgObject() {
 		model = NULL;
 		body = NULL;
@@ -281,6 +281,9 @@ class btosgObject {
        		    std::cout << "Object _NO_NAME_ position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
     	}
 	virtual void update() {
+	    ///< Objects's update callback.
+	    ///< This fucntion is called automatically from World::setpSimulation() for each registered object.
+	    ///< Positions graphical object from its physhical state.
             if (body) {
             	btTransform wTrans;
             	body->getMotionState()->getWorldTransform(wTrans);
@@ -291,6 +294,7 @@ class btosgObject {
     	    }
     	}
     	void reset() {
+	    ///< Reposition object to its inital state.
             if ( body ) {
             	body->setWorldTransform(init_state);
             	body->getMotionState()->setWorldTransform(init_state);

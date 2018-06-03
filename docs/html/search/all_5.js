@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['name',['name',['../classbtosgObject.html#a12396e1362797a75473a2e833b579cc9',1,'btosgObject']]]
+  ['readme',['README',['../md_README.html',1,'']]],
+  ['reset',['reset',['../classbtosgObject.html#a93983f9180dd0672f8779cf2baa78580',1,'btosgObject']]]
 ];

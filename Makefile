@@ -44,7 +44,14 @@ pc:
 btosg: ${BTOSG}
 	@echo -n ""
 
-all: default examples
+all: default examples docs pc
+
+manual:
+	${RM} -rf docs
+	@make docs
+
+docs:
+	doxygen btosg.doxygen
 
 carZ: carZ.o btosg.o
 	$(CXX) -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -lm
@@ -114,7 +121,7 @@ clean:
 	$(RM) *.o ${EXAMPLES} ${BTOSG} *.pc
 	make -C loadOBJ clean
 
-push: *.cpp *.h Makefile README.md loadOBJ img obj .gitignore .travis.yml
+push: *.cpp *.h Makefile README.md loadOBJ img obj .gitignore .travis.yml docs
 	git add $^
 	git commit -m "update"
 	git push

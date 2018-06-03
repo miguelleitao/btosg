@@ -46,13 +46,11 @@ void {\bfseries set\+Texture} (char const $\ast$fname)
 void {\bfseries set\+Material} (osg\+::ref\+\_\+ptr$<$ osg\+::\+Material $>$ mat)
 \item 
 \mbox{\Hypertarget{classbtosgObject_acfd70fa6477c80fd7f29ad7ab9f4f067}\label{classbtosgObject_acfd70fa6477c80fd7f29ad7ab9f4f067}} 
-void \hyperlink{classbtosgObject_acfd70fa6477c80fd7f29ad7ab9f4f067}{log\+Position} ()
-\begin{DoxyCompactList}\small\item\em Postion graphical object from physhical state. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{classbtosgObject_a342917817dfde62554f83da8e0d5110b}\label{classbtosgObject_a342917817dfde62554f83da8e0d5110b}} 
+void {\bfseries log\+Position} ()
+\item 
 virtual void \hyperlink{classbtosgObject_a342917817dfde62554f83da8e0d5110b}{update} ()
-\begin{DoxyCompactList}\small\item\em Reposition object to inital state. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{classbtosgObject_a93983f9180dd0672f8779cf2baa78580}\label{classbtosgObject_a93983f9180dd0672f8779cf2baa78580}} 
-void {\bfseries reset} ()
+\item 
+void \hyperlink{classbtosgObject_a93983f9180dd0672f8779cf2baa78580}{reset} ()
 \item 
 \mbox{\Hypertarget{classbtosgObject_ad1508a0ce28cfac83e5f0ff6245f91b5}\label{classbtosgObject_ad1508a0ce28cfac83e5f0ff6245f91b5}} 
 void {\bfseries set\+Init\+State} ()
@@ -88,6 +86,21 @@ bt\+Collision\+Shape $\ast$ \hyperlink{classbtosgObject_a0f6a8da01cf643c321bffe8
 float \hyperlink{classbtosgObject_a2418bb2194d5e9b0f1c51c84672ba7d1}{mass}
 \begin{DoxyCompactList}\small\item\em Mass of object. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classbtosgObject_a93983f9180dd0672f8779cf2baa78580}\label{classbtosgObject_a93983f9180dd0672f8779cf2baa78580}} 
+\index{btosg\+Object@{btosg\+Object}!reset@{reset}}
+\index{reset@{reset}!btosg\+Object@{btosg\+Object}}
+\subsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily void btosg\+Object\+::reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+$<$ Reposition object to its inital state. \mbox{\Hypertarget{classbtosgObject_a342917817dfde62554f83da8e0d5110b}\label{classbtosgObject_a342917817dfde62554f83da8e0d5110b}} 
+\index{btosg\+Object@{btosg\+Object}!update@{update}}
+\index{update@{update}!btosg\+Object@{btosg\+Object}}
+\subsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily virtual void btosg\+Object\+::update (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+$<$ Objects\textquotesingle{}s update callback. This fucntion is called automatically from World\+::setp\+Simulation() for each registered object. Positions graphical object from its physhical state. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

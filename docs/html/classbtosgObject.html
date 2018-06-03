@@ -124,15 +124,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setTexture</b> (char 
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setMaterial</b> (osg::ref_ptr&lt; osg::Material &gt; mat)</td></tr>
 <tr class="separator:a6ab7b9e0553dab398b980637788b56a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfd70fa6477c80fd7f29ad7ab9f4f067"><td class="memItemLeft" align="right" valign="top"><a id="acfd70fa6477c80fd7f29ad7ab9f4f067"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbtosgObject.html#acfd70fa6477c80fd7f29ad7ab9f4f067">logPosition</a> ()</td></tr>
-<tr class="memdesc:acfd70fa6477c80fd7f29ad7ab9f4f067"><td class="mdescLeft">&#160;</td><td class="mdescRight">Postion graphical object from physhical state. <br /></td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>logPosition</b> ()</td></tr>
 <tr class="separator:acfd70fa6477c80fd7f29ad7ab9f4f067"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a342917817dfde62554f83da8e0d5110b"><td class="memItemLeft" align="right" valign="top"><a id="a342917817dfde62554f83da8e0d5110b"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbtosgObject.html#a342917817dfde62554f83da8e0d5110b">update</a> ()</td></tr>
-<tr class="memdesc:a342917817dfde62554f83da8e0d5110b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reposition object to inital state. <br /></td></tr>
+<tr class="memitem:a342917817dfde62554f83da8e0d5110b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbtosgObject.html#a342917817dfde62554f83da8e0d5110b">update</a> ()</td></tr>
 <tr class="separator:a342917817dfde62554f83da8e0d5110b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93983f9180dd0672f8779cf2baa78580"><td class="memItemLeft" align="right" valign="top"><a id="a93983f9180dd0672f8779cf2baa78580"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
+<tr class="memitem:a93983f9180dd0672f8779cf2baa78580"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbtosgObject.html#a93983f9180dd0672f8779cf2baa78580">reset</a> ()</td></tr>
 <tr class="separator:a93983f9180dd0672f8779cf2baa78580"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1508a0ce28cfac83e5f0ff6245f91b5"><td class="memItemLeft" align="right" valign="top"><a id="ad1508a0ce28cfac83e5f0ff6245f91b5"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setInitState</b> ()</td></tr>
@@ -174,6 +170,59 @@ float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 <tr class="memdesc:a2418bb2194d5e9b0f1c51c84672ba7d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mass of object. <br /></td></tr>
 <tr class="separator:a2418bb2194d5e9b0f1c51c84672ba7d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a93983f9180dd0672f8779cf2baa78580"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93983f9180dd0672f8779cf2baa78580">&#9670;&nbsp;</a></span>reset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void btosgObject::reset </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>&lt; Reposition object to its inital state. </p>
+
+</div>
+</div>
+<a id="a342917817dfde62554f83da8e0d5110b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a342917817dfde62554f83da8e0d5110b">&#9670;&nbsp;</a></span>update()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void btosgObject::update </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>&lt; Objects's update callback. This fucntion is called automatically from World::setpSimulation() for each registered object. Positions graphical object from its physhical state. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="btosg_8h_source.html">btosg.h</a></li>
 <li>btosg.cpp</li>
