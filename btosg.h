@@ -133,32 +133,33 @@ class btosgRigidBody : public btRigidBody {
 	}
 };
 */
-class btosgObject : public osg::PositionAttitudeTransform {
+class btosgObject : public osg::PositionAttitudeTransform, public btRigidBody {
    public:
 	// Main components
 	//osg::Geode *geo;
 	//osg::ref_ptr<osg::PositionAttitudeTransform> model;
 	char *name;
 	btTransform init_state;
-	btRigidBody *body;
+	//btRigidBody *body;
 	// other
 	btCollisionShape* shape;
 	float mass;
 	btosgObject() {
 		//model = NULL;
-		body = NULL;
+		//body = NULL;
 		shape = NULL; 
 		mass = 0.;
                 name = NULL;
                 init_state = btTransform();
+		bool isDynamic = false;
 	};
         virtual ~btosgObject() {
+		/*
             if (body) {
 		delete body->getMotionState();
 		delete body;
 		body = NULL;
 	    }
-	    /*
 	    if( model ) {
 		model->unref();
 		model = NULL;
@@ -181,42 +182,46 @@ class btosgObject : public osg::PositionAttitudeTransform {
 		bool isDynamic = (mass != 0.f);
 
     		btVector3 localInertia(0, 0, 0);
-    		if (isDynamic && shape)
+    		if (mass>1e-30f && shape)
         		shape->calculateLocalInertia(mass, localInertia);
-		if ( body ) body->setMassProps(m, localInertia); 
+		setMassProps(m, localInertia); 
 	}
 	btVector3 getPosition() {
-         	if (body) {
+	    if ( isDynamic ) {
             		btTransform wTrans;
-			body->getMotionState()->getWorldTransform(wTrans);
+			getMotionState()->getWorldTransform(wTrans);
             		return wTrans.getOrigin();
-         	}
-		return osg2bt_Vec3(osg::PositionAttitudeTransform::getPosition());
-		return btVector3(0.,0.,0.);
+	    }
+	    if ( isViewable ) {
+		    return osg2bt_Vec3(osg::PositionAttitudeTransform::getPosition());
+	    }
+	    return btVector3(0,0,0);
     	}
 	btQuaternion getRotation() {
-         	if (body) {
+	    if ( isDynamic ) {
             		btTransform wTrans;
-			body->getMotionState()->getWorldTransform(wTrans);
+			getMotionState()->getWorldTransform(wTrans);
             		return wTrans.getRotation();
-         	}
-		osg2bt_Quat(osg::PositionAttitudeTransform::getAttitude());
-		return btQuaternion(0.,0.,0.,0.);
+	    }
+	    if ( isViewable() ) {
+		    return osg2bt_Quat(osg::PositionAttitudeTransform::getAttitude());
+	    }
+	    return btQuaternion(0.,0.,0.,0.);
     	}
 	btVector3 getEuler() {
 		btQuaternion qt = getRotation();
 		return quat2Euler(qt);
 	}
 	void setPosition(const btVector3 &p) {
-	    if (body) {
+	    if ( isDynamic ) {
                 btTransform wTrans;
-                body->getMotionState()->getWorldTransform(wTrans);
+                getMotionState()->getWorldTransform(wTrans);
                 wTrans.setOrigin(p);
-                body->setWorldTransform(wTrans);
-                body->getMotionState()->setWorldTransform(wTrans);
-                body->clearForces();
-                body->setLinearVelocity(btVector3(0,0,0));
-                body->setAngularVelocity(btVector3(0,0,0));
+                setWorldTransform(wTrans);
+                getMotionState()->setWorldTransform(wTrans);
+                clearForces();
+                setLinearVelocity(btVector3(0,0,0));
+                setAngularVelocity(btVector3(0,0,0));
             }
             #ifdef AVOID_DIRECT_MODEL_UPDATE
             else
@@ -232,16 +237,16 @@ class btosgObject : public osg::PositionAttitudeTransform {
 		setPosition(btVector3(x,y,z));
         }
 	void setRotation(btQuaternion q) {
-            if (body) {
+            if ( isDynamic ) {
                 btTransform wTrans;
-                body->getMotionState()->getWorldTransform(wTrans);
+                getMotionState()->getWorldTransform(wTrans);
                 wTrans.setRotation(q);
                 //wTrans.setOrigin(btVector3(x,y,z));
-                body->setWorldTransform(wTrans);
-                body->getMotionState()->setWorldTransform(wTrans);
-                body->clearForces();
-                body->setLinearVelocity(btVector3(0,0,0));
-                body->setAngularVelocity(btVector3(0,0,0));
+                setWorldTransform(wTrans);
+                getMotionState()->setWorldTransform(wTrans);
+                clearForces();
+                setLinearVelocity(btVector3(0,0,0));
+                setAngularVelocity(btVector3(0,0,0));
             }
             #ifdef AVOID_DIRECT_MODEL_UPDATE
             else 
@@ -250,6 +255,7 @@ class btosgObject : public osg::PositionAttitudeTransform {
                 #ifdef  _DEBUG_
 		  printf("setRotation in non dynamic object\n");
 		#endif
+		if ( isViewable )
 		  osg::PositionAttitudeTransform::setAttitude(bt2osg_Quat(q));
             }
 	}
@@ -273,22 +279,22 @@ class btosgObject : public osg::PositionAttitudeTransform {
        		    std::cout << "Object _NO_NAME_ position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
     	}
 	virtual void update() {
-            if (body) {
+            if ( isDynamic && isViewable ) {
             	btTransform wTrans;
-            	body->getMotionState()->getWorldTransform(wTrans);
+            	getMotionState()->getWorldTransform(wTrans);
             	osg::PositionAttitudeTransform::setAttitude(bt2osg_Quat(wTrans.getRotation()));
 		osg::PositionAttitudeTransform::setPosition(bt2osg_Vec3(wTrans.getOrigin()));
     	    }
     	}
     	void reset() {
-            if ( body ) {
-            	body->setWorldTransform(init_state);
-            	body->getMotionState()->setWorldTransform(init_state);
-            	body->clearForces();
+            if ( isDynamic ) {
+            	setWorldTransform(init_state);
+            	getMotionState()->setWorldTransform(init_state);
+            	clearForces();
             	if ( mass>0. ) {
-            	    body->setLinearVelocity(btVector3(0.,0.,0.));
-            	    body->setAngularVelocity(btVector3(0.,0.,0.));
-            	    body->activate();   // Required if the object was asleep
+            	    setLinearVelocity(btVector3(0.,0.,0.));
+            	    setAngularVelocity(btVector3(0.,0.,0.));
+            	    activate();   // Required if the object was asleep
             	}
             }
             else { // Not required for dynamic objects.
@@ -299,7 +305,7 @@ class btosgObject : public osg::PositionAttitudeTransform {
 	void setInitState() {
        	    // Store current state as init state.
             // Init state is aplied by reset()
-            if (body) body->getMotionState()->getWorldTransform(init_state);
+            getMotionState()->getWorldTransform(init_state);
     	}
     	void setInitState(btTransform iState) {
             // Store iState as init state.
@@ -343,7 +349,7 @@ class btosgExternalObject : public btosgObject {
 
 		mass = 1.;
                 createRigidBody();
-                body->setDamping(0.01,0.1);
+                setDamping(0.01,0.1);
 	}
 };
 
@@ -360,7 +366,7 @@ class btosgSphere : public btosgObject {
 		shape = new btSphereShape(r);
 		mass = 1.;
                 createRigidBody();
-                body->setDamping(0.01,0.1);
+                setDamping(0.01,0.1);
 	}
 };
 
