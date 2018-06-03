@@ -140,10 +140,11 @@ class btosgRigidBody : public btRigidBody {
 };
 */
 
-/*! btosgObjectA
+/** Main btosg object base class.
+ *  Integrates a physical object (btRigisBody), a colision shape (btCollisionShape)
+ *  and a graphical object (osg::PositionAttitudeTransfor).
  */
 class btosgObject {
-	/// Main btosg object base class.
    public:
 	// Main components
 	//osg::Geode *geo;
