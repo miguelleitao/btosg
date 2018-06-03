@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['update',['update',['../classbtosgObject.html#a342917817dfde62554f83da8e0d5110b',1,'btosgObject']]]
+  ['logposition',['logPosition',['../classbtosgObject.html#acfd70fa6477c80fd7f29ad7ab9f4f067',1,'btosgObject']]]
 ];

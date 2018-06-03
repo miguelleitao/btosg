@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['shape',['shape',['../classbtosgObject.html#a0f6a8da01cf643c321bffe86e42604b0',1,'btosgObject']]]
+  ['name',['name',['../classbtosgObject.html#a12396e1362797a75473a2e833b579cc9',1,'btosgObject']]]
 ];

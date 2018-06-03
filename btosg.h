@@ -139,7 +139,11 @@ class btosgRigidBody : public btRigidBody {
 	}
 };
 */
+
+/*! btosgObjectA
+ */
 class btosgObject {
+	/// Main btosg object base class.
    public:
 	// Main components
 	//osg::Geode *geo;
@@ -181,6 +185,7 @@ class btosgObject {
             name = strdup(n);
         }
 	void setMass(double m) {
+		/// Sets the object's mass.
 		mass = m;
 		bool isDynamic = (mass != 0.f);
 
@@ -190,6 +195,7 @@ class btosgObject {
 		if ( body ) body->setMassProps(m, localInertia); 
 	}
 	btVector3 getPosition() {
+		/// Returns object's position.
          	if (body) {
             		btTransform wTrans;
 			body->getMotionState()->getWorldTransform(wTrans);
@@ -199,6 +205,7 @@ class btosgObject {
 		return btVector3(0.,0.,0.);
     	}
 	btQuaternion getRotation() {
+                /// Returns object's attitude as a Quaternion.
          	if (body) {
             		btTransform wTrans;
 			body->getMotionState()->getWorldTransform(wTrans);
@@ -208,10 +215,12 @@ class btosgObject {
 		return btQuaternion(0.,0.,0.,0.);
     	}
 	btVector3 getEuler() {
+		/// Returns object's attitude as HPR Euler angles.
 		btQuaternion qt = getRotation();
 		return quat2Euler(qt);
 	}
 	void setPosition(const btVector3 &p) {
+		/// Sets objects position.
 	    if (body) {
                 btTransform wTrans;
                 body->getMotionState()->getWorldTransform(wTrans);
@@ -235,9 +244,11 @@ class btosgObject {
             }
         }
         void setPosition(float x, float y, float z) {
+		/// Sets objects position.
 		setPosition(btVector3(x,y,z));
         }
 	void setRotation(btQuaternion q) {
+	    /// Sets objects attitude from a quaternion.
             if (body) {
                 btTransform wTrans;
                 body->getMotionState()->getWorldTransform(wTrans);
@@ -262,6 +273,7 @@ class btosgObject {
             }
 	}
 	void setRotation(float x, float y, float z, float w) {
+	    /// Sets objects attitude from the quaternion coords.
 	    setRotation(btQuaternion(x,y,z,w));
 	}
 	
@@ -270,10 +282,13 @@ class btosgObject {
 	}
 	
 	void setTexture(char const *fname);
+		/// Sets a texture from an image file.
 	void setMaterial(osg::ref_ptr<osg::Material> mat) {
+		/// Sets the material properties for the object.
 		model->getOrCreateStateSet()->setAttributeAndModes(mat, osg::StateAttribute::ON);
 	}
 	void logPosition() {
+		/// Outputs object's position.
          	btVector3 pos = getPosition();
        		if ( name )
        		    std::cout << "Object " << name << " position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
