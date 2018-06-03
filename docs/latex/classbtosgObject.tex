@@ -61,8 +61,9 @@ void {\bfseries load\+Object\+Model} (char const $\ast$fname)
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
+\mbox{\Hypertarget{classbtosgObject_afd15726e7a214212d6d5815f8ac1ac6c}\label{classbtosgObject_afd15726e7a214212d6d5815f8ac1ac6c}} 
 osg\+::ref\+\_\+ptr$<$ osg\+::\+Position\+Attitude\+Transform $>$ \hyperlink{classbtosgObject_afd15726e7a214212d6d5815f8ac1ac6c}{model}
-\begin{DoxyCompactList}\small\item\em Main btosg object base class. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Object\textquotesingle{}s graphical model. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classbtosgObject_a12396e1362797a75473a2e833b579cc9}\label{classbtosgObject_a12396e1362797a75473a2e833b579cc9}} 
 char $\ast$ \hyperlink{classbtosgObject_a12396e1362797a75473a2e833b579cc9}{name}
 \begin{DoxyCompactList}\small\item\em Object name. \end{DoxyCompactList}\item 
@@ -81,7 +82,7 @@ float \hyperlink{classbtosgObject_a2418bb2194d5e9b0f1c51c84672ba7d1}{mass}
 
 
 \subsection{Detailed Description}
-btosg\+ObjectA 
+Main btosg object base class. Integrates a physical object (bt\+Rigis\+Body), a colision shape (bt\+Collision\+Shape) and a graphical object (osg\+::\+Position\+Attitude\+Transfor). 
 
 \subsection{Member Function Documentation}
 \mbox{\Hypertarget{classbtosgObject_afef1fe06635566ab9cee134f72439e02}\label{classbtosgObject_afef1fe06635566ab9cee134f72439e02}} 
@@ -161,19 +162,6 @@ Sets objects attitude from the quaternion coords. \mbox{\Hypertarget{classbtosgO
 {\footnotesize\ttfamily virtual void btosg\+Object\+::update (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
 
 Objects\textquotesingle{}s update callback. This function is called automatically from World\+::setp\+Simulation() for each registered object. Positions graphical object from its physhical state. 
-
-\subsection{Member Data Documentation}
-\mbox{\Hypertarget{classbtosgObject_afd15726e7a214212d6d5815f8ac1ac6c}\label{classbtosgObject_afd15726e7a214212d6d5815f8ac1ac6c}} 
-\index{btosg\+Object@{btosg\+Object}!model@{model}}
-\index{model@{model}!btosg\+Object@{btosg\+Object}}
-\subsubsection{\texorpdfstring{model}{model}}
-{\footnotesize\ttfamily osg\+::ref\+\_\+ptr$<$osg\+::\+Position\+Attitude\+Transform$>$ btosg\+Object\+::model}
-
-
-
-Main btosg object base class. 
-
-Object\textquotesingle{}s graphical model 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

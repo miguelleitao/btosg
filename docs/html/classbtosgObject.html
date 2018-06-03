@@ -23,7 +23,7 @@
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">btosg
    </div>
-   <div id="projectbrief">AthinabstractionlayerintegratingBulletandOpenSceneGraph</div>
+   <div id="projectbrief">A thin abstraction layer integrating Bullet and OpenSceneGraph</div>
   </td>
  </tr>
  </tbody>
@@ -138,8 +138,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>loadObjectModel</b> (
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:afd15726e7a214212d6d5815f8ac1ac6c"><td class="memItemLeft" align="right" valign="top">osg::ref_ptr&lt; osg::PositionAttitudeTransform &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbtosgObject.html#afd15726e7a214212d6d5815f8ac1ac6c">model</a></td></tr>
-<tr class="memdesc:afd15726e7a214212d6d5815f8ac1ac6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main btosg object base class.  <a href="#afd15726e7a214212d6d5815f8ac1ac6c">More...</a><br /></td></tr>
+<tr class="memitem:afd15726e7a214212d6d5815f8ac1ac6c"><td class="memItemLeft" align="right" valign="top"><a id="afd15726e7a214212d6d5815f8ac1ac6c"></a>
+osg::ref_ptr&lt; osg::PositionAttitudeTransform &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbtosgObject.html#afd15726e7a214212d6d5815f8ac1ac6c">model</a></td></tr>
+<tr class="memdesc:afd15726e7a214212d6d5815f8ac1ac6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Object's graphical model. <br /></td></tr>
 <tr class="separator:afd15726e7a214212d6d5815f8ac1ac6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a12396e1362797a75473a2e833b579cc9"><td class="memItemLeft" align="right" valign="top"><a id="a12396e1362797a75473a2e833b579cc9"></a>
 char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbtosgObject.html#a12396e1362797a75473a2e833b579cc9">name</a></td></tr>
@@ -163,7 +164,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 <tr class="separator:a2418bb2194d5e9b0f1c51c84672ba7d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>btosgObjectA </p>
+<div class="textblock"><p>Main btosg object base class. Integrates a physical object (btRigisBody), a colision shape (btCollisionShape) and a graphical object (osg::PositionAttitudeTransfor). </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="afef1fe06635566ab9cee134f72439e02"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afef1fe06635566ab9cee134f72439e02">&#9670;&nbsp;</a></span>getEuler()</h2>
@@ -520,24 +521,6 @@ float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 </table>
 </div><div class="memdoc">
 <p>Objects's update callback. This function is called automatically from World::setpSimulation() for each registered object. Positions graphical object from its physhical state. </p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="afd15726e7a214212d6d5815f8ac1ac6c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afd15726e7a214212d6d5815f8ac1ac6c">&#9670;&nbsp;</a></span>model</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">osg::ref_ptr&lt;osg::PositionAttitudeTransform&gt; btosgObject::model</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Main btosg object base class. </p>
-<p>Object's graphical model </p>
 
 </div>
 </div>
