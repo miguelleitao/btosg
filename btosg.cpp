@@ -70,7 +70,7 @@ btosgWorld::~btosgWorld() {
 }
 
 void btosgWorld::addObject(btosgObject *obj)  {
-    /// Registes the object obj into a simulation world.
+    /// Registers the object obj into a simulation world.
     objects.push_front(obj);
     if ( obj->body )  dynamic->addRigidBody(obj->body);
 		else if ( _DEBUG_ ) fprintf(stderr,"Adding object without rigid body\n");
