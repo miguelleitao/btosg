@@ -106,6 +106,8 @@ void btosgWorld::reset() {
 };
 
 void btosgObject::loadObjectModel(char const *fname) {
+    /// Loads an object model from a Wavefront OBJ file.
+    /// Loadded model is used to defne bith the collision and graphical shapes.
     if ( ! fname || ! *fname ) {
         fprintf(stderr,"Invalid object model filename\n");
         return;
@@ -124,10 +126,7 @@ void btosgObject::loadObjectModel(char const *fname) {
 
 void btosgObject::setTexture(char const *fname)
 {
-    //! Sets the object texture from a loaded image file.
-    //---------------------------------------
-    /// Set up a StateSet to texture the objects
-    // ---------------------------------------
+    /// Sets the object texture from a loaded image file.
     osg::StateSet* stateset = new osg::StateSet();
 	
 	    osg::ref_ptr<osg::Image> image = osgDB::readRefImageFile( fname );
