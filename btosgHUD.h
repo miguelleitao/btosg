@@ -15,13 +15,14 @@
 #include <osgText/Text>
 
 
+/// Head Up Display
 class btosgHUD : public osg::Projection {
     private:
  	// A geometry node for the HUD
 	osg::Geode* geode; 
     public:
 	void setBackground() {
-	   // Set up geometry for the HUD and add it to the HUD
+	   /// Set up geometry for the HUD and add it to the HUD
 	   osg::Geometry* HUDBackgroundGeometry = new osg::Geometry();
 
 	   osg::Vec3Array* HUDBackgroundVertices = new osg::Vec3Array;
@@ -80,6 +81,8 @@ class btosgHUD : public osg::Projection {
 	   HUDStateSet->setRenderBinDetails( 11, "RenderBin");
 	}
     	btosgHUD() {
+	   /// Constructs an Head Up Display.
+
 	   // Initialize the projection matrix for viewing everything we
 	   // will add as descendants of this node. Use screen coordinates
 	   // to define the horizontal and vertical extent of the projection
@@ -106,6 +109,7 @@ class btosgHUD : public osg::Projection {
 	   HUDModelViewMatrix->addChild( geode );
     	}
 	virtual bool addDrawable( osg::Drawable *td ) {
+	   /// Add a visual elemente to the HUD.
 	   return geode->addDrawable(td);	   
 	}
 };

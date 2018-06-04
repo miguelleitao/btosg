@@ -21,7 +21,6 @@
 class btosgWheel : public btosgCylinder {
     public:
         btosgWheel(btVector3 pos, double ang) : btosgCylinder(0.4, 0.2) {
-            
             setPosition(pos);
             setRotation(osg::Quat(ang,osg::Vec3(1.,0.,0.)));
             setTexture("wheel.png");
@@ -43,18 +42,22 @@ class btosgWheel : public btosgCylinder {
 };
 */
 
+/// A four wheel vehicle based on btRaycastVehicle.
 class btosgVehicle: public btosgObject {
     private:
         btDefaultVehicleRaycaster *rayCaster;
     public:
-        float dx,dy,dz;
-        osg::Vec3 dim;
-        osg::Vec3 up;
-        osg::Vec3 front;
-        btRaycastVehicle *vehicle;
-        osg::ref_ptr<osg::PositionAttitudeTransform> wheel[4];
-        double wheelRotation[4];
+        float dx;			///< Vehicle x dimension.
+	float dy;			///< Vehicle y dimension.
+	float dz;			///< Vehicle < dimension.
+        osg::Vec3 dim;			///< Vehicle's dimensions in world coordinates.
+        osg::Vec3 up;			///< Vehicle's up vector. Usually, up=-gravity
+        osg::Vec3 front;		///< Vehicle's up vector.
+        btRaycastVehicle *vehicle;	///< A btRaycastVehicle object.
+        osg::ref_ptr<osg::PositionAttitudeTransform> wheel[4]; 	///< Transformation from vehicle's referential to wheel position.
+        double wheelRotation[4];				///< Wheels' rotation angles.
         btosgVehicle(btosgWorld *world, osg::Vec3 dimLocal = osg::Vec3(2.,0.4,4.), double m=1000. ) {
+	    /// btosgVehicle constructor.
             btVector3 grav = world->dynamic->getGravity();
             int grav_axis = grav.minAxis();
             switch ( grav_axis ) {
@@ -134,8 +137,10 @@ class btosgVehicle: public btosgObject {
         btRaycastVehicle* vehicle,
         btRaycastVehicle::btVehicleTuning tuning)
     {
+	/// Adds four wheels to the vehicle.
+	
         // The direction of the raycast, the btRaycastVehicle uses raycasts 
-        // to sense the ground under the wheels
+        // to sense the ground under the wheels.
         btVector3 wheelDirectionCS0(-osg2bt_Vec3(up));
 
         // The axis which the wheel rotates arround
@@ -210,7 +215,7 @@ class btosgVehicle: public btosgObject {
                     osg::Texture2D* texture = new osg::Texture2D;
                     texture->setImage(image);
                     texture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR);
-                    stateset->setTextureAttributeAndModes(0,texture, osg::StateAttribute::ON);
+                    stateset->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
                 }
                 stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
                 sd->setStateSet( stateset ); 
@@ -253,19 +258,20 @@ class btosgVehicle: public btosgObject {
                 //wheel[i]->setPosition(osg::Vec3(bt2osg_Vec3(*halfExtents)));
                 osg::Vec3 iPos = bt2osg_Vec3(iWheel.m_chassisConnectionPointCS);
                 wheel[i]->setPosition(iPos);
-                //printf("  roda %d, %f %f %f\n",i,iPos[0],iPos[1],iPos[2]);
+                //printf("  Wheel %d, %f %f %f\n",i,iPos[0],iPos[1],iPos[2]);
                 model->addChild( wheel[i] );
             }
         }
     }
 
     void printInfo() {
+	/// Outputs vehicle's info.
         btosgPrint("Center of Mass", body->getCenterOfMassPosition());
         btosgPrint("Mass", mass);
         for( int i=0 ; i<vehicle->getNumWheels(); i++)
         {
             btWheelInfo& iWheel = vehicle->getWheelInfo(i);
-            btosgPrint("Wheel",i);
+            btosgPrint("Wheel", i);
             btosgPrint("  ChassisConnectionPoint", iWheel.m_chassisConnectionPointCS);
             btosgPrint("  WheelDirection", iWheel.m_wheelDirectionCS);
             btosgPrint("  WheelAxle", iWheel.m_wheelAxleCS);
@@ -273,6 +279,7 @@ class btosgVehicle: public btosgObject {
     }
     
     void logPosition() {
+	 /// Outputs vehicle's position.
          if (body) {
             btTransform wTrans;
             body->getMotionState()->getWorldTransform(wTrans);
@@ -290,10 +297,15 @@ class btosgVehicle: public btosgObject {
             }
          }
     }
+    
     virtual void update()
     {
+        /// Vehicle's update callback.
+	/// This function is called automatically from World::setpSimulation() for each registered vehicle.
+	/// Positions graphical vehicle and wheels from their physhical states.
+
         // updateVehicle is Not required.
-        // Vehicle dynamics is updated in stepSimulation();
+        // Vehicle dynamics are updated in stepSimulation();
         // updateVehicle requires frame_time that may not be available.
         // vehicle->updateVehicle(frame_time);
                
@@ -310,7 +322,7 @@ class btosgVehicle: public btosgObject {
             //vehicle->updateWheelTransform(i,true);
             btWheelInfo& iWheel = vehicle->getWheelInfo(i);
             if ( wheel[i] ) {
-                osg::Vec3 iPos =    bt2osg_Vec3(iWheel.m_chassisConnectionPointCS +
+                osg::Vec3 iPos = bt2osg_Vec3(iWheel.m_chassisConnectionPointCS +
                     iWheel.m_raycastInfo.m_suspensionLength * iWheel.m_wheelDirectionCS);
                 wheel[i]->setPosition(iPos);
                 

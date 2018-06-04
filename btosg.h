@@ -84,6 +84,8 @@ class btosgNode {
 };
 */
 
+/// btosgWorld
+/// Integrates a btDynamicsWorld and an osg::Group
 class btosgWorld {
     private:
         unsigned long steps;
@@ -92,13 +94,14 @@ class btosgWorld {
 	btCollisionDispatcher* dispatcher;
         btSequentialImpulseConstraintSolver* solver;
     public:
-	btDynamicsWorld *dynamic;
+	btDynamicsWorld *dynamic;	///< Pointer to btDynamicsWorld object.
+	/// Pointer to osg::Group object storing the root node of the object tree.
 #ifdef BTOSG_SHADOW
         osg::ref_ptr<osgShadow::ShadowedScene> scene;
 #else
 	osg::ref_ptr<osg::Group> 	scene;
 #endif
-        std::forward_list<class btosgObject*> objects;
+        std::forward_list<class btosgObject*> objects; ///< List of Objects.
 	btosgWorld() {
 
 		// Create dynamic world
@@ -360,10 +363,12 @@ class btosgObject {
 };
 
 #if BTOSG_LOAD_OBJ
+/// Object from loaded model
 class btosgExternalObject : public btosgObject {
     public:
 	//char *fname;
 	btosgExternalObject(const char *file_name) {
+		/// Constructs an object from an external model.
 		loadObjectModel(file_name);
 
    		GLInstanceGraphicsShape* glmesh = LoadMeshFromObj(file_name, "");
@@ -383,10 +388,12 @@ class btosgExternalObject : public btosgObject {
 };
 #endif
 
+/// Sphere
 class btosgSphere : public btosgObject {
     public:
-	float radius;
+	float radius;		///< Radius
 	btosgSphere(float r) {
+		/// Constructs a Sphere object.
 		radius = r;
 		osg::ref_ptr<osg::Geode> geo = new osg::Geode();
 		geo->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.,0.,0.),r)));
@@ -400,11 +407,14 @@ class btosgSphere : public btosgObject {
 	}
 };
 
-
+/// Axis oriented box.
 class btosgBox : public btosgObject {
     public:
-	float dx,dy,dz;
+	float dx;	///<  x dimension
+	float dy;	///<  y dimension
+	float dz;	///<  z dimension
 	btosgBox(osg::Vec3 dim = osg::Vec3(1.,1.,1.), double m=1. ) {
+	    /// Constructs an axis oriented box.
             dx = dim[0];
             dy = dim[1];
             dz = dim[2];
@@ -428,20 +438,39 @@ class btosgBox : public btosgObject {
             createRigidBody();
             //printf("box created\n");
 	}
-	btosgBox(float x, float y, float z) : btosgBox( osg::Vec3(x,y,z) ) {};
-        btosgBox(float r)                   : btosgBox( osg::Vec3(r,r,r) ) {};
+	btosgBox(float x, float y, float z) : btosgBox( osg::Vec3(x,y,z) ) {
+	    /// Constructs an axis oriented box.
+	};
+        btosgBox(float r)                   : btosgBox( osg::Vec3(r,r,r) ) {
+	    /// Constructs an axis oriented box.
+	};
 };
 
 
-
+/// Infinit plane
 class btosgPlane : public btosgObject {
     // Physical infinit, axis oriented plane.
     // Viewable as a finit, axis oriented, small depth box.
-    public:
+    private: 
 	float dx,dy,dz;
-    	btosgPlane()  :  btosgPlane(10., 10., 0.) { };
-        btosgPlane( osg::Vec3 v ) : btosgPlane( v[0], v[1], v[2] ) { };
+    public:
+    	btosgPlane()  :  btosgPlane(10., 10., 0.) { 
+		/// Constructs a physical infinite plane, viewable as low thickness finite box.
+                /// Viewable box has dimensions 10,10,0.
+                /// Plane is created facing Z axis.
+	};
+		
+        btosgPlane( osg::Vec3 v ) : btosgPlane( v[0], v[1], v[2] ) {
+		/// Constructs a physical infinite plane, viewable as low thickness finite box.
+                /// Viewable box has dimensions v.x,v.y,v.z.
+                /// Minimum dimension selects physical plane orientatiton.
+                /// Plane is created as axis oriented.
+	};
     	btosgPlane(float dx, float dy, float dz)  {
+		/// Constructs a physical infinite plane, viewable as low thickness finite box.
+		/// Viewable box has dimensions dx,dy,dz. 
+		/// Minimum dimension selects physical plane orientatiton.
+		/// Plane is created as axis oriented.
 		dx = max(dx, 0.001);
         	dy = max(dy, 0.001);
         	dz = max(dz, 0.001);
@@ -468,6 +497,7 @@ class btosgPlane : public btosgObject {
 		// printf("box created\n");
 	}
 	void createRigidBody() {
+		/// Creates a Rigid Body
         	btDefaultMotionState* mState = new 
 			btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0.,0.,0.)));
 		btVector3 inertia(0,0,0);
@@ -481,12 +511,14 @@ class btosgPlane : public btosgObject {
 };
 
 
-
+/// Cone
 class btosgCone : public btosgObject {
-    public:
-	float radius;
+    private:
+        float radius;
         float height;
+    public:
         btosgCone(float r=0.5, float h=1)  {
+	    /// Constructs a Z axis cone.
             radius = r;
             height = h;
             osg::Geode *geo = new osg::Geode();
@@ -514,11 +546,14 @@ class btosgCone : public btosgObject {
         }
 };
 
+/// Cylinder
 class btosgCylinder : public btosgObject {
-    public:
+    private:
 	float radius;
         float height;
+    public:
         btosgCylinder(float r=0.5, float h=1)  {
+	    /// Constructs a Z axis cylinder.
             radius = r;
             height = h;
             osg::Geode *geo = new osg::Geode();
