@@ -42,7 +42,7 @@ class btosgWheel : public btosgCylinder {
 };
 */
 
-/// A four wheel vehicle based on btRaycastVehicle.
+/// A four-wheeled vehicle based on btRaycastVehicle.
 class btosgVehicle: public btosgObject {
     private:
         btDefaultVehicleRaycaster *rayCaster;

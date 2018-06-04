@@ -84,8 +84,11 @@ class btosgNode {
 };
 */
 
-/// btosgWorld
-/// Integrates a btDynamicsWorld and an osg::Group
+//! Physical and visual world.
+/*! Integrates a btDynamicsWorld and an osg::Group.
+ *  Provides automated updating of graphical objects from related 
+ *  physical simulated bodies.
+ */
 class btosgWorld {
     private:
         unsigned long steps;
@@ -143,9 +146,10 @@ class btosgRigidBody : public btRigidBody {
 };
 */
 
-/** Main btosg object base class.
- *  Integrates a physical object (btRigidBody), a collision shape (btCollisionShape)
- *  and a graphical object (osg::PositionAttitudeTransform).
+//!  Main btosg object base class.
+/*!  Integrates a physical object (btRigidBody), a collision shape (btCollisionShape)
+ *   and a graphical object (osg::PositionAttitudeTransform).
+ *   Most object classes derive directly from btosgObject class.
  */
 class btosgObject {
    public:
@@ -447,7 +451,7 @@ class btosgBox : public btosgObject {
 };
 
 
-/// Infinit plane
+/// Infinite plane
 class btosgPlane : public btosgObject {
     // Physical infinit, axis oriented plane.
     // Viewable as a finit, axis oriented, small depth box.
