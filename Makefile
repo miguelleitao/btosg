@@ -47,10 +47,10 @@ btosg: ${BTOSG}
 all: default examples docs pc
 
 manual:
-	${RM} -rf documentation
-	@make documentation
+	${RM} -rf documentation/html documentation/latex
+	@make documentation/html
 
-documentation:
+documentation/html:
 	doxygen btosg.doxygen
 
 carZ: carZ.o btosg.o
