@@ -1,8 +1,6 @@
-{#mainpage}
-# btosg
 A thin abstraction layer to integrate **Bullet** and **OpenSceneGraph**.
 
-### Description
+### Description    {#mainpage}
 **btosg** is aimed to ease building simple visual simulation applications integrating **Bullet** and **OpenSceneGraph**.
 **btosg** stands on top of these two APIs but does not try to hide them. Instead, in order to build a complete application, the programmer is able and usually needs to access directly the data structures from both **Bullet** and **OpenSceneGraph**. So, the use of **btosg** does not avoid the requirement to know and understand their APIs.
 
@@ -12,12 +10,18 @@ The use of **btosg** can help the programming task because it allows to create a
 #### OpenSceneGraph: 
 * https://github.com/openscenegraph/OpenSceneGraph 
 * http://www.openscenegraph.org/
+
 #### Bullet:
 * https://github.com/bulletphysics/bullet3 
 * http://bulletphysics.org/
 
-Dependences can be installed by (assuming Fedora Linux):
-    dnf install bullet openscenegraph-osg openscenegraph-osgViewer openscenegraph-osgSim openscenegraph-osgDB openscenegraph-osgGA openscenegraph-osgShadow
+Dependences can be installed on Fedora Linux using:
+
+    dnf install bullet bullet-devel OpenSceneGraph OpenSceneGraph-devel
+
+Dependences can be installed on Ubuntu using:
+
+    apt install bullet openscenegraph-osg openscenegraph-osgViewer openscenegraph-osgSim openscenegraph-osgDB openscenegraph-osgGA openscenegraph-osgShadow
 
 ### Build
 
