@@ -8,7 +8,7 @@ A thin abstraction layer to integrate **Bullet** and **OpenSceneGraph**.
 
 The use of **btosg** can help the programming task because it allows to create and position both the physical and graphics definitions of small objects in one step. It also keeps track of syncronizing the graphics definitions from the state of each physical object.
 
-### Dependences
+### Dependencies
 #### OpenSceneGraph: 
 * https://github.com/openscenegraph/OpenSceneGraph 
 * http://www.openscenegraph.org/
@@ -16,11 +16,11 @@ The use of **btosg** can help the programming task because it allows to create a
 * https://github.com/bulletphysics/bullet3 
 * http://bulletphysics.org/
 
-Dependences can be installed on Fedora Linux using:
+Dependencies can be installed on Fedora Linux using:
 
     dnf install bullet bullet-devel OpenSceneGraph OpenSceneGraph-devel
 
-Dependences can be installed on Ubuntu using:
+Dependencies can be installed on Ubuntu using:
 
     apt install bullet openscenegraph-osg openscenegraph-osgViewer openscenegraph-osgSim openscenegraph-osgDB openscenegraph-osgGA openscenegraph-osgShadow
 
