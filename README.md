@@ -42,7 +42,7 @@ g++ -o <i>application</i> `pkg-config --libs btosg` <i>application.o</i>
 </pre>
 
 ### Documentation
-The btosg reference documentation can be browsed online from both:
+The **btosg** reference documentation can be browsed online from both:
 
 * https://miguelleitao.github.io/btosg/
 
