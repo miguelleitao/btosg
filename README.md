@@ -40,6 +40,14 @@ Compile using
 g++ -c `pkg-config --cflags btosg` <i>application.cpp</i>
 g++ -o <i>application</i> `pkg-config --libs btosg` <i>application.o</i>
 </pre>
+
+### Documentation
+The btosg reference documentation can be browsed online from both:
+
+* https://miguelleitao.github.io/btosg/
+
+* https://miguelleitao.github.io/btosg-documentation/html
+
 ### Examples
 **btosg** is available with some working examples.
 * **ball.cpp** implements a simple simulation of a ball with two planes.
