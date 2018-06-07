@@ -790,7 +790,7 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = mainpage.md btosg.md btosg.cpp btosg.h btosgHUD.h btosgVehicle.h
+INPUT                  = btosg.md btosg.cpp btosg.h btosgHUD.h btosgVehicle.h
 USE_MDFILE_AS_MAINPAGE = btosg.md
 
 # This tag can be used to specify the character encoding of the source files
@@ -907,7 +907,7 @@ EXCLUDE_SYMBOLS        =
 # that contain example code fragments that are included (see the \include
 # command).
 
-EXAMPLE_PATH           =
+EXAMPLE_PATH           = docs
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp and

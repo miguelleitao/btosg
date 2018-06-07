@@ -1,4 +1,5 @@
-A thin abstraction layer to integrate **Bullet** and **OpenSceneGraph**.
+\mainpage btosg
+A programming framework to build visual physical simulations.
 
 ### Description 
 **btosg** is aimed to ease building simple visual simulation applications integrating **Bullet** and **OpenSceneGraph**.
