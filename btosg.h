@@ -103,9 +103,10 @@ class btosgVec3 : public osg::Vec3 {
 	btosgVec3(osg::Vec3  v) : osg::Vec3(v) {};
 	btosgVec3(osg::Vec3d v) : osg::Vec3(v) {};
 	btosgVec3(btVector3  v) : osg::Vec3(v[0],v[1],v[2]) {};
-	operator btVector3() {
+	operator btVector3() const {
 		return btVector3(x(), y(), z());
 	} 
+
 };
 
 
@@ -254,7 +255,7 @@ class btosgObject {
 		btQuaternion qt = getRotation();
 		return quat2Euler(qt);
 	}
-	void setPosition(const btVector3 &p) {
+	void setPosition(const btosgVec3 &p) {
 		/// Sets objects position.
 	    if (body) {
                 btTransform wTrans;
@@ -280,7 +281,7 @@ class btosgObject {
         }
         void setPosition(float x, float y, float z) {
 		/// Sets objects position.
-		setPosition(btVector3(x,y,z));
+		setPosition(btosgVec3(x,y,z));
         }
 	void setRotation(btQuaternion q) {
 	    /// Sets objects attitude from a quaternion.
