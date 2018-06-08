@@ -9,9 +9,11 @@
 
 #define _DEBUG_ (0)
 
+/*
 osg::Vec3 bt2osg_Vec3(btVector3 bv) {
 return osg::Vec3( bv.x(), bv.y(), bv.z() );
 }
+*/
 osg::Vec4 bt2osg_Vec4(btVector4 bv) {
 	return osg::Vec4( bv.x(), bv.y(), bv.z(), bv.w() );
 }
@@ -124,7 +126,7 @@ void btosgObject::loadObjectModel(char const *fname) {
     }
     if (  !model)	model = new osg::PositionAttitudeTransform;
     osg::PositionAttitudeTransform* obj_rot = new osg::PositionAttitudeTransform;
-    obj_rot->setAttitude(osg::Quat(-osg::PI/2.,btosgVec3(1.,0.,0.)));				// osg::Vec 
+    obj_rot->setAttitude(osg::Quat(-osg::PI/2.,osg::Vec3(1.,0.,0.)));
     obj_rot->addChild(loadedModel);
     model->addChild(obj_rot);
 }

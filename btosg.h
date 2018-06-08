@@ -45,7 +45,7 @@
  */
 #define AVOID_DIRECT_MODEL_UPDATE
 
-osg::Vec3 bt2osg_Vec3(btVector3 bv);
+//osg::Vec3 bt2osg_Vec3(btVector3 bv);
 osg::Vec4 bt2osg_Vec4(btVector4 bv);
 btVector3 osg2bt_Vec3(osg::Vec3 bv);
 osg::Quat bt2osg_Quat(btQuaternion bv);
@@ -100,7 +100,7 @@ class btosgVec3 : public osg::Vec3 {
 	//! Constructor from base class osg::Vec3
 	/*! @param v osg::Vec3 object
 	 */
-	btosgVec3(osg::Vec3  v) : osg::Vec3(v) {};
+	btosgVec3(osg::Vec3f v) : osg::Vec3(v) {};
 	btosgVec3(osg::Vec3d v) : osg::Vec3(v) {};
 	btosgVec3(btVector3  v) : osg::Vec3(v[0],v[1],v[2]) {};
 	operator btVector3() const {
@@ -114,6 +114,7 @@ class btosgVec3 : public osg::Vec3 {
  */
 class btosgQuat : public osg::Quat {
     public:
+	btosgQuat() : osg::Quat() {};
 	/**@brief Constructor from 4 scalars
 	 * @param x X value
 	 * @param y Y value
@@ -299,7 +300,7 @@ class btosgObject {
 		   printf("set Position in non dynamic object\n");
 		#endif
                 if (model) {
-                    model->setPosition(bt2osg_Vec3(p));
+                    model->setPosition(p);
                 }
             }
         }
@@ -383,7 +384,8 @@ class btosgObject {
             else { // Not required for dynamic objects.
             	if ( model ) {
             	    model->setAttitude(bt2osg_Quat(init_state.getRotation()));
-            	    model->setPosition(bt2osg_Vec3(init_state.getOrigin()));
+            	    //model->setPosition(bt2osg_Vec3(init_state.getOrigin()));
+            	    model->setPosition(btosgVec3(init_state.getOrigin()));
             	}
             }
     	}

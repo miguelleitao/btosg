@@ -256,8 +256,13 @@ class btosgVehicle: public btosgObject {
             if ( wheel[i] ) {
                 wheel[i]->addChild(gen_wheel);
                 //wheel[i]->setPosition(osg::Vec3(bt2osg_Vec3(*halfExtents)));
+/*
                 osg::Vec3 iPos = bt2osg_Vec3(iWheel.m_chassisConnectionPointCS);
                 wheel[i]->setPosition(iPos);
+*/
+                btosgVec3 iPos = iWheel.m_chassisConnectionPointCS;
+                wheel[i]->setPosition(iPos);
+
                 //printf("  Wheel %d, %f %f %f\n",i,iPos[0],iPos[1],iPos[2]);
                 model->addChild( wheel[i] );
             }
@@ -304,7 +309,7 @@ class btosgVehicle: public btosgObject {
 	/// This function is called automatically from World::setpSimulation() for each registered vehicle.
 	/// Positions graphical vehicle and wheels from their physhical states.
 
-        // updateVehicle is Not required.
+        // updateVehicle() implemente in Bullet is Not required.
         // Vehicle dynamics are updated in stepSimulation();
         // updateVehicle requires frame_time that may not be available.
         // vehicle->updateVehicle(frame_time);
@@ -322,8 +327,8 @@ class btosgVehicle: public btosgObject {
             //vehicle->updateWheelTransform(i,true);
             btWheelInfo& iWheel = vehicle->getWheelInfo(i);
             if ( wheel[i] ) {
-                osg::Vec3 iPos = bt2osg_Vec3(iWheel.m_chassisConnectionPointCS +
-                    iWheel.m_raycastInfo.m_suspensionLength * iWheel.m_wheelDirectionCS);
+                btosgVec3 iPos = iWheel.m_chassisConnectionPointCS +
+                    iWheel.m_raycastInfo.m_suspensionLength * iWheel.m_wheelDirectionCS;
                 wheel[i]->setPosition(iPos);
                 
                 btQuaternion steeringOrn(iWheel.m_wheelDirectionCS,-iWheel.m_steering);
@@ -335,7 +340,7 @@ class btosgVehicle: public btosgObject {
                 btMatrix3x3 fullMat = steeringMat*rotatingMat;
                 btQuaternion fullQuat;
                 fullMat.getRotation(fullQuat);
-                wheel[i]->setAttitude(bt2osg_Quat(fullQuat));
+                wheel[i]->setAttitude(btosgQuat(fullQuat));
             }
         }   
     }
