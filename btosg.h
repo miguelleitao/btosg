@@ -90,6 +90,10 @@ class btosgNode {
  */
 class btosgVec3 : public osg::Vec3 {
     public:
+	/**@brief Default constructor
+	 */
+	btosgVec3() : osg::Vec3() {};
+
 	/**@brief Constructor from 3 scalars
 	 * @param x X value
 	 * @param y Y value

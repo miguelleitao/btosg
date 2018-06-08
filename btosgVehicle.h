@@ -50,13 +50,13 @@ class btosgVehicle: public btosgObject {
         float dx;			///< Vehicle x dimension.
 	float dy;			///< Vehicle y dimension.
 	float dz;			///< Vehicle < dimension.
-        osg::Vec3 dim;			///< Vehicle's dimensions in world coordinates.
-        osg::Vec3 up;			///< Vehicle's up vector. Usually, up=-gravity
-        osg::Vec3 front;		///< Vehicle's up vector.
+        btosgVec3 dim;			///< Vehicle's dimensions in world coordinates.
+        btosgVec3 up;			///< Vehicle's up vector. Usually, up=-gravity
+        btosgVec3 front;		///< Vehicle's up vector.
         btRaycastVehicle *vehicle;	///< A btRaycastVehicle object.
         osg::ref_ptr<osg::PositionAttitudeTransform> wheel[4]; 	///< Transformation from vehicle's referential to wheel position.
         double wheelRotation[4];				///< Wheels' rotation angles.
-        btosgVehicle(btosgWorld *world, osg::Vec3 dimLocal = osg::Vec3(2.,0.4,4.), double m=1000. ) {
+        btosgVehicle(btosgWorld *world, btosgVec3 dimLocal = btosgVec3(2.,0.4,4.), double m=1000. ) {
 	    /// btosgVehicle constructor.
             btVector3 grav = world->dynamic->getGravity();
             int grav_axis = grav.minAxis();
@@ -65,12 +65,12 @@ class btosgVehicle: public btosgObject {
                     fprintf(stderr,"Gravity direction %d (%f,%f,%f) not supported\n",grav_axis,grav[0],grav[1],grav[2]);
 		    break;
                 case 1:
-                    up = osg::Vec3(0., 1., 0.);
-                    front = osg::Vec3(0., 0., 1.);
+                    up = btosgVec3(0., 1., 0.);
+                    front = btosgVec3(0., 0., 1.);
                     break;
                 case 2:
-                    up = osg::Vec3(0., 0., 1.);
-                    front = osg::Vec3(0., 1., 0.);
+                    up = btosgVec3(0., 0., 1.);
+                    front = btosgVec3(0., 1., 0.);
                     break;
             }
             // dimLocal contains (Width,Height,Lenght)
@@ -107,7 +107,7 @@ class btosgVehicle: public btosgObject {
             // Center-of-gravity is shifted by shift ????
             btTransform shift(btQuaternion::getIdentity(), btVector3(0.f, 0.f, 0.f));
             // Box for collisions and center-of-gravity definition
-            btCollisionShape* boxShape = new btBoxShape(osg2bt_Vec3(dim/2.));
+            btCollisionShape* boxShape = new btBoxShape(btVector3(dim)/2.);
             btCompoundShape* chassisShape = new btCompoundShape();
             chassisShape->addChildShape(shift, boxShape);
             shape = chassisShape;
@@ -128,7 +128,7 @@ class btosgVehicle: public btosgObject {
             
             printf("vehicle body created\n");
             
-            vehicle->setCoordinateSystem( 0, osg2bt_Vec3(up).maxAxis(), osg2bt_Vec3(front).maxAxis() );
+            vehicle->setCoordinateSystem( 0, btVector3(up).maxAxis(), btVector3(front).maxAxis() );
             return;
 	}
 
@@ -141,10 +141,10 @@ class btosgVehicle: public btosgObject {
 	
         // The direction of the raycast, the btRaycastVehicle uses raycasts 
         // to sense the ground under the wheels.
-        btVector3 wheelDirectionCS0(-osg2bt_Vec3(up));
+        btVector3 wheelDirectionCS0(-btVector3(up));
 
         // The axis which the wheel rotates arround
-        btVector3 wheelAxleCS( osg2bt_Vec3(front ^ up) );
+        btVector3 wheelAxleCS( btosgVec3(front ^ up) );
         
         // center-of mass height if mass=0
         // height = suspensionRestLength-mass.g/m_suspensionStiffness

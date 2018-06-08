@@ -17,9 +17,11 @@ return osg::Vec3( bv.x(), bv.y(), bv.z() );
 osg::Vec4 bt2osg_Vec4(btVector4 bv) {
 	return osg::Vec4( bv.x(), bv.y(), bv.z(), bv.w() );
 }
+/*
 btVector3 osg2bt_Vec3(osg::Vec3 bv) {
 	return btVector3( bv.x(), bv.y(), bv.z() );
 }
+*/
 osg::Quat bt2osg_Quat(btQuaternion bv) {
 	return osg::Quat( bv.x(), bv.y(), bv.z(), bv.w() );
 }

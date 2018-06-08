@@ -186,15 +186,16 @@ class BlockBlue : public btosgBox {
 
 int main()
 {
-	osg::Vec3 up(0., 0., 1.);
+	btosgVec3 up(0., 0., 1.);
 	#ifdef _UP_
-	up = osg::Vec3(_UP_);
+	up = btosgVec3(_UP_);
 	#endif
-	myWorld.dynamic->setGravity(osg2bt_Vec3(up)*-9.8);
+	btosgVec3 gravity = up*-9.8;
+	myWorld.dynamic->setGravity(gravity);
 
 	 // Car
 	myVehicle = new btosgVehicle(&myWorld);
-	myVehicle->setPosition(osg2bt_Vec3(up*3.));
+	myVehicle->setPosition(btosgVec3(up*3.));
 	myVehicle->setName("Vehicle");
 	myVehicle->setMass(800.);
 	myWorld.addObject( myVehicle );
