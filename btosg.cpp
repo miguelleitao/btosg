@@ -107,7 +107,7 @@ void btosgWorld::reset() {
 
 void btosgObject::loadObjectModel(char const *fname) {
     /// Loads an object model from a Wavefront OBJ file.
-    /// Loadded model is used to defne bith the collision and graphical shapes.
+    /// Loadded model is used to define both the collision and graphical shapes.
     if ( ! fname || ! *fname ) {
         fprintf(stderr,"Invalid object model filename\n");
         return;
@@ -118,7 +118,7 @@ void btosgObject::loadObjectModel(char const *fname) {
     }
     if (  !model)	model = new osg::PositionAttitudeTransform;
     osg::PositionAttitudeTransform* obj_rot = new osg::PositionAttitudeTransform;
-    obj_rot->setAttitude(osg::Quat(-osg::PI/2.,osg::Vec3(1.,0.,0.)));
+    obj_rot->setAttitude(osg::Quat(-osg::PI/2.,btosgVec3(1.,0.,0.)));				// osg::Vec 
     obj_rot->addChild(loadedModel);
     model->addChild(obj_rot);
 }

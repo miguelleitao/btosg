@@ -84,6 +84,18 @@ class btosgNode {
 };
 */
 
+class btosgVec3 : public osg::Vec3 {
+    public:
+	btosgVec3(double x, double y, double z) : osg::Vec3(x,y,z) {};
+	btosgVec3(osg::Vec3  v) : osg::Vec3(v) {};
+	btosgVec3(osg::Vec3d v) : osg::Vec3(v) {};
+	btosgVec3(btVector3  v) : osg::Vec3(v[0],v[1],v[2]) {};
+	operator btVector3() {
+		return btVector3(x(), y(), z());
+	} 
+};
+
+
 //! Physical and visual world.
 /*! Integrates a btDynamicsWorld and an osg::Group.
  *  Provides automated updating of graphical objects from related 
@@ -115,7 +127,7 @@ class btosgWorld {
 	 	dynamic = new btDiscreteDynamicsWorld(dispatcher,broadphase,solver,collisionConfiguration);
 
 		// Set Gravity
-		dynamic->setGravity(btVector3(0., 0., -9.8));
+		dynamic->setGravity(btosgVec3(0., 0., -9.8));
 
 		// Creating the root node
                 #ifdef BTOSG_SHADOW
@@ -203,15 +215,16 @@ class btosgObject {
         		shape->calculateLocalInertia(mass, localInertia);
 		if ( body ) body->setMassProps(m, localInertia); 
 	}
-	btVector3 getPosition() {
+	btosgVec3 getPosition() {
 		/// Returns object's position.
          	if (body) {
             		btTransform wTrans;
 			body->getMotionState()->getWorldTransform(wTrans);
             		return wTrans.getOrigin();
          	}
-		if (model) return osg2bt_Vec3(model->getPosition());
-		return btVector3(0.,0.,0.);
+		//if (model) return osg2bt_Vec3(model->getPosition());
+		if (model) return model->getPosition();
+		return btosgVec3(0.,0.,0.);
     	}
 	btQuaternion getRotation() {
                 /// Returns object's attitude as a Quaternion.
@@ -313,7 +326,7 @@ class btosgObject {
             	body->getMotionState()->getWorldTransform(wTrans);
             	if ( model ) {
             	    model->setAttitude(bt2osg_Quat(wTrans.getRotation()));
-            	    model->setPosition(bt2osg_Vec3(wTrans.getOrigin()));
+            	    model->setPosition(btosgVec3(wTrans.getOrigin()));
             	}
     	    }
     	}
