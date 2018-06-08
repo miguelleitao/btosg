@@ -90,7 +90,7 @@ class btosgNode {
  */
 class btosgVec3 : public osg::Vec3 {
     public:
-	/**@brief Constructor from scalars
+	/**@brief Constructor from 3 scalars
 	 * @param x X value
 	 * @param y Y value
 	 * @param z Z value
@@ -106,9 +106,32 @@ class btosgVec3 : public osg::Vec3 {
 	operator btVector3() const {
 		return btVector3(x(), y(), z());
 	} 
-
 };
 
+//! btosgQuat represents a Quaternion.
+/*! Can be used as a btQuaternion or an osg::Quat.
+ *  Implemented as derived from osg::Quar with aditional constructor and convertor from and to btQuaternion.
+ */
+class btosgQuat : public osg::Quat {
+    public:
+	/**@brief Constructor from 4 scalars
+	 * @param x X value
+	 * @param y Y value
+	 * @param z Z value
+	 * @param w W value
+	 */
+	btosgQuat(double x, double y, double z, double w) : osg::Quat(x,y,z,w) {};
+
+	//! Constructor from base class osg::Quat
+	/*! @param q osg::Quat object
+	 */
+	btosgQuat(osg::Quat  q) : osg::Quat(q) {};
+	btosgQuat(btQuaternion  q) : osg::Quat(q[0],q[1],q[2],q[3]) {};
+	operator btQuaternion() const {
+		return btQuaternion(x(), y(), z(), w());
+	}
+	btosgVec3 toEuler(); 
+};
 
 //! Physical and visual world.
 /*! Integrates a btDynamicsWorld and an osg::Group.
@@ -240,20 +263,21 @@ class btosgObject {
 		if (model) return model->getPosition();
 		return btosgVec3(0.,0.,0.);
     	}
-	btQuaternion getRotation() {
+	btosgQuat getRotation() {
                 /// Returns object's attitude as a Quaternion.
          	if (body) {
             		btTransform wTrans;
 			body->getMotionState()->getWorldTransform(wTrans);
             		return wTrans.getRotation();
          	}
-		if (model) return osg2bt_Quat(model->getAttitude());
-		return btQuaternion(0.,0.,0.,0.);
+		//if (model) return osg2bt_Quat(model->getAttitude());
+		if (model) return model->getAttitude();
+		return btosgQuat(1.,0.,0.,0.);
     	}
-	btVector3 getEuler() {
+	btosgVec3 getEuler() {
 		/// Returns object's attitude as HPR Euler angles.
-		btQuaternion qt = getRotation();
-		return quat2Euler(qt);
+		btosgQuat qt = getRotation();
+		return qt.toEuler();
 	}
 	void setPosition(const btosgVec3 &p) {
 		/// Sets objects position.
