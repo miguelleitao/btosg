@@ -124,4 +124,4 @@ clean:
 push: *.cpp *.h Makefile *.md loadOBJ img obj .gitignore .travis.yml docs btosg.doxygen
 	git add $^
 	git commit -m "update"
-	git push
+	git push origin HEAD
