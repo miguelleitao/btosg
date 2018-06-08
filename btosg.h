@@ -45,13 +45,6 @@
  */
 #define AVOID_DIRECT_MODEL_UPDATE
 
-//osg::Vec3 bt2osg_Vec3(btVector3 bv);
-osg::Vec4 bt2osg_Vec4(btVector4 bv);
-btVector3 osg2bt_Vec3(osg::Vec3 bv);
-osg::Quat bt2osg_Quat(btQuaternion bv);
-btQuaternion osg2bt_Quat(osg::Quat bv);
-btVector3 quat2Euler(const btQuaternion& q);
-
 #define max(a,b) \
    ({ __typeof__ (a) _a = (a); \
        __typeof__ (b) _b = (b); \
@@ -428,7 +421,6 @@ class btosgExternalObject : public btosgObject {
 
 		const GLInstanceVertex& v = glmesh->m_vertices->at(0);
    		btConvexHullShape* shapeH = new btConvexHullShape((const btScalar*)(&(v.xyzw[0])), glmesh->m_numvertices, sizeof(GLInstanceVertex));
-   		//btVector3 color(1,1,1);
    		btVector3 scaling(.999,.999,.999);
    		shapeH->setLocalScaling(scaling);
 		shape = shapeH;
@@ -449,7 +441,7 @@ class btosgSphere : public btosgObject {
 		radius = r;
 		osg::ref_ptr<osg::Geode> geo = new osg::Geode();
 		geo->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.,0.,0.),r)));
-		if (  !model)	model = new osg::PositionAttitudeTransform;
+		if ( !model )	model = new osg::PositionAttitudeTransform;
 		model->addChild(geo);
                 model->setNodeMask(CastsShadowTraversalMask);
 		shape = new btSphereShape(r);
@@ -532,7 +524,7 @@ class btosgPlane : public btosgObject {
 		osg::Geode *geo = new osg::Geode();
 		if ( geo ) {
 		    osg::Shape *sp = new osg::Box( osg::Vec3(0.,0.,0.), dx, dy, dz );
-		    if ( sp) {
+		    if ( sp ) {
 		        osg::ShapeDrawable *sd = new osg::ShapeDrawable(sp);
 		        if ( sd ) 
 		            geo->addDrawable(sd);
@@ -579,14 +571,14 @@ class btosgCone : public btosgObject {
             osg::Geode *geo = new osg::Geode();
             if ( geo ) {
                 osg::Shape *sp = new osg::Cone( osg::Vec3(0.,0.,0.), r, h);
-                if ( sp) {
+                if ( sp ) {
                     osg::ShapeDrawable *sd = new osg::ShapeDrawable(sp);
                     if ( sd ) 
                         geo->addDrawable(sd);
                     else fprintf(stderr,"Error creating osg::Shape\n");
                 } else fprintf(stderr,"Error creating osg::Shape\n");
             } else fprintf(stderr,"Error creating Geode\n");
-            if (  !model)	model = new osg::PositionAttitudeTransform;
+            if ( !model )	model = new osg::PositionAttitudeTransform;
             osg::PositionAttitudeTransform *center_pos = new osg::PositionAttitudeTransform;
             center_pos->setPosition(osg::Vec3(0.,0.,-height/4.));
             center_pos->addChild(geo);
@@ -614,7 +606,7 @@ class btosgCylinder : public btosgObject {
             osg::Geode *geo = new osg::Geode();
             if ( geo ) {
                 osg::Shape *sp = new osg::Cylinder( osg::Vec3(0.,0.,0.), r, h);
-                if ( sp) {
+                if ( sp ) {
                     osg::ShapeDrawable *sd = new osg::ShapeDrawable(sp);
                     if ( sd ) 
                         geo->addDrawable(sd);
