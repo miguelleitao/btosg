@@ -350,7 +350,7 @@ class btosgObject {
 	}
 	void logPosition() {
 		/// Outputs object's position.
-         	btVector3 pos = getPosition();
+         	btosgVec3 pos = getPosition();
        		if ( name )
        		    std::cout << "Object " << name << " position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
        		else
@@ -364,7 +364,7 @@ class btosgObject {
             	btTransform wTrans;
             	body->getMotionState()->getWorldTransform(wTrans);
             	if ( model ) {
-            	    model->setAttitude(bt2osg_Quat(wTrans.getRotation()));
+            	    model->setAttitude(btosgQuat(wTrans.getRotation()));
             	    model->setPosition(btosgVec3(wTrans.getOrigin()));
             	}
     	    }
@@ -383,8 +383,7 @@ class btosgObject {
             }
             else { // Not required for dynamic objects.
             	if ( model ) {
-            	    model->setAttitude(bt2osg_Quat(init_state.getRotation()));
-            	    //model->setPosition(bt2osg_Vec3(init_state.getOrigin()));
+            	    model->setAttitude(btosgQuat(init_state.getRotation()));
             	    model->setPosition(btosgVec3(init_state.getOrigin()));
             	}
             }
@@ -470,7 +469,7 @@ class btosgBox : public btosgObject {
 	float dx;	///<  x dimension
 	float dy;	///<  y dimension
 	float dz;	///<  z dimension
-	btosgBox(osg::Vec3 dim = osg::Vec3(1.,1.,1.), double m=1. ) {
+	btosgBox(btosgVec3 dim = btosgVec3(1.,1.,1.), double m=1. ) {
 	    /// Constructs an axis oriented box.
             dx = dim[0];
             dy = dim[1];
@@ -489,16 +488,16 @@ class btosgBox : public btosgObject {
             model->addChild(geo);
             model->setNodeMask(CastsShadowTraversalMask);
             mass = m;
-            shape = new btBoxShape( osg2bt_Vec3(dim/2.) );
+            shape = new btBoxShape( btosgVec3(dim/2.) );
             if ( !shape ) fprintf(stderr,"Error creating btShape\n");
             
             createRigidBody();
             //printf("box created\n");
 	}
-	btosgBox(float x, float y, float z) : btosgBox( osg::Vec3(x,y,z) ) {
+	btosgBox(float x, float y, float z) : btosgBox( btosgVec3(x,y,z) ) {
 	    /// Constructs an axis oriented box.
 	};
-        btosgBox(float r)                   : btosgBox( osg::Vec3(r,r,r) ) {
+        btosgBox(float r)                   : btosgBox( btosgVec3(r,r,r) ) {
 	    /// Constructs an axis oriented box.
 	};
 };
