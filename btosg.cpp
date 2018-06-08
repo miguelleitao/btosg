@@ -50,6 +50,12 @@ btVector3 quat2Euler(const btQuaternion& q)
 	return btVector3(yaw,pitch,roll);
 }
 
+btosgVec3 btosgQuat::toEuler()
+{
+	return quat2Euler(*this);
+}
+
+
 btosgWorld::~btosgWorld() {
             delete dynamic; // ????
             delete solver;
