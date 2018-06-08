@@ -260,7 +260,6 @@ class btosgObject {
 			body->getMotionState()->getWorldTransform(wTrans);
             		return wTrans.getOrigin();
          	}
-		//if (model) return osg2bt_Vec3(model->getPosition());
 		if (model) return model->getPosition();
 		return btosgVec3(0.,0.,0.);
     	}
@@ -271,9 +270,8 @@ class btosgObject {
 			body->getMotionState()->getWorldTransform(wTrans);
             		return wTrans.getRotation();
          	}
-		//if (model) return osg2bt_Quat(model->getAttitude());
 		if (model) return model->getAttitude();
-		return btosgQuat(1.,0.,0.,0.);
+		return btosgQuat(0.,0.,0.,1.);
     	}
 	btosgVec3 getEuler() {
 		/// Returns object's attitude as HPR Euler angles.
@@ -314,7 +312,6 @@ class btosgObject {
                 btTransform wTrans;
                 body->getMotionState()->getWorldTransform(wTrans);
                 wTrans.setRotation(q);
-                //wTrans.setOrigin(btVector3(x,y,z));
                 body->setWorldTransform(wTrans);
                 body->getMotionState()->setWorldTransform(wTrans);
                 body->clearForces();
@@ -335,14 +332,8 @@ class btosgObject {
 	}
 	void setRotation(float x, float y, float z, float w) {
 	    /// Sets objects attitude from the quaternion coords.
-	    setRotation(btQuaternion(x,y,z,w));
+	    setRotation(btosgQuat(x,y,z,w));
 	}
-/*	
-	void setRotation(osg::Quat q) {
-	    /// Sets objects attitude from a quaternion.
-            setRotation(q[0],q[1],q[2],q[3]);
-	}
-	*/
 	
 	void setTexture(char const *fname); //< Sets a texture from an image file.
 	void setMaterial(osg::ref_ptr<osg::Material> mat) {
@@ -433,7 +424,7 @@ class btosgExternalObject : public btosgObject {
 
 		const GLInstanceVertex& v = glmesh->m_vertices->at(0);
    		btConvexHullShape* shapeH = new btConvexHullShape((const btScalar*)(&(v.xyzw[0])), glmesh->m_numvertices, sizeof(GLInstanceVertex));
-   		btVector3 color(1,1,1);
+   		//btVector3 color(1,1,1);
    		btVector3 scaling(.999,.999,.999);
    		shapeH->setLocalScaling(scaling);
 		shape = shapeH;
@@ -520,7 +511,7 @@ class btosgPlane : public btosgObject {
                 /// Plane is created facing Z axis.
 	};
 		
-        btosgPlane( osg::Vec3 v ) : btosgPlane( v[0], v[1], v[2] ) {
+        btosgPlane( btosgVec3 v ) : btosgPlane( v[0], v[1], v[2] ) {
 		/// Constructs a physical infinite plane, viewable as low thickness finite box.
                 /// Viewable box has dimensions v.x,v.y,v.z.
                 /// Minimum dimension selects physical plane orientatiton.
