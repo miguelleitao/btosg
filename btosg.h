@@ -84,9 +84,22 @@ class btosgNode {
 };
 */
 
+//! btosgVec3 can be used to represent 3D points and vectors.
+/*! Can be used as a btVector3 or an osg::Vec3.
+ *  Implemented as derived from osg::Vec3 with aditional constructor and convertor from and to btVector3.
+ */
 class btosgVec3 : public osg::Vec3 {
     public:
+	/**@brief Constructor from scalars
+	 * @param x X value
+	 * @param y Y value
+	 * @param z Z value
+	 */
 	btosgVec3(double x, double y, double z) : osg::Vec3(x,y,z) {};
+
+	//! Constructor from base class osg::Vec3
+	/*! @param v osg::Vec3 object
+	 */
 	btosgVec3(osg::Vec3  v) : osg::Vec3(v) {};
 	btosgVec3(osg::Vec3d v) : osg::Vec3(v) {};
 	btosgVec3(btVector3  v) : osg::Vec3(v[0],v[1],v[2]) {};
