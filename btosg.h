@@ -308,7 +308,7 @@ class btosgObject {
 		/// Sets objects position.
 		setPosition(btosgVec3(x,y,z));
         }
-	void setRotation(btQuaternion q) {
+	void setRotation(btosgQuat q) {
 	    /// Sets objects attitude from a quaternion.
             if (body) {
                 btTransform wTrans;
@@ -329,7 +329,7 @@ class btosgObject {
 		  printf("setRotation in non dynamic object\n");
 		#endif
                 if (model) {
-                        model->setAttitude(bt2osg_Quat(q));
+                        model->setAttitude(q);
                 }
             }
 	}
@@ -337,11 +337,12 @@ class btosgObject {
 	    /// Sets objects attitude from the quaternion coords.
 	    setRotation(btQuaternion(x,y,z,w));
 	}
-	
+/*	
 	void setRotation(osg::Quat q) {
 	    /// Sets objects attitude from a quaternion.
             setRotation(q[0],q[1],q[2],q[3]);
 	}
+	*/
 	
 	void setTexture(char const *fname); //< Sets a texture from an image file.
 	void setMaterial(osg::ref_ptr<osg::Material> mat) {
