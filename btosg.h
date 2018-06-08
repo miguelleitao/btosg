@@ -463,7 +463,10 @@ class btosgSphere : public btosgObject {
 	}
 };
 
-/// Axis oriented box.
+ 
+//!  Axis oriented box..
+/*!  Represents a physical and visual axis oriented box.
+ */
 class btosgBox : public btosgObject {
     public:
 	float dx;	///<  x dimension
