@@ -45,13 +45,6 @@
  */
 #define AVOID_DIRECT_MODEL_UPDATE
 
-osg::Vec3 bt2osg_Vec3(btVector3 bv);
-osg::Vec4 bt2osg_Vec4(btVector4 bv);
-btVector3 osg2bt_Vec3(osg::Vec3 bv);
-osg::Quat bt2osg_Quat(btQuaternion bv);
-btQuaternion osg2bt_Quat(osg::Quat bv);
-btVector3 quat2Euler(const btQuaternion& q);
-
 #define max(a,b) \
    ({ __typeof__ (a) _a = (a); \
        __typeof__ (b) _b = (b); \
@@ -84,6 +77,60 @@ class btosgNode {
 };
 */
 
+//! btosgVec3 can be used to represent 3D points and vectors.
+/*! Can be used as a btVector3 or an osg::Vec3.
+ *  Implemented as derived from osg::Vec3 with aditional constructor and convertor from and to btVector3.
+ */
+class btosgVec3 : public osg::Vec3 {
+    public:
+	/**@brief Default constructor
+	 */
+	btosgVec3() : osg::Vec3() {};
+
+	/**@brief Constructor from 3 scalars
+	 * @param x X value
+	 * @param y Y value
+	 * @param z Z value
+	 */
+	btosgVec3(double x, double y, double z) : osg::Vec3(x,y,z) {};
+
+	//! Constructor from base class osg::Vec3
+	/*! @param v osg::Vec3 object
+	 */
+	btosgVec3(osg::Vec3f v) : osg::Vec3(v) {};
+	btosgVec3(osg::Vec3d v) : osg::Vec3(v) {};
+	btosgVec3(btVector3  v) : osg::Vec3(v[0],v[1],v[2]) {};
+	operator btVector3() const {
+		return btVector3(x(), y(), z());
+	} 
+};
+
+//! btosgQuat represents a Quaternion.
+/*! Can be used as a btQuaternion or an osg::Quat.
+ *  Implemented as derived from osg::Quar with aditional constructor and convertor from and to btQuaternion.
+ */
+class btosgQuat : public osg::Quat {
+    public:
+	btosgQuat() : osg::Quat() {};
+	/**@brief Constructor from 4 scalars
+	 * @param x X value
+	 * @param y Y value
+	 * @param z Z value
+	 * @param w W value
+	 */
+	btosgQuat(double x, double y, double z, double w) : osg::Quat(x,y,z,w) {};
+
+	//! Constructor from base class osg::Quat
+	/*! @param q osg::Quat object
+	 */
+	btosgQuat(osg::Quat  q) : osg::Quat(q) {};
+	btosgQuat(btQuaternion  q) : osg::Quat(q[0],q[1],q[2],q[3]) {};
+	operator btQuaternion() const {
+		return btQuaternion(x(), y(), z(), w());
+	}
+	btosgVec3 toEuler(); 
+};
+
 //! Physical and visual world.
 /*! Integrates a btDynamicsWorld and an osg::Group.
  *  Provides automated updating of graphical objects from related 
@@ -115,7 +162,7 @@ class btosgWorld {
 	 	dynamic = new btDiscreteDynamicsWorld(dispatcher,broadphase,solver,collisionConfiguration);
 
 		// Set Gravity
-		dynamic->setGravity(btVector3(0., 0., -9.8));
+		dynamic->setGravity(btosgVec3(0., 0., -9.8));
 
 		// Creating the root node
                 #ifdef BTOSG_SHADOW
@@ -203,32 +250,32 @@ class btosgObject {
         		shape->calculateLocalInertia(mass, localInertia);
 		if ( body ) body->setMassProps(m, localInertia); 
 	}
-	btVector3 getPosition() {
+	btosgVec3 getPosition() {
 		/// Returns object's position.
          	if (body) {
             		btTransform wTrans;
 			body->getMotionState()->getWorldTransform(wTrans);
             		return wTrans.getOrigin();
          	}
-		if (model) return osg2bt_Vec3(model->getPosition());
-		return btVector3(0.,0.,0.);
+		if (model) return model->getPosition();
+		return btosgVec3(0.,0.,0.);
     	}
-	btQuaternion getRotation() {
+	btosgQuat getRotation() {
                 /// Returns object's attitude as a Quaternion.
          	if (body) {
             		btTransform wTrans;
 			body->getMotionState()->getWorldTransform(wTrans);
             		return wTrans.getRotation();
          	}
-		if (model) return osg2bt_Quat(model->getAttitude());
-		return btQuaternion(0.,0.,0.,0.);
+		if (model) return model->getAttitude();
+		return btosgQuat(0.,0.,0.,1.);
     	}
-	btVector3 getEuler() {
+	btosgVec3 getEuler() {
 		/// Returns object's attitude as HPR Euler angles.
-		btQuaternion qt = getRotation();
-		return quat2Euler(qt);
+		btosgQuat qt = getRotation();
+		return qt.toEuler();
 	}
-	void setPosition(const btVector3 &p) {
+	void setPosition(const btosgVec3 &p) {
 		/// Sets objects position.
 	    if (body) {
                 btTransform wTrans;
@@ -248,21 +295,20 @@ class btosgObject {
 		   printf("set Position in non dynamic object\n");
 		#endif
                 if (model) {
-                    model->setPosition(bt2osg_Vec3(p));
+                    model->setPosition(p);
                 }
             }
         }
         void setPosition(float x, float y, float z) {
 		/// Sets objects position.
-		setPosition(btVector3(x,y,z));
+		setPosition(btosgVec3(x,y,z));
         }
-	void setRotation(btQuaternion q) {
+	void setRotation(btosgQuat q) {
 	    /// Sets objects attitude from a quaternion.
             if (body) {
                 btTransform wTrans;
                 body->getMotionState()->getWorldTransform(wTrans);
                 wTrans.setRotation(q);
-                //wTrans.setOrigin(btVector3(x,y,z));
                 body->setWorldTransform(wTrans);
                 body->getMotionState()->setWorldTransform(wTrans);
                 body->clearForces();
@@ -277,18 +323,13 @@ class btosgObject {
 		  printf("setRotation in non dynamic object\n");
 		#endif
                 if (model) {
-                        model->setAttitude(bt2osg_Quat(q));
+                        model->setAttitude(q);
                 }
             }
 	}
 	void setRotation(float x, float y, float z, float w) {
 	    /// Sets objects attitude from the quaternion coords.
-	    setRotation(btQuaternion(x,y,z,w));
-	}
-	
-	void setRotation(osg::Quat q) {
-	    /// Sets objects attitude from a quaternion.
-            setRotation(q[0],q[1],q[2],q[3]);
+	    setRotation(btosgQuat(x,y,z,w));
 	}
 	
 	void setTexture(char const *fname); //< Sets a texture from an image file.
@@ -298,7 +339,7 @@ class btosgObject {
 	}
 	void logPosition() {
 		/// Outputs object's position.
-         	btVector3 pos = getPosition();
+         	btosgVec3 pos = getPosition();
        		if ( name )
        		    std::cout << "Object " << name << " position " << pos[0] << " " << pos[1] << " " << pos[2] << std::endl;
        		else
@@ -312,8 +353,8 @@ class btosgObject {
             	btTransform wTrans;
             	body->getMotionState()->getWorldTransform(wTrans);
             	if ( model ) {
-            	    model->setAttitude(bt2osg_Quat(wTrans.getRotation()));
-            	    model->setPosition(bt2osg_Vec3(wTrans.getOrigin()));
+            	    model->setAttitude(btosgQuat(wTrans.getRotation()));
+            	    model->setPosition(btosgVec3(wTrans.getOrigin()));
             	}
     	    }
     	}
@@ -331,8 +372,8 @@ class btosgObject {
             }
             else { // Not required for dynamic objects.
             	if ( model ) {
-            	    model->setAttitude(bt2osg_Quat(init_state.getRotation()));
-            	    model->setPosition(bt2osg_Vec3(init_state.getOrigin()));
+            	    model->setAttitude(btosgQuat(init_state.getRotation()));
+            	    model->setPosition(btosgVec3(init_state.getOrigin()));
             	}
             }
     	}
@@ -380,7 +421,6 @@ class btosgExternalObject : public btosgObject {
 
 		const GLInstanceVertex& v = glmesh->m_vertices->at(0);
    		btConvexHullShape* shapeH = new btConvexHullShape((const btScalar*)(&(v.xyzw[0])), glmesh->m_numvertices, sizeof(GLInstanceVertex));
-   		btVector3 color(1,1,1);
    		btVector3 scaling(.999,.999,.999);
    		shapeH->setLocalScaling(scaling);
 		shape = shapeH;
@@ -401,7 +441,7 @@ class btosgSphere : public btosgObject {
 		radius = r;
 		osg::ref_ptr<osg::Geode> geo = new osg::Geode();
 		geo->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.,0.,0.),r)));
-		if (  !model)	model = new osg::PositionAttitudeTransform;
+		if ( !model )	model = new osg::PositionAttitudeTransform;
 		model->addChild(geo);
                 model->setNodeMask(CastsShadowTraversalMask);
 		shape = new btSphereShape(r);
@@ -411,13 +451,16 @@ class btosgSphere : public btosgObject {
 	}
 };
 
-/// Axis oriented box.
+ 
+//!  Axis oriented box..
+/*!  Represents a physical and visual axis oriented box.
+ */
 class btosgBox : public btosgObject {
     public:
 	float dx;	///<  x dimension
 	float dy;	///<  y dimension
 	float dz;	///<  z dimension
-	btosgBox(osg::Vec3 dim = osg::Vec3(1.,1.,1.), double m=1. ) {
+	btosgBox(btosgVec3 dim = btosgVec3(1.,1.,1.), double m=1. ) {
 	    /// Constructs an axis oriented box.
             dx = dim[0];
             dy = dim[1];
@@ -436,16 +479,16 @@ class btosgBox : public btosgObject {
             model->addChild(geo);
             model->setNodeMask(CastsShadowTraversalMask);
             mass = m;
-            shape = new btBoxShape( osg2bt_Vec3(dim/2.) );
+            shape = new btBoxShape( btosgVec3(dim/2.) );
             if ( !shape ) fprintf(stderr,"Error creating btShape\n");
             
             createRigidBody();
             //printf("box created\n");
 	}
-	btosgBox(float x, float y, float z) : btosgBox( osg::Vec3(x,y,z) ) {
+	btosgBox(float x, float y, float z) : btosgBox( btosgVec3(x,y,z) ) {
 	    /// Constructs an axis oriented box.
 	};
-        btosgBox(float r)                   : btosgBox( osg::Vec3(r,r,r) ) {
+        btosgBox(float r)                   : btosgBox( btosgVec3(r,r,r) ) {
 	    /// Constructs an axis oriented box.
 	};
 };
@@ -464,7 +507,7 @@ class btosgPlane : public btosgObject {
                 /// Plane is created facing Z axis.
 	};
 		
-        btosgPlane( osg::Vec3 v ) : btosgPlane( v[0], v[1], v[2] ) {
+        btosgPlane( btosgVec3 v ) : btosgPlane( v[0], v[1], v[2] ) {
 		/// Constructs a physical infinite plane, viewable as low thickness finite box.
                 /// Viewable box has dimensions v.x,v.y,v.z.
                 /// Minimum dimension selects physical plane orientatiton.
@@ -481,7 +524,7 @@ class btosgPlane : public btosgObject {
 		osg::Geode *geo = new osg::Geode();
 		if ( geo ) {
 		    osg::Shape *sp = new osg::Box( osg::Vec3(0.,0.,0.), dx, dy, dz );
-		    if ( sp) {
+		    if ( sp ) {
 		        osg::ShapeDrawable *sd = new osg::ShapeDrawable(sp);
 		        if ( sd ) 
 		            geo->addDrawable(sd);
@@ -528,14 +571,14 @@ class btosgCone : public btosgObject {
             osg::Geode *geo = new osg::Geode();
             if ( geo ) {
                 osg::Shape *sp = new osg::Cone( osg::Vec3(0.,0.,0.), r, h);
-                if ( sp) {
+                if ( sp ) {
                     osg::ShapeDrawable *sd = new osg::ShapeDrawable(sp);
                     if ( sd ) 
                         geo->addDrawable(sd);
                     else fprintf(stderr,"Error creating osg::Shape\n");
                 } else fprintf(stderr,"Error creating osg::Shape\n");
             } else fprintf(stderr,"Error creating Geode\n");
-            if (  !model)	model = new osg::PositionAttitudeTransform;
+            if ( !model )	model = new osg::PositionAttitudeTransform;
             osg::PositionAttitudeTransform *center_pos = new osg::PositionAttitudeTransform;
             center_pos->setPosition(osg::Vec3(0.,0.,-height/4.));
             center_pos->addChild(geo);
@@ -563,7 +606,7 @@ class btosgCylinder : public btosgObject {
             osg::Geode *geo = new osg::Geode();
             if ( geo ) {
                 osg::Shape *sp = new osg::Cylinder( osg::Vec3(0.,0.,0.), r, h);
-                if ( sp) {
+                if ( sp ) {
                     osg::ShapeDrawable *sd = new osg::ShapeDrawable(sp);
                     if ( sd ) 
                         geo->addDrawable(sd);

@@ -9,23 +9,6 @@
 
 #define _DEBUG_ (0)
 
-osg::Vec3 bt2osg_Vec3(btVector3 bv) {
-return osg::Vec3( bv.x(), bv.y(), bv.z() );
-}
-osg::Vec4 bt2osg_Vec4(btVector4 bv) {
-	return osg::Vec4( bv.x(), bv.y(), bv.z(), bv.w() );
-}
-btVector3 osg2bt_Vec3(osg::Vec3 bv) {
-	return btVector3( bv.x(), bv.y(), bv.z() );
-}
-osg::Quat bt2osg_Quat(btQuaternion bv) {
-	return osg::Quat( bv.x(), bv.y(), bv.z(), bv.w() );
-}
-
-btQuaternion osg2bt_Quat(osg::Quat bv) {
-	return btQuaternion( bv.x(), bv.y(), bv.z(), bv.w() );
-}
-
 btVector3 quat2Euler(const btQuaternion& q)
 {
 	// Implementation not tested.
@@ -49,6 +32,12 @@ btVector3 quat2Euler(const btQuaternion& q)
 	double yaw = atan2(siny, cosy);
 	return btVector3(yaw,pitch,roll);
 }
+
+btosgVec3 btosgQuat::toEuler()
+{
+	return quat2Euler(*this);
+}
+
 
 btosgWorld::~btosgWorld() {
             delete dynamic; // ????
@@ -107,7 +96,7 @@ void btosgWorld::reset() {
 
 void btosgObject::loadObjectModel(char const *fname) {
     /// Loads an object model from a Wavefront OBJ file.
-    /// Loadded model is used to defne bith the collision and graphical shapes.
+    /// Loadded model is used to define both the collision and graphical shapes.
     if ( ! fname || ! *fname ) {
         fprintf(stderr,"Invalid object model filename\n");
         return;

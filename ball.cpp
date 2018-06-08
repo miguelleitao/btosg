@@ -20,8 +20,10 @@ btosgSphere *myBall;
 
 int main()
 {
-	osg::Vec3 up(0., 0., 1.);
-	myWorld.dynamic->setGravity(osg2bt_Vec3(up)*-9.8);
+	btosgVec3 up(0., 0., 1.);
+	btosgVec3 gravity = up*-9.8;
+	//myWorld.dynamic->setGravity(osg2bt_Vec3(up)*-9.8);
+	myWorld.dynamic->setGravity(gravity);
 
 	// Beach Ball
 	myBall = new btosgSphere(0.25);
