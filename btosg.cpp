@@ -112,7 +112,6 @@ void btosgObject::loadObjectModel(char const *fname) {
     model->addChild(obj_rot);
 }
 
-
 void btosgObject::setTexture(char const *fname)
 {
     /// Sets the object texture from a loaded image file.
