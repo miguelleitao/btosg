@@ -94,12 +94,24 @@ public:
      */
     btosgVec3(double x, double y, double z) : osg::Vec3(x,y,z) {};
 
-    //! Constructor from base class osg::Vec3
+    //! Constructor from osg::Vec3f
     /*! @param v osg::Vec3 object
      */
     btosgVec3(osg::Vec3f v) : osg::Vec3(v) {};
+
+    //! Constructor from osg::Vec3d
+    /*! @param v osg::Vec3 object
+     */
     btosgVec3(osg::Vec3d v) : osg::Vec3(v) {};
+
+    //! Constructor from btVector3
+    /*! @param v btVector3 object
+     */
     btosgVec3(btVector3  v) : osg::Vec3(v[0],v[1],v[2]) {};
+
+    //! Converter operator to Bullet Vector 
+    /*! Returns vector as a btVector3 object
+     */
     operator btVector3() const {
         return btVector3(x(), y(), z());
     }
@@ -124,10 +136,22 @@ public:
     /*! @param q osg::Quat object
      */
     btosgQuat(osg::Quat  q) : osg::Quat(q) {};
+
+    //! Constructor from Bullet quaternion btQuaternion
+    /*! @param q btQuaternion object
+     */
     btosgQuat(btQuaternion  q) : osg::Quat(q[0],q[1],q[2],q[3]) {};
+
+    //! Convertor operator to Bullet quaternion 
+    /*! Returns quaternion as a btQuaternion object
+     */
     operator btQuaternion() const {
         return btQuaternion(x(), y(), z(), w());
     }
+
+    //! Converter to Euler angles
+    /*! Returns a btoasgVec3 object with HPR Euler angles
+     */
     btosgVec3 toEuler();
 };
 

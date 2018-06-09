@@ -15,7 +15,7 @@ LIB_BULLET_DIR?=$(shell pkg-config --libs-only-L bullet)
 LIB_OSG_DIR=$(shell pkg-config --libs-only-L openscenegraph-osg)
 BTOSG_LOAD_OBJ?=YES
 CXXFLAGS?=-std=c++11 -Wall -Wextra -O2 -Wno-uninitialized -Wno-unused-parameter -DBTOSG_LOAD_OBJ=${BTOSG_LOAD_OBJ}
-VERSION:=$(shell git tag |tail -1)
+VERSION:=$(shell git describe --tags --long)
 
 #LD_B3OBJ_IMPORT=-L loadOBJ -lloadOBJ
 B3_OBJ_LOADER=loadOBJ/libloadOBJ.a
