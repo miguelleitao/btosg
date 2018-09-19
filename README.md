@@ -65,3 +65,5 @@ To compile and try the provided examples do:
     ./carZ
     ./carY
 
+### Referencing
+The release version can be referenced by either http://doi.org/ctz5 or doi:10.5281/zenodo.1283484.
