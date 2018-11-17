@@ -20,6 +20,7 @@ The use of **btosg** can help the programming task because it allows to create a
 
 Dependencies can be installed on Fedora Linux using:
 
+    dnf install gcc-c++ mesa-libGL-devel
     dnf install bullet bullet-devel OpenSceneGraph OpenSceneGraph-devel
 
 Dependencies can be installed on Ubuntu using:
