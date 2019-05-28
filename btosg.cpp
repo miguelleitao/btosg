@@ -118,8 +118,7 @@ void btosgObject::setTexture(char const *fname)
     osg::StateSet* stateset = new osg::StateSet();
 
     osg::ref_ptr<osg::Image> image = osgDB::readRefImageFile( fname );
-    if (image)
-    {
+    if (image) {
         osg::Texture2D* texture = new osg::Texture2D;
         texture->setImage(image);
         texture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR);

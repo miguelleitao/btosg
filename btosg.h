@@ -109,7 +109,7 @@ public:
      */
     btosgVec3(btVector3  v) : osg::Vec3(v[0],v[1],v[2]) {};
 
-    //! Converter operator to Bullet Vector 
+    //! Converter operator to Bullet Vector
     /*! Returns vector as a btVector3 object
      */
     operator btVector3() const {
@@ -142,7 +142,7 @@ public:
      */
     btosgQuat(btQuaternion  q) : osg::Quat(q[0],q[1],q[2],q[3]) {};
 
-    //! Convertor operator to Bullet quaternion 
+    //! Convertor operator to Bullet quaternion
     /*! Returns quaternion as a btQuaternion object
      */
     operator btQuaternion() const {
@@ -169,8 +169,8 @@ private:
     btSequentialImpulseConstraintSolver* solver;
 public:
     btDynamicsWorld *dynamic;	///< Pointer to btDynamicsWorld object.
-    /// Pointer to osg::Group object storing the root node of the object tree.
 #ifdef BTOSG_SHADOW
+    /// Pointer to osg::Group object storing the root node of the object tree.
     osg::ref_ptr<osgShadow::ShadowedScene> scene;
 #else
     osg::ref_ptr<osg::Group> 	scene;
@@ -199,7 +199,6 @@ public:
 #else
         scene = new osg::Group;// Creating the root node
 #endif
-
         steps = 0L;
     };
     ~btosgWorld();
@@ -227,12 +226,12 @@ public:
     // Main components
     //osg::Geode *geo;
     osg::ref_ptr<osg::PositionAttitudeTransform> model;	///< Object's graphical model
-    char *name;	///< Object name
+    char *name;	              ///< Object name
     btTransform init_state;   ///< Inital state. Applied on reset events.
-    btRigidBody *body;	  ///< object's rigid body
+    btRigidBody *body;	      ///< object's rigid body
     // other
     btCollisionShape* shape;  ///< Object's collision shape.
-    float mass;		  ///< Mass of object
+    float mass;		            ///< Mass of object
     btosgObject() {
         model = NULL;
         body = NULL;
@@ -266,6 +265,7 @@ public:
     }
     void setMass(double m) {
         /// Sets the object's mass.
+        /// m specifies mass in kg units.
         mass = m;
         bool isDynamic = (mass != 0.f);
 
@@ -371,7 +371,7 @@ public:
     }
     virtual void update() {
         /// Objects's update callback.
-        /// This function is called automatically from World::setpSimulation() for each registered object.
+        /// This function is called automatically from World::stepSimulation() for each registered object.
         /// Positions graphical object from its physhical state.
         if (body) {
             btTransform wTrans;
@@ -408,7 +408,7 @@ public:
     }
     void setInitState(btTransform iState) {
         /// Stores iState as init state.
-        /// Init state is aplied by reset()
+        /// Init state is applied by reset()
         init_state = iState;
     }
     void createRigidBody() {
@@ -462,6 +462,7 @@ public:
     float radius;		///< Radius
     btosgSphere(float r) {
         /// Constructs a Sphere object.
+        /// @param r the radius of the sphere in meters units.
         radius = r;
         osg::ref_ptr<osg::Geode> geo = new osg::Geode();
         geo->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.,0.,0.),r)));
@@ -480,12 +481,14 @@ public:
 /*!  Represents a physical and visual axis oriented box.
  */
 class btosgBox : public btosgObject {
-public:
+  public:
     float dx;	///<  x dimension
     float dy;	///<  y dimension
     float dz;	///<  z dimension
     btosgBox(btosgVec3 dim = btosgVec3(1.,1.,1.), double m=1. ) {
         /// Constructs an axis oriented box.
+        /// dim specifies the three coordinates of the box's center in meters units.
+        /// m specifies the object mass.
         dx = dim[0];
         dy = dim[1];
         dz = dim[2];
@@ -565,7 +568,6 @@ public:
         shape = new btStaticPlaneShape(norm, 0);
         if ( !shape ) fprintf(stderr,"Error creating btShape\n");
         createRigidBody();
-        // printf("box created\n");
     }
     void createRigidBody() {
         /// Creates a Rigid Body
@@ -613,7 +615,6 @@ public:
         if ( !shape ) fprintf(stderr,"Error creating btShape\n");
         createRigidBody();
         body->setDamping(0.01,0.2);
-        //printf("cone created\n");
     }
 };
 
@@ -654,4 +655,3 @@ public:
 };
 
 #endif // BTOSG_H
-
