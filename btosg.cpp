@@ -9,7 +9,7 @@
 
 #define _DEBUG_ (0)
 
-btVector3 quat2Euler(const btQuaternion& q)
+btVector3 quat2Euler_orignal(const btQuaternion& q)
 {
     // Implementation not tested.
 
@@ -22,7 +22,7 @@ btVector3 quat2Euler(const btQuaternion& q)
     double sinp = +2.0 * (q.w() * q.y() - q.z() * q.x());
     double pitch;
     if (fabs(sinp) >= 1)
-        pitch = copysign(M_PI / 2, sinp); // use 90 degrees if out of range
+        pitch = copysign(M_PI / 2., sinp); // use 90 degrees if out of range
     else
         pitch = asin(sinp);
 
@@ -32,6 +32,54 @@ btVector3 quat2Euler(const btQuaternion& q)
     double yaw = atan2(siny, cosy);
     return btVector3(yaw,pitch,roll);
 }
+
+btVector3 quat2Euler(const btQuaternion& q) {
+    double matrix[3][3];
+    double cx,sx;
+    double cy,sy;
+    double cz,sz;
+	double qW = q.getW();
+	double qX = q.getX();
+	double qY = q.getY();
+	double qZ = q.getZ(); 
+	double eX,eY,eZ;
+    matrix[0][0] = 1.0f - 2.0f * (qY * qY + qZ * qZ);
+    matrix[0][1] = (2.0f * qX * qY) - (2.0f * qW * qZ);
+    matrix[1][0] = 2.0f * (qX * qY + qW * qZ);
+    matrix[1][1] = 1.0f - (2.0f * qX * qX) - (2.0f * qZ * qZ);
+    matrix[2][0] = 2.0f * (qX * qZ - qW * qY);
+    matrix[2][1] = 2.0f * (qY * qZ + qW * qX);
+    matrix[2][2] = 1.0f - 2.0f * (qX * qX - qY * qY);
+
+
+    sy = -matrix[2][0];
+    cy = sqrt(1 - (sy * sy));
+    eY = atan2(sy,cy);
+
+    if (sy != 1.0f && sy != -1.0f)   
+    {
+        cx = matrix[2][2] / cy;
+        sx = matrix[2][1] / cy;
+        eX = atan2(sx,cx) ;  
+
+        cz = matrix[0][0] / cy;
+        sz = matrix[1][0] / cy;
+        eZ = atan2(sz,cz) ;  
+    }
+    else
+    {
+        cx = matrix[1][1];
+        sx = -matrix[1][2];
+        eX = atan2(sx,cx) ;   
+
+        cz = 1.0f;
+        sz = 0.0f;
+        eZ = atan2(sz,cz) ;   
+    }   
+    return btVector3(eZ,eX,eY);
+}
+
+
 
 btosgVec3 btosgQuat::toEuler()
 {
