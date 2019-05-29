@@ -4,3 +4,4 @@
 .config
 *.orig
 backup
+obj/plane*

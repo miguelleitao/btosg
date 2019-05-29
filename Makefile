@@ -35,7 +35,7 @@ default: ${BTOSG}
 
 examples: ${EXAMPLES}
 
-test: ${BTOSG} pc ball carZ
+test: ${BTOSG} pc ball carZ hpr_test
 
 pc:
 	rm -f ${BTOSG_PC}
@@ -65,6 +65,9 @@ ball: ball.o btosg.o
 objects: objects.o btosg.o ${B3_OBJ_LOADER}
 	$(CXX) -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -lm -l Bullet3Common
 
+hpr_test: hpr_test.o btosg.o ${B3_OBJ_LOADER}
+	$(CXX) -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -lm -l Bullet3Common
+
 carZ.o: car.cpp btosg.h btosgVehicle.h
 	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} $< -o $@ -DVERSION=${VERSION} 
 
@@ -75,6 +78,9 @@ ball.o: ball.cpp btosg.h
 	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $<
 
 objects.o: objects.cpp btosg.h
+	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $< 
+
+hpr_test.o: hpr_test.cpp btosg.h
 	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $< 
 
 #-DBTOSG_SHADOW $<

@@ -1,6 +1,6 @@
 /*
-	objects.cpp
-	Miguel Leitao, 2012
+	hpr_test.cpp
+	Miguel Leitao, 2019
 */
 
 #include <osgViewer/Viewer>
@@ -9,53 +9,36 @@
 
 #define _DEBUG_ (0)
 
-
 double frame_time = 0.;
 
 // Create World
 btosgWorld myWorld;
 
-btosgSphere *myBall;
+btosgQuat Euler2Quat(btosgVec3 v) {
 
+    //return      osg::Quat::makeRotate(v[0],v[1],v[2]);
+    return 	btQuaternion(btVector3(0.,1.,0.),v[2]) * 
+    		btQuaternion(btVector3(1.,0.,0.),v[1]) *
+		btQuaternion(btVector3(0.,0.,1.),v[0]);
+}
 
 int main()
 {
     btosgVec3 up(0., 0., 1.);
     myWorld.dynamic->setGravity(btVector3(up)*-9.8);
 
-    // Beach Ball
-    myBall = new btosgSphere(0.2);
-    myBall->setMass(0.01);
-    myBall->setTexture("img/beachball.png");
-    myBall->setPosition(0.,-4.,5.);
-    myWorld.addObject( myBall );
-
-
-    btosgExternalObject *myObj;
-    myObj = new btosgExternalObject("obj/cone.obj");
-    myObj->setMass(1.6);
-    myObj->setRotation(btQuaternion(btVector3(1.,0.,0.),osg::PI/2.));
-    myObj->setPosition(0.5,-4.5,3);
-    myWorld.addObject( myObj );
-    myObj = new btosgExternalObject("obj/cone.obj");
-    myObj->setMass(1.6);
-    myObj->setRotation(btQuaternion(btVector3(1.,0.,0.),osg::PI));
-    myObj->setPosition(0.5,-4.5,3);
-    myWorld.addObject( myObj );
-    myObj = new btosgExternalObject("obj/cone.obj");
-    myObj->setMass(1.6);
-    myObj->setRotation(btQuaternion(btVector3(1.,0.,0.),-osg::PI/2.));
-    myObj->setPosition(1.5,-3.5,3);
-    myWorld.addObject( myObj );
-    myObj = new btosgExternalObject("obj/torus.obj");
-    myObj->setMass(1.6);
-    myObj->setRotation(btQuaternion(btVector3(1.,0.,0.),-0.*osg::PI/2.));
-    myObj->setPosition(1.5,-4.5,6.);
-    myWorld.addObject( myObj );
-    myObj = new btosgExternalObject("obj/octahedron.obj");
-    myObj->setMass(0.8);
-    myObj->setPosition(1.5,-4.5,3.);
-    myWorld.addObject( myObj );
+    btosgExternalObject *myObj1, *myObj2;
+    myObj1 = new btosgExternalObject("obj/plane.obj");
+    myObj1->setMass(0);
+    myObj1->setRotation(btQuaternion(btVector3(1.,0.,0.),osg::PI/2.));
+    myObj1->setPosition(-2.,-2.,1.);
+    myWorld.addObject( myObj1 );
+    myObj2 = new btosgExternalObject("obj/plane.obj");
+    myObj2->setMass(0);
+    myObj2->setRotation(btQuaternion(btVector3(1.,0.,0.),osg::PI/2.));
+    myObj2->setPosition(2.,-2.,1.);
+    myWorld.addObject( myObj2 );
+    
 
     // Material for base plans
     osg::ref_ptr<osg::Material> matRamp = new osg::Material;
@@ -67,19 +50,17 @@ int main()
     // Plane 1
     btosgPlane *myRamp;
     myRamp = new btosgPlane();
-    myRamp->setRotation(osg::Quat(-0.*osg::PI/8.,osg::Vec3(1.,0.,0.)));
+    myRamp->setRotation(osg::Quat(0.,osg::Vec3(1.,0.,0.)));
     myRamp->setPosition(0.,-5.,0.);
     myRamp->setName("Ramp1");
-    myRamp->body->setFriction(100.);
     myRamp->setMaterial(matRamp);
     myWorld.addObject( myRamp );
 
     // Plane 2
     myRamp = new btosgPlane();
-    myRamp->setRotation(osg::Quat(osg::PI/8.,osg::Vec3(1.,0.,0.)));
+    myRamp->setRotation(osg::Quat(osg::PI/2.,osg::Vec3(1.,0.,0.)));
     myRamp->setPosition(0.,0.,0.);
     myRamp->setName("Ramp2");
-    myRamp->body->setFriction(100.);
     myRamp->setMaterial(matRamp);
     myWorld.addObject( myRamp );
 
@@ -107,7 +88,7 @@ int main()
     osg::ref_ptr<osgGA::TrackballManipulator> manipulator = new osgGA::TrackballManipulator;
     viewer.setCameraManipulator( manipulator );
     // Set the desired home coordinates for the manipulator
-    osg::Vec3d eye(osg::Vec3(-15., 0., -5.)+up*20.);
+    osg::Vec3d eye(osg::Vec3(0., -15., -5.)+up*20.);
     osg::Vec3d center(0., 0., 0.);
     // Make sure that OSG is not overriding our home position
     manipulator->setAutoComputeHomePosition(false);
@@ -124,6 +105,14 @@ int main()
     while( !viewer.done() )
     {
         myWorld.stepSimulation(frame_time,10);
+
+	btosgQuat quat = btQuaternion(btVector3(1.,0.,0.),0.);
+        myObj1->setRotation(quat);
+	btosgVec3 euler = quat.toEuler();
+	printf("quat %f %f %f %f : ",quat[0],quat[1],quat[2],quat[3]);
+	printf("euler %f,%f,%f\n", euler[0],euler[1],euler[2]);
+        myObj2->setRotation(Euler2Quat(euler));
+
 
         viewer.frame();
         timenow = myTimer.time_s();
