@@ -106,7 +106,7 @@ int main()
     {
         myWorld.stepSimulation(frame_time,10);
 
-	btosgQuat quat = btQuaternion(btVector3(1.,0.,0.),0.);
+	btosgQuat quat = btQuaternion(btVector3(1.,0.,0.),timenow);
         myObj1->setRotation(quat);
 	btosgVec3 euler = quat.toEuler();
 	printf("quat %f %f %f %f : ",quat[0],quat[1],quat[2],quat[3]);
