@@ -28,12 +28,12 @@ int main()
     myWorld.dynamic->setGravity(btVector3(up)*-9.8);
 
     btosgExternalObject *myObj1, *myObj2;
-    myObj1 = new btosgExternalObject("obj/plane.obj");
+    myObj1 = new btosgExternalObject("cow.obj");
     myObj1->setMass(0);
     myObj1->setRotation(btQuaternion(btVector3(1.,0.,0.),osg::PI/2.));
     myObj1->setPosition(-2.,-2.,1.);
     myWorld.addObject( myObj1 );
-    myObj2 = new btosgExternalObject("obj/plane.obj");
+    myObj2 = new btosgExternalObject("cow.obj");
     myObj2->setMass(0);
     myObj2->setRotation(btQuaternion(btVector3(1.,0.,0.),osg::PI/2.));
     myObj2->setPosition(2.,-2.,1.);
@@ -106,8 +106,9 @@ int main()
     {
         myWorld.stepSimulation(frame_time,10);
 
-	btosgQuat quat = btQuaternion(btVector3(1.,0.,0.),0.);
-        myObj1->setRotation(quat);
+	//btosgQuat quat = btQuaternion(btVector3(1.,1.,1.),timenow);
+        btosgQuat quat = osg::Quat(timenow,osg::Vec3d(1.,0.1,0.01));
+	myObj1->setRotation(quat);
 	btosgVec3 euler = quat.toEuler();
 	printf("quat %f %f %f %f : ",quat[0],quat[1],quat[2],quat[3]);
 	printf("euler %f,%f,%f\n", euler[0],euler[1],euler[2]);
