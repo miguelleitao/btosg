@@ -35,7 +35,11 @@ default: ${BTOSG}
 
 examples: ${EXAMPLES}
 
-test: ${BTOSG} pc ball carZ hpr_test
+# test targets
+# test target are built during CI build process.
+# CI build process uses BTOSG_LOAD_OBJ=NO.
+# Application using btosgExternalObject() cannot be included in this phase.
+test: ${BTOSG} pc ball carZ 
 
 pc:
 	rm -f ${BTOSG_PC}
