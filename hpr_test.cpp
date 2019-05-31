@@ -9,6 +9,8 @@
 
 #define _DEBUG_ (0)
 
+#define OBJECT_FNAME "obj/plane.obj"
+
 double frame_time = 0.;
 
 // Create World
@@ -28,12 +30,12 @@ int main()
     myWorld.dynamic->setGravity(btVector3(up)*-9.8);
 
     btosgExternalObject *myObj1, *myObj2;
-    myObj1 = new btosgExternalObject("cow.obj");
+    myObj1 = new btosgExternalObject(OBJECT_FNAME);
     myObj1->setMass(0);
     myObj1->setRotation(btQuaternion(btVector3(1.,0.,0.),osg::PI/2.));
     myObj1->setPosition(-2.,-2.,1.);
     myWorld.addObject( myObj1 );
-    myObj2 = new btosgExternalObject("cow.obj");
+    myObj2 = new btosgExternalObject(OBJECT_FNAME);
     myObj2->setMass(0);
     myObj2->setRotation(btQuaternion(btVector3(1.,0.,0.),osg::PI/2.));
     myObj2->setPosition(2.,-2.,1.);
