@@ -41,23 +41,53 @@ btosgVec3 btosgQuat::toEuler()
     return quat2Euler(*this);
 }
 
+int btosgWorld::deleteAllObjects() {
+    int count = 0;
+    while ( !objects.empty() )
+    {
+	btosgObject *obj = objects.front();
+	removeObject(obj);
+	delete(obj);
+        //std::cout << ' ' << mylist.front();
+        count++;
+    }
+    return count;
+}
+
 btosgWorld::~btosgWorld() {
+/*
+    for ( auto it = objects.begin() ; it != objects.end(); ++it ) {
+        btosgObject *obj = *it;
+	removeObject(obj);
+	//delete obj;
+    }
+*/
+    deleteAllObjects();
+/*
+    std::forward_list<btosgObject*>::iterator it = objects.begin();
+    while (it != objects.end())
+    {
+	std::forward_list<btosgObject*>::iterator next = it;
+	next++;
+	btosgObject *obj = *it;
+        removeObject(obj);  // alternatively, i = items.erase(i);
+	delete(obj);
+	it = next;
+    }
+ */   
+
     delete dynamic; // ????
     delete solver;
     delete dispatcher;
     delete collisionConfiguration;
     delete broadphase;
-    for ( auto it = objects.begin(); it != objects.end(); ++it ) {
-        btosgObject *obj = *it;
-        delete obj;
-    }
     /*
     while (!objects.empty())
     {
         objects.pop_front();
     }
     */
-    scene->unref();
+    //scene->unref();
 }
 
 void btosgWorld::addObject(btosgObject *obj)  {
@@ -68,7 +98,19 @@ void btosgWorld::addObject(btosgObject *obj)  {
     //printf("adding object to World\n");
     if ( obj->model ) scene->addChild(obj->model);
     else if ( _DEBUG_ ) fprintf(stderr,"Adding object without visual model\n");
+};
 
+void btosgWorld::removeObject(btosgObject *obj)  {
+    /// Unregisters the object obj from the simulation world.
+    
+    if ( obj->body )  dynamic->removeRigidBody(obj->body);
+    else if ( _DEBUG_ ) fprintf(stderr,"Removing object without rigid body\n");
+    //printf("removing object from World\n");
+    if ( obj->model ) scene->removeChild(obj->model);
+    else if ( _DEBUG_ ) fprintf(stderr,"Removing object without visual model\n");  
+    // Remove from the list.
+    // This also calls de the destructor for obj.
+    objects.remove(obj); 
 };
 
 void btosgWorld::stepSimulation(btScalar timeStep, int maxSubSteps) {

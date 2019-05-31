@@ -5,6 +5,7 @@
 
 #include <osgViewer/Viewer>
 #include <osg/Material>
+#include <unistd.h>
 #include "btosg.h"
 
 #define _DEBUG_ (0)
@@ -50,22 +51,22 @@ int main()
     matRamp->setShininess(osg::Material::FRONT_AND_BACK, 64);
 
     // Plane 1
-    btosgPlane *myRamp;
-    myRamp = new btosgPlane();
-    myRamp->setRotation(osg::Quat(0.,osg::Vec3(1.,0.,0.)));
-    myRamp->setPosition(0.,-5.,0.);
-    myRamp->setName("Ramp1");
-    myRamp->setMaterial(matRamp);
-    myWorld.addObject( myRamp );
+    btosgPlane *myRamp1;
+    myRamp1 = new btosgPlane();
+    myRamp1->setRotation(osg::Quat(0.,osg::Vec3(1.,0.,0.)));
+    myRamp1->setPosition(0.,-5.,0.);
+    myRamp1->setName("Ramp1");
+    myRamp1->setMaterial(matRamp);
+    myWorld.addObject( myRamp1 );
 
     // Plane 2
-    myRamp = new btosgPlane();
-    myRamp->setRotation(osg::Quat(osg::PI/2.,osg::Vec3(1.,0.,0.)));
-    myRamp->setPosition(0.,0.,0.);
-    myRamp->setName("Ramp2");
-    myRamp->setMaterial(matRamp);
-    myWorld.addObject( myRamp );
-
+    btosgPlane *myRamp2 = new btosgPlane();
+    myRamp2->setRotation(osg::Quat(osg::PI/2.,osg::Vec3(1.,0.,0.)));
+    myRamp2->setPosition(0.,0.,0.);
+    myRamp2->setName("Ramp2");
+    myRamp2->setMaterial(matRamp);
+    myWorld.addObject( myRamp2 );
+ 
     // Creating the viewer
     osgViewer::Viewer viewer ;
 

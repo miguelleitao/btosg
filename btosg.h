@@ -204,6 +204,8 @@ public:
     ~btosgWorld();
     void stepSimulation(btScalar timeStep, int maxSubSteps);
     void addObject(class btosgObject *obj);
+    void removeObject(class btosgObject *obj);
+    int  deleteAllObjects();
     void reset();
 };
 /*
@@ -247,15 +249,15 @@ public:
             body = NULL;
         }
         if( model ) {
-            model->unref();
-            model = NULL;
+            //model->unref();
+            //model = NULL;
         }
         if (shape) {
             delete shape;
             shape = NULL;
         }
         if (name) {
-            delete name;
+            free(name);
             name = NULL;
         }
     }
@@ -434,13 +436,15 @@ public:
 #if BTOSG_LOAD_OBJ
 /// Object from loaded model
 class btosgExternalObject : public btosgObject {
+    GLInstanceGraphicsShape* glmesh = NULL;
+    
 public:
     //char *fname;
     btosgExternalObject(const char *file_name) {
         /// Constructs an object from an external model.
         loadObjectModel(file_name);
 
-        GLInstanceGraphicsShape* glmesh = LoadMeshFromObj(file_name, "");
+        glmesh = LoadMeshFromObj(file_name, "");
         //printf("[INFO] Obj loaded: Extracted %d verticed from obj file [%s]\n", glmesh->m_numvertices, file_name);
 
         const GLInstanceVertex& v = glmesh->m_vertices->at(0);
@@ -452,6 +456,10 @@ public:
         mass = 1.;
         createRigidBody();
         body->setDamping(0.01,0.1);
+    }
+
+    ~btosgExternalObject() {
+	if ( glmesh ) btgDeleteGraphicsShape(glmesh);
     }
 };
 #endif
@@ -558,7 +566,7 @@ public:
                 else fprintf(stderr,"Error creating osg::Shape\n");
             } else fprintf(stderr,"Error creating osg::Shape\n");
         } else fprintf(stderr,"Error creating Geode\n");
-        if (  !model)	model = new osg::PositionAttitudeTransform;
+        if ( !model )	model = new osg::PositionAttitudeTransform;
         model->addChild(geo);
         model->setNodeMask(ReceivesShadowTraversalMask);
         mass = 0;
@@ -572,7 +580,7 @@ public:
     void createRigidBody() {
         /// Creates a Rigid Body
         btDefaultMotionState* mState = new
-        btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0.,0.,0.)));
+        	btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0.,0.,0.)));
         btVector3 inertia(0,0,0);
         //shape->calculateLocalInertia(mass,inertia);
         btRigidBody::btRigidBodyConstructionInfo cInfo(mass,mState,shape,inertia);
@@ -580,6 +588,9 @@ public:
         cInfo.m_friction = 0.9f;
         body = new btRigidBody(cInfo);
         if ( !body ) fprintf(stderr,"Error creating btBody\n");
+    }
+    ~btosgPlane() {
+
     }
 };
 

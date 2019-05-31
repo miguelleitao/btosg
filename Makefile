@@ -85,12 +85,12 @@ objects.o: objects.cpp btosg.h
 	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $< 
 
 hpr_test.o: hpr_test.cpp btosg.h
-	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $< 
+	$(CXX) ${CXXFLAGS} -g -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $< 
 
 #-DBTOSG_SHADOW $<
 
 btosg.o: btosg.cpp btosg.h
-	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} -fPIC $<
+	$(CXX) ${CXXFLAGS} -g -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} -fPIC $<
 
 libbtosg.a: btosg.o
 	$(AR) cr $@ $^
