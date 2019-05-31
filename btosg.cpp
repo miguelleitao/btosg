@@ -11,7 +11,9 @@
 
 btVector3 quat2Euler(const btQuaternion& q)
 {
-    // Implementation under test.
+    // Implementation tested.
+    // Using HPR order rotation. 
+    // Angles are interpreted when Y points forward, Z points up.
     // https://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/Quaternions.pdf
 
     // roll (y-axis rotation)
@@ -34,14 +36,10 @@ btVector3 quat2Euler(const btQuaternion& q)
     return btVector3(yaw,pitch,roll);
 }
 
-
-
-
 btosgVec3 btosgQuat::toEuler()
 {
     return quat2Euler(*this);
 }
-
 
 btosgWorld::~btosgWorld() {
     delete dynamic; // ????
