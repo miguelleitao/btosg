@@ -301,17 +301,23 @@ public:
         btosgQuat qt = getRotation();
         return qt.toEuler();
     }
+    void setTransform(const btTransform &wTrans) {
+	/// Sets position and orientation of object using btTransform
+	if (body) {
+	    body->setWorldTransform(wTrans);
+            body->getMotionState()->setWorldTransform(wTrans);
+            body->clearForces();
+            body->setLinearVelocity(btVector3(0,0,0));
+            body->setAngularVelocity(btVector3(0,0,0));
+	}
+    }
     void setPosition(const btosgVec3 &p) {
         /// Sets objects position.
         if (body) {
             btTransform wTrans;
             body->getMotionState()->getWorldTransform(wTrans);
             wTrans.setOrigin(p);
-            body->setWorldTransform(wTrans);
-            body->getMotionState()->setWorldTransform(wTrans);
-            body->clearForces();
-            body->setLinearVelocity(btVector3(0,0,0));
-            body->setAngularVelocity(btVector3(0,0,0));
+	    setTransform(wTrans);
         }
 #ifdef AVOID_DIRECT_MODEL_UPDATE
         else
