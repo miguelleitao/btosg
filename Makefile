@@ -98,8 +98,10 @@ libbtosg.a: btosg.o
 libbtosg.so: btosg.o
 	$(CXX) -shared $^ -o $@
 
+loadOBJ: ${B3_OBJ_LOADER}
+
 ${B3_OBJ_LOADER}:
-	make -C loadOBJ BULLET_DIR=${BULLET_DIR} OSG_DIR=${OSG_DIR}
+	make -C loadOBJ BULLET_DIR=${BULLET_DIR} OSG_DIR=${OSG_DIR} all
 
 ${BTOSG_PC}:
 	@echo "prefix=/usr" 				 > $@

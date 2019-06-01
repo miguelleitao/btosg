@@ -11,7 +11,7 @@ INC_BULLET?=$(shell pkg-config --cflags-only-I bullet)
 LIB_BULLET_DIR?=$(shell pkg-config --libs-only-L bullet)
 VERSION:=$(shell git tag)
 
-
+all: ${TARGET}
 
 ${TARGET}: ${OBJS}
 	$(AR) cr $@ $^
