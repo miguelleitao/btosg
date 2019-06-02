@@ -142,6 +142,12 @@ public:
      */
     btosgQuat(btQuaternion  q) : osg::Quat(q[0],q[1],q[2],q[3]) {};
 
+    //! Constructor from btosgVec3 and scalar
+    /*! @param axis btosgVec3 rotation axis
+     *  @param ang  double rotation angle
+     */
+    btosgQuat(btosgVec3 axis, double ang) : osg::Quat(ang, axis) {};
+
     //! Convertor operator to Bullet quaternion
     /*! Returns quaternion as a btQuaternion object
      */
@@ -545,7 +551,7 @@ public:
     btosgPlane()  :  btosgPlane(10., 10., 0.) {
         /// Constructs a physical infinite plane, viewable as low thickness finite box.
         /// Viewable box has dimensions 10,10,0.
-        /// Plane is created facing Z axis.
+        /// plane is created facing Z axis.
     };
 
     btosgPlane( btosgVec3 v ) : btosgPlane( v[0], v[1], v[2] ) {
