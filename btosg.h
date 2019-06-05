@@ -142,6 +142,12 @@ public:
      */
     btosgQuat(btQuaternion  q) : osg::Quat(q[0],q[1],q[2],q[3]) {};
 
+    //! Constructor from btosgVec3 and scalar
+    /*! @param axis btosgVec3 rotation axis
+     *  @param ang  double rotation angle
+     */
+    btosgQuat(btosgVec3 axis, double ang) : osg::Quat(ang, axis) {};
+
     //! Convertor operator to Bullet quaternion
     /*! Returns quaternion as a btQuaternion object
      */
@@ -301,17 +307,23 @@ public:
         btosgQuat qt = getRotation();
         return qt.toEuler();
     }
+    void setTransform(const btTransform &wTrans) {
+	/// Sets position and orientation of object using btTransform
+	if (body) {
+	    body->setWorldTransform(wTrans);
+            body->getMotionState()->setWorldTransform(wTrans);
+            body->clearForces();
+            body->setLinearVelocity(btVector3(0,0,0));
+            body->setAngularVelocity(btVector3(0,0,0));
+	}
+    }
     void setPosition(const btosgVec3 &p) {
         /// Sets objects position.
         if (body) {
             btTransform wTrans;
             body->getMotionState()->getWorldTransform(wTrans);
             wTrans.setOrigin(p);
-            body->setWorldTransform(wTrans);
-            body->getMotionState()->setWorldTransform(wTrans);
-            body->clearForces();
-            body->setLinearVelocity(btVector3(0,0,0));
-            body->setAngularVelocity(btVector3(0,0,0));
+	    setTransform(wTrans);
         }
 #ifdef AVOID_DIRECT_MODEL_UPDATE
         else
@@ -539,7 +551,7 @@ public:
     btosgPlane()  :  btosgPlane(10., 10., 0.) {
         /// Constructs a physical infinite plane, viewable as low thickness finite box.
         /// Viewable box has dimensions 10,10,0.
-        /// Plane is created facing Z axis.
+        /// plane is created facing Z axis.
     };
 
     btosgPlane( btosgVec3 v ) : btosgPlane( v[0], v[1], v[2] ) {

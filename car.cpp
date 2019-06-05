@@ -151,12 +151,12 @@ public:
         model->getOrCreateStateSet()->
         setAttributeAndModes(mat, osg::StateAttribute::ON);
     }
-    BlockGreen(float x, float z) : BlockGreen(x,1.,z) {};
+    BlockGreen(float x, float z) : BlockGreen(x,3.,z) {};
 };
 
 class BlockRed : public btosgBox {
 public:
-    BlockRed(float x, float y, float z) : btosgBox( osg::Vec3(1.,1.,1.), 10000. ) {
+    BlockRed(float x, float y, float z) : btosgBox( osg::Vec3(1.,1.,1.), 5000. ) {
         setPosition(btVector3(x,y,z));
         osg::ref_ptr<osg::Material> mat = new osg::Material;
         mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
@@ -166,7 +166,7 @@ public:
         model->getOrCreateStateSet()->
         setAttributeAndModes(mat, osg::StateAttribute::ON);
     }
-    BlockRed(float x, float z) : BlockRed(x,1.,z) {};
+    BlockRed(float x, float z) : BlockRed(x,3.,z) {};
 };
 
 class BlockBlue : public btosgBox {
@@ -181,7 +181,7 @@ public:
         model->getOrCreateStateSet()->
         setAttributeAndModes(mat, osg::StateAttribute::ON);
     }
-    BlockBlue(float x, float z) : BlockBlue(x,1.,z) {};
+    BlockBlue(float x, float z) : BlockBlue(x,3.,z) {};
 };
 
 int main()
