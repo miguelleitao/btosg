@@ -133,7 +133,7 @@ clean:
 	$(RM) *.o ${EXAMPLES} ${BTOSG} *.pc
 	make -C loadOBJ clean
 
-push: *.cpp *.h Makefile *.md loadOBJ img obj .gitignore .travis.yml docs btosg.doxygen
+push: *.cpp *.h Makefile *.md loadOBJ img obj .gitignore .travis.yml docs btosg.doxygen .gitignore
 	git add $^
 	git commit -m "update"
 	git push origin HEAD
