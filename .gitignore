@@ -1,6 +1,7 @@
 *.o
 *.a
 *.so
+*.pc
 .config
 *.orig
 backup
