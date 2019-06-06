@@ -3,6 +3,8 @@
 	Miguel Leitao, 2012
 */
 
+#define BTOSG_LOAD_OBJ YES
+
 #include <osgViewer/Viewer>
 #include <osg/Material>
 #include "btosg.h"

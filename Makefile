@@ -4,7 +4,6 @@
 
 # Targets
 BTOSG=libbtosg.a libbtosg.so
-EXAMPLES=ball carZ carY objects
 BTOSG_PC=btosg.pc
 
 BULLET_DIR?=/usr
@@ -33,7 +32,8 @@ LD_OSG=${LIB_OSG_DIR} -l osg -losgViewer -losgSim -losgDB -losgGA -losgShadow
 
 default: ${BTOSG}
 
-examples: ${EXAMPLES}
+Examples:
+	make -C examples BULLET_DIR=${BULLET_DIR} OSG_DIR=${OSG_DIR} all
 
 # test targets
 # test target are built during CI build process.
@@ -48,7 +48,7 @@ pc:
 btosg: ${BTOSG}
 	@echo -n ""
 
-all: default examples docs pc
+all: default Examples docs pc
 
 manual:
 	${RM} -rf documentation/html documentation/latex
@@ -133,7 +133,7 @@ clean:
 	$(RM) *.o ${EXAMPLES} ${BTOSG} *.pc
 	make -C loadOBJ clean
 
-push: *.cpp *.h Makefile *.md loadOBJ img obj .gitignore .travis.yml docs btosg.doxygen .gitignore
+push: *.cpp *.h Makefile *.md loadOBJ img obj .gitignore .travis.yml docs btosg.doxygen .gitignore examples
 	git add $^
 	git commit -m "update"
 	git push origin HEAD
