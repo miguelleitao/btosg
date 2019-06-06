@@ -45,7 +45,7 @@ examples: ${EXAMPLES}
 # Applications using btosgExternalObject() should not be included in this phase.
 test: ball carZ 
 
-all: examples docs
+all: examples 
 
 carZ: carZ.o 
 	$(CXX) -O2 -o $@ $^  ${LD_BTOSG} -lm
