@@ -169,6 +169,7 @@ public:
 class btosgWorld {
 private:
     unsigned long steps;
+    unsigned long nObjs;
     btDbvtBroadphase* broadphase;
     btDefaultCollisionConfiguration* collisionConfiguration;
     btCollisionDispatcher* dispatcher;
@@ -206,11 +207,13 @@ public:
         scene = new osg::Group;// Creating the root node
 #endif
         steps = 0L;
+	nObjs = 0L;
     };
     ~btosgWorld();
     void stepSimulation(btScalar timeStep, int maxSubSteps);
     void addObject(class btosgObject *obj);
     void removeObject(class btosgObject *obj);
+    void listObjects();
     int  deleteAllObjects();
     void reset();
 };
@@ -267,6 +270,7 @@ public:
             name = NULL;
         }
     }
+    void print();
     void setName(char const *n) {
         /// Sets the object's name.
         name = strdup(n);
@@ -387,14 +391,18 @@ public:
         /// Objects's update callback.
         /// This function is called automatically from World::stepSimulation() for each registered object.
         /// Positions graphical object from its physhical state.
+printf("update ini\n");
         if (body) {
             btTransform wTrans;
             body->getMotionState()->getWorldTransform(wTrans);
             if ( model ) {
+printf("  atualizando\n");
                 model->setAttitude(btosgQuat(wTrans.getRotation()));
                 model->setPosition(btosgVec3(wTrans.getOrigin()));
+printf("  atualizou\n");
             }
         }
+printf("update end\n");
     }
     void reset() {
         /// Reposition object to its inital state.
@@ -432,7 +440,7 @@ public:
             return;
         }
         btDefaultMotionState* mState = new
-        btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0.,0.,0.)));
+            btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0.,0.,0.)));
         btVector3 inertia(0,0,0);
         shape->calculateLocalInertia(mass,inertia);
         btRigidBody::btRigidBodyConstructionInfo cInfo(mass,mState,shape,inertia);
@@ -453,18 +461,20 @@ class btosgExternalObject : public btosgObject {
 public:
     //char *fname;
     btosgExternalObject(const char *file_name) {
-        /// Constructs an object from an external model.
+        /// Constructs a graphical object from an external model.
         loadObjectModel(file_name);
 
+	// Reload external model as a mesh to use as colision shape
         glmesh = LoadMeshFromObj(file_name, "");
-        //printf("[INFO] Obj loaded: Extracted %d verticed from obj file [%s]\n", glmesh->m_numvertices, file_name);
+	if ( glmesh ) {
+		//printf("[INFO] Obj loaded: Extracted %d verticed from obj file [%s]\n", glmesh->m_numvertices, file_name);
 
-        const GLInstanceVertex& v = glmesh->m_vertices->at(0);
-        btConvexHullShape* shapeH = new btConvexHullShape((const btScalar*)(&(v.xyzw[0])), glmesh->m_numvertices, sizeof(GLInstanceVertex));
-        btVector3 scaling(.999,.999,.999);
-        shapeH->setLocalScaling(scaling);
-        shape = shapeH;
-
+		const GLInstanceVertex& v = glmesh->m_vertices->at(0);
+		btConvexHullShape* shapeH = new btConvexHullShape((const btScalar*)(&(v.xyzw[0])), glmesh->m_numvertices, sizeof(GLInstanceVertex));
+		btVector3 scaling(.999,.999,.999);
+		shapeH->setLocalScaling(scaling);
+		shape = shapeH;
+	}
         mass = 1.;
         createRigidBody();
         body->setDamping(0.01,0.1);

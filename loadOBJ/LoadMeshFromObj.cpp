@@ -12,10 +12,12 @@ GLInstanceGraphicsShape* LoadMeshFromObj(const char* relativeFileName, const cha
 {
 	std::vector<tinyobj::shape_t> shapes;
 	std::string err = tinyobj::LoadObj(shapes, relativeFileName, materialPrefixPath);
+	if ( ! err.empty() ) return NULL;	
+
 		
 	GLInstanceGraphicsShape* gfxShape = btgCreateGraphicsShapeFromWavefrontObj(shapes);
 
-// delete shapes
+// delete shapes ??
 	return gfxShape;
 }
 

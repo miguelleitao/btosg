@@ -9,6 +9,13 @@
 
 #define _DEBUG_ (0)
 
+
+void btosgObject::print() {
+printf("listando object\n");
+printf("name: %s\n", name);
+    std::cout << name << "\n";
+}
+
 btVector3 quat2Euler(const btQuaternion& q)
 {
     // Implementation tested.
@@ -90,6 +97,19 @@ btosgWorld::~btosgWorld() {
     //scene->unref();
 }
 
+
+
+void btosgWorld::listObjects() {
+    int n = 0;
+    for ( auto it = objects.begin() ; it != objects.end(); ++it ) {
+        btosgObject *obj = *it;
+	obj->print();
+	n++;
+    }
+    
+printf("listou %d objects\n",n);
+}
+
 void btosgWorld::addObject(btosgObject *obj)  {
     /// Registers the object obj into a simulation world.
     objects.push_front(obj);
@@ -114,6 +134,7 @@ void btosgWorld::removeObject(btosgObject *obj)  {
 };
 
 void btosgWorld::stepSimulation(btScalar timeStep, int maxSubSteps) {
+printf("\nBeginStep %ld\n", steps);
     /// Performs a simulation step.
     if ( steps==0L ) {
         for ( auto it = objects.begin(); it != objects.end(); ++it ) {
@@ -121,12 +142,17 @@ void btosgWorld::stepSimulation(btScalar timeStep, int maxSubSteps) {
             obj->setInitState();
         }
     }
+printf("\nStepA %ld\n", steps);
+listObjects();
+printf("listou\n");
     dynamic->stepSimulation(timeStep,maxSubSteps);
 
+printf("\nStepB %ld\n", steps);
     for ( auto it = objects.begin(); it != objects.end(); ++it ) {
         btosgObject *obj = *it;
         obj->update();
     }
+printf("\nEndStep %ld\n", steps);
     steps += 1;
 };
 
@@ -149,7 +175,13 @@ void btosgObject::loadObjectModel(char const *fname) {
     if ( ! loadedModel ) {
         fprintf(stderr,"Error reading Object model from file '%s'\n", fname);
     }
-    if (  !model)	model = new osg::PositionAttitudeTransform;
+
+    if ( name ) {
+	fprintf(stderr,"Warning: Object '%s' overloaded with object '%s'\n", name, fname);
+    }
+
+    setName(fname);
+    if ( ! model )	model = new osg::PositionAttitudeTransform;
     osg::PositionAttitudeTransform* obj_rot = new osg::PositionAttitudeTransform;
     obj_rot->setAttitude(osg::Quat(-osg::PI/2.,osg::Vec3(1.,0.,0.)));
     obj_rot->addChild(loadedModel);
