@@ -40,6 +40,7 @@ Examples:
 # CI build process uses BTOSG_LOAD_OBJ=NO.
 # Applications using btosgExternalObject() should not be included in this phase.
 test: ${BTOSG} pc 
+	@make -C examples carZ ball
 
 pc:
 	rm -f ${BTOSG_PC}
@@ -102,6 +103,7 @@ install: ${BTOSG} ${BTOSGPC}
 clean:
 	$(RM) *.o ${EXAMPLES} ${BTOSG} *.pc
 	make -C loadOBJ clean
+	make -X examples clean
 
 push: *.cpp *.h Makefile *.md loadOBJ img obj .gitignore .travis.yml docs btosg.doxygen .gitignore examples
 	git add $^
