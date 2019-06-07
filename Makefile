@@ -39,7 +39,7 @@ Examples:
 # test target are built during CI build process.
 # CI build process uses BTOSG_LOAD_OBJ=NO.
 # Applications using btosgExternalObject() should not be included in this phase.
-test: ${BTOSG} pc ball carZ 
+test: ${BTOSG} pc 
 
 pc:
 	rm -f ${BTOSG_PC}
@@ -56,36 +56,6 @@ manual:
 
 documentation/html:
 	doxygen btosg.doxygen
-
-carZ: carZ.o btosg.o
-	$(CXX) -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -lm
-
-carY: carY.o btosg.o
-	$(CXX) -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -lm
-
-ball: ball.o btosg.o
-	$(CXX) -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -lm
-
-objects: objects.o btosg.o ${B3_OBJ_LOADER}
-	$(CXX) -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -lm -l Bullet3Common
-
-hpr_test: hpr_test.o btosg.o ${B3_OBJ_LOADER}
-	$(CXX) -O2 -o $@ $^ ${LD_BULLET} ${LD_OSG} -lm -l Bullet3Common
-
-carZ.o: car.cpp btosg.h btosgVehicle.h
-	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} $< -o $@ -DVERSION=${VERSION} 
-
-carY.o: car.cpp btosg.h btosgVehicle.h
-	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} $< -o $@ -DVERSION=${VERSION} -D_UP_=0,1,0
-
-ball.o: ball.cpp btosg.h 
-	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $<
-
-objects.o: objects.cpp btosg.h
-	$(CXX) ${CXXFLAGS} -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $< 
-
-hpr_test.o: hpr_test.cpp btosg.h
-	$(CXX) ${CXXFLAGS} -g -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} $< 
 
 #-DBTOSG_SHADOW $<
 
