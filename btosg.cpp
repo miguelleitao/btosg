@@ -134,7 +134,6 @@ void btosgWorld::removeObject(btosgObject *obj)  {
 };
 
 void btosgWorld::stepSimulation(btScalar timeStep, int maxSubSteps) {
-printf("\nBeginStep %ld\n", steps);
     /// Performs a simulation step.
     if ( steps==0L ) {
         for ( auto it = objects.begin(); it != objects.end(); ++it ) {
@@ -142,17 +141,13 @@ printf("\nBeginStep %ld\n", steps);
             obj->setInitState();
         }
     }
-printf("\nStepA %ld\n", steps);
-listObjects();
-printf("listou\n");
+    // listObjects();
     dynamic->stepSimulation(timeStep,maxSubSteps);
 
-printf("\nStepB %ld\n", steps);
     for ( auto it = objects.begin(); it != objects.end(); ++it ) {
         btosgObject *obj = *it;
         obj->update();
     }
-printf("\nEndStep %ld\n", steps);
     steps += 1;
 };
 

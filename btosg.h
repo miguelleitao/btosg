@@ -391,18 +391,14 @@ public:
         /// Objects's update callback.
         /// This function is called automatically from World::stepSimulation() for each registered object.
         /// Positions graphical object from its physhical state.
-printf("update ini\n");
         if (body) {
             btTransform wTrans;
             body->getMotionState()->getWorldTransform(wTrans);
             if ( model ) {
-printf("  atualizando\n");
                 model->setAttitude(btosgQuat(wTrans.getRotation()));
                 model->setPosition(btosgVec3(wTrans.getOrigin()));
-printf("  atualizou\n");
             }
         }
-printf("update end\n");
     }
     void reset() {
         /// Reposition object to its inital state.
