@@ -103,7 +103,7 @@ install: ${BTOSG} ${BTOSGPC}
 clean:
 	$(RM) *.o ${EXAMPLES} ${BTOSG} *.pc
 	make -C loadOBJ clean
-	make -X examples clean
+	make -C examples clean
 
 push: *.cpp *.h Makefile *.md loadOBJ img obj .gitignore .travis.yml docs btosg.doxygen .gitignore examples
 	git add $^
