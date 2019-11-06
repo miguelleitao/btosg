@@ -30,7 +30,7 @@ endif
 LD_BULLET=${LIB_BULLET_DIR} -l BulletDynamics -l BulletCollision -l LinearMath
 LD_OSG=${LIB_OSG_DIR} -l osg -losgViewer -losgSim -losgDB -losgGA -losgShadow
 
-default: ${BTOSG}
+default: ${BTOSG} loadOBJ
 
 Examples:
 	make -C examples BULLET_DIR=${BULLET_DIR} OSG_DIR=${OSG_DIR} all
