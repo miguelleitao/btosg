@@ -4,7 +4,7 @@
 
 # Targets
 
-EXAMPLES=ball carZ carY objects
+EXAMPLES=ball carZ carY objects heightfield
 
 
 BULLET_DIR?=/usr
@@ -56,6 +56,9 @@ carY: carY.o
 ball: ball.o 
 	$(CXX) -O2 -o $@ $^  ${LD_BTOSG} -lm
 
+heightfield: heightfield.o
+	$(CXX) -O2 -o $@ $^  ${LD_BTOSG} -lm
+
 objects: objects.o  
 	$(CXX) -O2 -o $@ $^ ${LD_B3OBJ_IMPORT} ${LD_BTOSG}  -lm
 
@@ -73,6 +76,9 @@ ball.o: ball.cpp
 
 objects.o: objects.cpp 
 	$(CXX) ${CXXFLAGS} -c ${INC_BTOSG} -DVERSION=${VERSION} $< 
+
+heightfield.o: heightfield.cpp
+	$(CXX) ${CXXFLAGS} -c ${INC_BTOSG} -DVERSION=${VERSION} $<
 
 hpr_test.o: hpr_test.cpp 
 	$(CXX) ${CXXFLAGS} -g -c ${INC_BTOSG} -DVERSION=${VERSION} $< 

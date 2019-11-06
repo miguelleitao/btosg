@@ -21,6 +21,7 @@
 #include <osg/Material>
 
 #include <btBulletDynamicsCommon.h>
+#include "BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"
 
 #if BTOSG_LOAD_OBJ==YES
 #include "loadOBJ/include/LoadMeshFromObj.h"
@@ -569,7 +570,7 @@ public:
     btosgPlane(float dx, float dy, float dz)  {
         /// Constructs a physical infinite plane, viewable as low thickness finite box.
         /// Viewable box has dimensions dx,dy,dz.
-        /// Minimum dimension selects physical plane orientatiton.
+        /// Minimum dimension selects physical plane orientation.
         /// Plane is created as axis oriented.
         dx = max(dx, 0.001);
         dy = max(dy, 0.001);
@@ -591,6 +592,29 @@ public:
         btVector3 norm(0.,0.,1);
         if ( dx<dy && dx<dz ) 	   norm = btVector3(1.,0.,0.);
         else if ( dy<dx && dy<dz ) norm = btVector3(0.,1.,0.);
+        // btHeightfieldTerrainShape::
+        
+        int dimX = 100;
+        int dimY = 100;
+        float data[dimX*dimY];
+        for( int y=0 ; y<dimY ; y++ )
+            for( int x=0 ; x<dimX ; x++ ) {
+                double xo = (double)x-50.;
+                double yo = (double)y-50.;
+                data[y*dimX+x] = (float)( 5.-xo*xo*yo*yo/(50.*50.*50*10) );
+            }
+        shape = new btHeightfieldTerrainShape(	100, 100, data , 2., 1., 10., 2, PHY_FLOAT, false);
+/*
+int heightStickWidth,
+int 	heightStickLength,
+const void * 	heightfieldData,
+btScalar 	heightScale,
+btScalar 	minHeight,
+btScalar 	maxHeight,
+int 	upAxis,
+PHY_ScalarType 	heightDataType,
+bool 	flipQuadEdges 
+*/
         shape = new btStaticPlaneShape(norm, 0);
         if ( !shape ) fprintf(stderr,"Error creating btShape\n");
         createRigidBody();
@@ -612,6 +636,9 @@ public:
     }
 };
 
+/// Heightfield
+class btosgHeightfield : public btosgPlane {
+};
 
 /// Cone
 class btosgCone : public btosgObject {
