@@ -32,7 +32,7 @@ int main()
             myBall->setMass(0.01);
             myBall->setTexture("img/beachball.png");
             myBall->setPosition((float)b,(float)y,15.);
-            myBall->body->setRestitution(0.95);
+            myBall->body->setRestitution(0.05);
             myWorld.addObject( myBall );
         }
 
@@ -55,7 +55,7 @@ int main()
 
     // Plane 2
     btosgHeightfield *myHfield;
-    myHfield = new btosgHeightfield(80., 80., 0.1);
+    myHfield = new btosgHeightfield(1., 1., 0.1);
     //myHfield->setRotation(osg::Quat(osg::PI/8.,osg::Vec3(1.,0.,0.)));
     myHfield->setPosition(0.,0.,0.);
     myHfield->setName("Ramp2");

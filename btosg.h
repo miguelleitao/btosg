@@ -614,7 +614,7 @@ public:
 };
 
 /// Heightfield
-class btosgHeightfield : public btosgPlane {
+class btosgHeightfield : public btosgObject {
 public:
     btosgHeightfield(float dx, float dy, float dz)  {
         /// Constructs a physical infinite plane, viewable as low thickness finite box.
@@ -650,10 +650,18 @@ public:
             for( int x=0 ; x<dimX ; x++ ) {
                 double xo = (double)x-50.;
                 double yo = (double)y-50.;
-                data[y*dimX+x] = (float)( xo*xo*yo*yo/(50.*50.*50*10.) );
+                data[y*dimX+x] = (float)( xo*xo*yo*yo/(50.*50.*50*10.) )*0.+25.;
             }
-        shape = new btHeightfieldTerrainShape(	100, 100, data , 200., 1., 10., 2, PHY_FLOAT , false);
-        shape->setLocalScaling(dx,dy,1.);
+        btHeightfieldTerrainShape *hfShape; 
+        btScalar       heightScale = 0.2;
+        btScalar       minHeight = 0.1;
+        btScalar       maxHeight = 30.;
+        int 	       upAxis = 2;
+        PHY_ScalarType heightDataType = PHY_FLOAT;
+        hfShape = new btHeightfieldTerrainShape( 100, 100, data , heightScale, minHeight, maxHeight, upAxis, heightDataType , false);
+        hfShape->setUseDiamondSubdivision(true);
+        hfShape->setLocalScaling(btVector3(1.5,1.5,1.));
+        shape = hfShape;
         //PHY_FLOAT
         //PHY_UCHAR
 /*
@@ -667,10 +675,28 @@ int 	upAxis,
 PHY_ScalarType 	heightDataType,
 bool 	flipQuadEdges 
 */
+        btTransform trans;
+        trans.setIdentity();
+        btVector3 aabbMin, aabbMax;
+        shape->getAabb(trans, aabbMin, aabbMax);
+        printf("aabbMin %f %f %f\n", aabbMin[0], aabbMin[1], aabbMin[2]);
+        printf("aabbMax %f %f %f\n", aabbMax[0], aabbMax[1], aabbMax[2]);
+        
         if ( !shape ) fprintf(stderr,"Error creating btShape\n");
         createRigidBody();
     }
-    
+    void createRigidBody() {
+        /// Creates a Rigid Body
+        btDefaultMotionState* mState = new
+        	btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0.,0.,0.)));
+        btVector3 inertia(0,0,0);
+        //shape->calculateLocalInertia(mass,inertia);
+        btRigidBody::btRigidBodyConstructionInfo cInfo(mass,mState,shape,inertia);
+        cInfo.m_restitution = 0.9f;
+        cInfo.m_friction = 0.9f;
+        body = new btRigidBody(cInfo);
+        if ( !body ) fprintf(stderr,"Error creating btBody\n");
+    }
 };
 
 /// Cone

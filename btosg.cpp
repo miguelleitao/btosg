@@ -199,3 +199,5 @@ void btosgObject::setTexture(char const *fname)
 
     model->setStateSet( stateset );
 }
+
+
