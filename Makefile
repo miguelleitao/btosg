@@ -51,6 +51,10 @@ btosg: ${BTOSG}
 
 all: default Examples docs pc
 
+All:
+	make clean
+	make all
+
 manual:
 	${RM} -rf documentation/html documentation/latex
 	@make documentation/html

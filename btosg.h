@@ -638,7 +638,7 @@ public:
         model->addChild(geo);
         model->setNodeMask(ReceivesShadowTraversalMask);
         mass = 0;
-        btVector3 norm(0.,0.,1);
+        btVector3 norm(0.,0.,1.);
         if ( dx<dy && dx<dz ) 	   norm = btVector3(1.,0.,0.);
         else if ( dy<dx && dy<dz ) norm = btVector3(0.,1.,0.);
         // btHeightfieldTerrainShape::
@@ -650,9 +650,12 @@ public:
             for( int x=0 ; x<dimX ; x++ ) {
                 double xo = (double)x-50.;
                 double yo = (double)y-50.;
-                data[y*dimX+x] = (float)( 5.-xo*xo*yo*yo/(50.*50.*50*10) );
+                data[y*dimX+x] = (float)( xo*xo*yo*yo/(50.*50.*50*10.) );
             }
-        shape = new btHeightfieldTerrainShape(	100, 100, data , 0.02, 1., 10., 2, PHY_FLOAT, false);
+        shape = new btHeightfieldTerrainShape(	100, 100, data , 200., 1., 10., 2, PHY_FLOAT , false);
+        shape->setLocalScaling(dx,dy,1.);
+        //PHY_FLOAT
+        //PHY_UCHAR
 /*
 int heightStickWidth,
 int 	heightStickLength,

@@ -25,13 +25,16 @@ int main()
     //myWorld.dynamic->setGravity(osg2bt_Vec3(up)*-9.8);
     myWorld.dynamic->setGravity(gravity);
 
-    // Beach Ball
-    myBall = new btosgSphere(0.25);
-    myBall->setMass(0.01);
-    myBall->setTexture("img/beachball.png");
-    myBall->setPosition(0.,0.,5.);
-    myBall->body->setRestitution(0.95);
-    myWorld.addObject( myBall );
+    // Balls
+    for( int y=0 ; y<10 ; y++ )
+        for( int b=0 ; b<10 ; b++ ) {
+            myBall = new btosgSphere(0.25);
+            myBall->setMass(0.01);
+            myBall->setTexture("img/beachball.png");
+            myBall->setPosition((float)b,(float)y,15.);
+            myBall->body->setRestitution(0.95);
+            myWorld.addObject( myBall );
+        }
 
     // Material for base plans
     osg::ref_ptr<osg::Material> matRamp = new osg::Material;
@@ -39,7 +42,7 @@ int main()
     matRamp->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.7, 0.8, 0.0, 1.0));
     matRamp->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
     matRamp->setShininess(osg::Material::FRONT_AND_BACK, 64);
-/*
+
     // Plane 1
     btosgPlane *myRamp;
     myRamp = new btosgPlane();
@@ -49,10 +52,10 @@ int main()
     myRamp->body->setFriction(100.);
     myRamp->setMaterial(matRamp);
     myWorld.addObject( myRamp );
-*/
+
     // Plane 2
     btosgHeightfield *myHfield;
-    myHfield = new btosgHeightfield(20., 20., 0.1);
+    myHfield = new btosgHeightfield(80., 80., 0.1);
     //myHfield->setRotation(osg::Quat(osg::PI/8.,osg::Vec3(1.,0.,0.)));
     myHfield->setPosition(0.,0.,0.);
     myHfield->setName("Ramp2");
@@ -84,7 +87,7 @@ int main()
     osg::ref_ptr<osgGA::TrackballManipulator> manipulator = new osgGA::TrackballManipulator;
     viewer.setCameraManipulator( manipulator );
     // Set the desired home coordinates for the manipulator
-    osg::Vec3d eye(osg::Vec3(-15., 0., -5.)+up*20.);
+    osg::Vec3d eye(osg::Vec3(-45., 0., -5.)+up*20.);
     osg::Vec3d center(0., 0., 0.);
     // Make sure that OSG is not overriding our home position
     manipulator->setAutoComputeHomePosition(false);
