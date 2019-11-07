@@ -29,7 +29,7 @@ int main()
     myBall = new btosgSphere(0.25);
     myBall->setMass(0.01);
     myBall->setTexture("img/beachball.png");
-    myBall->setPosition(0.,-4.,5.);
+    myBall->setPosition(0.,0.,5.);
     myBall->body->setRestitution(0.95);
     myWorld.addObject( myBall );
 
@@ -39,7 +39,7 @@ int main()
     matRamp->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.7, 0.8, 0.0, 1.0));
     matRamp->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
     matRamp->setShininess(osg::Material::FRONT_AND_BACK, 64);
-
+/*
     // Plane 1
     btosgPlane *myRamp;
     myRamp = new btosgPlane();
@@ -49,11 +49,11 @@ int main()
     myRamp->body->setFriction(100.);
     myRamp->setMaterial(matRamp);
     myWorld.addObject( myRamp );
-
+*/
     // Plane 2
     btosgHeightfield *myHfield;
-    myHfield = new btosgHeightfield();
-    myHfield->setRotation(osg::Quat(osg::PI/8.,osg::Vec3(1.,0.,0.)));
+    myHfield = new btosgHeightfield(20., 20., 0.1);
+    //myHfield->setRotation(osg::Quat(osg::PI/8.,osg::Vec3(1.,0.,0.)));
     myHfield->setPosition(0.,0.,0.);
     myHfield->setName("Ramp2");
     myHfield->body->setFriction(100.);
