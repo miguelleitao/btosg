@@ -7,8 +7,9 @@ CXXFLAGS=-Wall -I include -I include/extra -I include/extra/extra ${INC_BULLET} 
 
 
 BULLET_DIR?=/usr
-INC_BULLET?=$(shell pkg-config --cflags-only-I bullet)
-LIB_BULLET_DIR?=$(shell pkg-config --libs-only-L bullet)
+INC_BULLET?:=$(shell pkg-config --silence-errors --cflags-only-I bullet)
+INC_BULLET?=-I /usr/local/include/bullet
+LIB_BULLET_DIR?=$(shell pkg-config --silence-errors --libs-only-L bullet)
 VERSION:=$(shell git tag)
 
 all: ${TARGET}

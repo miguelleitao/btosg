@@ -643,18 +643,20 @@ public:
         else if ( dy<dx && dy<dz ) norm = btVector3(0.,1.,0.);
         // btHeightfieldTerrainShape::
         
-        int dimX = 100;
-        int dimY = 100;
+        int dimX = 1000;
+        int dimY = 1000;
         float data[dimX*dimY];
         for( int y=0 ; y<dimY ; y++ )
             for( int x=0 ; x<dimX ; x++ ) {
-                double xo = (double)x-50.;
-                double yo = (double)y-50.;
-                data[y*dimX+x] = (float)( xo*xo*yo*yo/(50.*50.*50*10.) )*0.+25.;
+                double xo = (double)x-(double)dimX/2.;
+                double yo = (double)y-(double)dimY/2.;
+                data[y*dimX+x] = (float)(((xo*xo)*10.+yo*yo) /(50.*50.*50.)) ;
+                if ( y==0 ) printf("d[%d] = %.3lf\n", y*dimX+x, data[y*dimX+x]);
+                if ( data[y*dimX+x] >30. ) data[y*dimX+x] = 30.;
             }
         btHeightfieldTerrainShape *hfShape; 
-        btScalar       heightScale = 0.2;
-        btScalar       minHeight = 0.1;
+        btScalar       heightScale = 1.;
+        btScalar       minHeight = -30.;
         btScalar       maxHeight = 30.;
         int 	       upAxis = 2;
         PHY_ScalarType heightDataType = PHY_FLOAT;

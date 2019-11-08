@@ -10,11 +10,12 @@ EXAMPLES=ball carZ carY objects heightfield
 BULLET_DIR?=/usr
 OSG_DIR?=/usr
 BTOSG_DIR?=..
-INC_BULLET?=$(shell pkg-config --cflags-only-I bullet)
-INC_OSG?=$(shell pkg-config --cflags-only-I openscenegraph-osg)
+INC_BULLET?:=$(shell pkg-config --silence-errors --cflags-only-I bullet)
+INC_BULLET?=-I /usr/local/include/bullet
+INC_OSG?=$(shell pkg-config --silence-errors --cflags-only-I openscenegraph-osg)
 INC_BTOSG?=-I ${BTOSG_DIR} ${INC_BULLET} ${INC_OSG}
-LIB_BULLET_DIR?=$(shell pkg-config --libs-only-L bullet)
-LIB_OSG_DIR=$(shell pkg-config --libs-only-L openscenegraph-osg)
+LIB_BULLET_DIR?=$(shell pkg-config --silence-errors --libs-only-L bullet)
+LIB_OSG_DIR=$(shell pkg-config --silence-errors --libs-only-L openscenegraph-osg)
 LIB_BTOSG_DIR=-L ${BTOSG_DIR} ${LIB_BULLET_DIR} ${LIB_OSG_DIR}
 
 CXXFLAGS?=-std=c++11 -Wall -Wextra -O2 -Wno-uninitialized -Wno-unused-parameter

@@ -8,11 +8,11 @@ BTOSG_PC=btosg.pc
 
 BULLET_DIR?=/usr
 OSG_DIR?=/usr
-INC_BULLET?=$(shell pkg-config --cflags-only-I bullet)
-INC_BULLET?=/usr/local/include/bullet
-INC_OSG?=$(shell pkg-config --cflags-only-I openscenegraph-osg)
-LIB_BULLET_DIR?=$(shell pkg-config --libs-only-L bullet)
-LIB_OSG_DIR=$(shell pkg-config --libs-only-L openscenegraph-osg)
+INC_BULLET?:=$(shell pkg-config --silence-errors --cflags-only-I bullet)
+INC_BULLET?=-I /usr/local/include/bullet
+INC_OSG?=$(shell pkg-config --silence-errors --cflags-only-I openscenegraph-osg)
+LIB_BULLET_DIR?=$(shell pkg-config --silence-errors --libs-only-L bullet)
+LIB_OSG_DIR=$(shell pkg-config --silence-errors --libs-only-L openscenegraph-osg)
 BTOSG_LOAD_OBJ?=YES
 CXXFLAGS?=-std=c++11 -Wall -Wextra -O2 -Wno-uninitialized -Wno-unused-parameter -DBTOSG_LOAD_OBJ=${BTOSG_LOAD_OBJ}
 VERSION:=$(shell git describe --tags --long)
