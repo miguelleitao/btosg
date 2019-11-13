@@ -108,6 +108,7 @@ int main()
     }
 
     delete manipulator;
+    exit(0);
 
 }
 

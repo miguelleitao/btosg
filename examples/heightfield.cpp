@@ -28,11 +28,11 @@ int main()
     // Balls
     for( int y=-3 ; y<=3 ; y++ )
         for( int b=-10 ; b<=10 ; b++ ) {
-            myBall = new btosgSphere(0.75);
+            myBall = new btosgSphere(0.5);
             myBall->setMass(0.01);
             myBall->setTexture("img/beachball.png");
             myBall->setPosition((float)b*2.,(float)y*2.,15.);
-            myBall->body->setRestitution(0.05);
+            myBall->body->setRestitution(0.5);
             myWorld.addObject( myBall );
         }
 
@@ -55,7 +55,7 @@ int main()
 
     // Plane 2
     btosgHeightfield *myHfield;
-    myHfield = new btosgHeightfield(10., 10., 0.1);
+    myHfield = new btosgHeightfield(50., 50., 0.1);
     //myHfield->setRotation(osg::Quat(osg::PI/8.,osg::Vec3(1.,0.,0.)));
     myHfield->setPosition(0.,0.,0.);
     myHfield->setName("Ramp2");

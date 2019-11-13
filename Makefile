@@ -6,12 +6,9 @@
 BTOSG=libbtosg.a libbtosg.so
 BTOSG_PC=btosg.pc
 
-BULLET_DIR?=/usr
+BULLET_DIR?=/usr/local
 OSG_DIR?=/usr
-INC_BULLET?:=$(shell pkg-config --silence-errors --cflags-only-I bullet)
-ifeq ($(INC_BULLET),)
-INC_BULLET:=-I /usr/local/include/bullet
-endif
+INC_BULLET?=$(shell pkg-config --silence-errors --cflags-only-I bullet) -I /usr/local/include/bullet
 INC_OSG?=$(shell pkg-config --silence-errors --cflags-only-I openscenegraph-osg)
 LIB_BULLET_DIR?=$(shell pkg-config --silence-errors --libs-only-L bullet)
 LIB_OSG_DIR=$(shell pkg-config --silence-errors --libs-only-L openscenegraph-osg)

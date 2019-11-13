@@ -401,25 +401,7 @@ public:
             }
         }
     }
-    void reset() {
-        /// Reposition object to its inital state.
-        if ( body ) {
-            body->setWorldTransform(init_state);
-            body->getMotionState()->setWorldTransform(init_state);
-            body->clearForces();
-            if ( mass>0. ) {
-                body->setLinearVelocity(btVector3(0.,0.,0.));
-                body->setAngularVelocity(btVector3(0.,0.,0.));
-                body->activate();   // Required if the object was asleep
-            }
-        }
-        else { // Not required for dynamic objects.
-            if ( model ) {
-                model->setAttitude(btosgQuat(init_state.getRotation()));
-                model->setPosition(btosgVec3(init_state.getOrigin()));
-            }
-        }
-    }
+    void reset(); 
     void setInitState() {
         /// Stores current state as init state.
         /// Init state is aplied by reset()
@@ -430,23 +412,7 @@ public:
         /// Init state is applied by reset()
         init_state = iState;
     }
-    void createRigidBody() {
-        /// Creates a new rigid body as a btRigidBody object.
-        if ( ! shape ) {
-            fprintf(stderr,"Cannot create RigidBody without shape\n");
-            return;
-        }
-        btDefaultMotionState* mState = new
-            btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0.,0.,0.)));
-        btVector3 inertia(0,0,0);
-        shape->calculateLocalInertia(mass,inertia);
-        btRigidBody::btRigidBodyConstructionInfo cInfo(mass,mState,shape,inertia);
-        //printf("mass: %f\n",mass);
-        cInfo.m_restitution = 0.9f;
-        cInfo.m_friction = 10.f;
-        body = new btRigidBody(cInfo);
-        if ( !body ) fprintf(stderr,"Error creating btBody\n");
-    }
+    void createRigidBody();
     void loadObjectModel(char const *fname);
 };
 
@@ -617,13 +583,16 @@ public:
 class btosgHeightfield : public btosgObject {
 public:
     btosgHeightfield(float dx, float dy, float dz)  {
-        /// Constructs a physical infinite plane, viewable as low thickness finite box.
+        /// Constructs a physical highfield.
         /// Viewable box has dimensions dx,dy,dz.
         /// Minimum dimension selects physical plane orientation.
         /// Plane is created as axis oriented.
         dx = max(dx, 0.001);
         dy = max(dy, 0.001);
         dz = max(dz, 0.001);
+        btVector3 norm(0.,0.,1.);
+        if ( dx<dy && dx<dz ) 	   norm = btVector3(1.,0.,0.);
+        else if ( dy<dx && dy<dz ) norm = btVector3(0.,1.,0.);
         osg::Geode *geo = new osg::Geode();
         if ( geo ) {
             osg::Shape *sp = new osg::Box( osg::Vec3(0.,0.,0.), dx, dy, dz );
@@ -638,19 +607,16 @@ public:
         model->addChild(geo);
         model->setNodeMask(ReceivesShadowTraversalMask);
         mass = 0;
-        btVector3 norm(0.,0.,1.);
-        if ( dx<dy && dx<dz ) 	   norm = btVector3(1.,0.,0.);
-        else if ( dy<dx && dy<dz ) norm = btVector3(0.,1.,0.);
         // btHeightfieldTerrainShape::
         
-        int dimX = 1000;
-        int dimY = 1000;
+        int dimX = 100;
+        int dimY = 100;
         float data[dimX*dimY];
         for( int y=0 ; y<dimY ; y++ )
             for( int x=0 ; x<dimX ; x++ ) {
-                double xo = (double)x-(double)dimX/2.;
-                double yo = (double)y-(double)dimY/2.;
-                data[y*dimX+x] = (float)(((xo*xo)*10.+yo*yo) /(50.*50.*50.)) ;
+                double xo = (double)x/(double)dimX - 0.5;
+                double yo = (double)y/(double)dimY - 0.5;
+                data[y*dimX+x] = (float)((xo*xo)*15.+5.*yo*yo) ;
                 if ( y==0 ) printf("d[%d] = %.3lf\n", y*dimX+x, data[y*dimX+x]);
                 if ( data[y*dimX+x] >30. ) data[y*dimX+x] = 30.;
             }
@@ -660,9 +626,9 @@ public:
         btScalar       maxHeight = 30.;
         int 	       upAxis = 2;
         PHY_ScalarType heightDataType = PHY_FLOAT;
-        hfShape = new btHeightfieldTerrainShape( 100, 100, data , heightScale, minHeight, maxHeight, upAxis, heightDataType , false);
+        hfShape = new btHeightfieldTerrainShape( dimX, dimY, data , heightScale, minHeight, maxHeight, upAxis, heightDataType , false);
         hfShape->setUseDiamondSubdivision(true);
-        hfShape->setLocalScaling(btVector3(1.5,1.5,1.));
+        hfShape->setLocalScaling(btVector3(dx/2./dimX,dy/2./dimY,1.));
         shape = hfShape;
         //PHY_FLOAT
         //PHY_UCHAR
