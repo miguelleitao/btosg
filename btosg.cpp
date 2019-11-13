@@ -200,4 +200,40 @@ void btosgObject::setTexture(char const *fname)
     model->setStateSet( stateset );
 }
 
+void btosgObject::reset() {
+    /// Reposition object to its inital state.
+    if ( body ) {
+        body->setWorldTransform(init_state);
+        body->getMotionState()->setWorldTransform(init_state);
+        body->clearForces();
+        if ( mass>0. ) {
+            body->setLinearVelocity(btVector3(0.,0.,0.));
+            body->setAngularVelocity(btVector3(0.,0.,0.));
+            body->activate();   // Required if the object was asleep
+        }
+    }
+    else { // Not required for dynamic objects.
+        if ( model ) {
+            model->setAttitude(btosgQuat(init_state.getRotation()));
+            model->setPosition(btosgVec3(init_state.getOrigin()));
+        }
+    }
+}
 
+void btosgObject::createRigidBody() {
+    /// Creates a new rigid body as a btRigidBody object.
+    if ( ! shape ) {
+        fprintf(stderr,"Cannot create RigidBody without shape\n");
+        return;
+    }
+    btDefaultMotionState* mState = new
+        btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0.,0.,0.)));
+    btVector3 inertia(0,0,0);
+    shape->calculateLocalInertia(mass,inertia);
+    btRigidBody::btRigidBodyConstructionInfo cInfo(mass,mState,shape,inertia);
+    //printf("mass: %f\n",mass);
+    cInfo.m_restitution = 0.9f;
+    cInfo.m_friction = 10.f;
+    body = new btRigidBody(cInfo);
+    if ( !body ) fprintf(stderr,"Error creating btBody\n");
+}
