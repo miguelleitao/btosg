@@ -21,6 +21,7 @@
 #include <osg/Material>
 
 #include <btBulletDynamicsCommon.h>
+#include "BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"
 
 #if BTOSG_LOAD_OBJ==YES
 #include "loadOBJ/include/LoadMeshFromObj.h"
@@ -569,7 +570,7 @@ public:
     btosgPlane(float dx, float dy, float dz)  {
         /// Constructs a physical infinite plane, viewable as low thickness finite box.
         /// Viewable box has dimensions dx,dy,dz.
-        /// Minimum dimension selects physical plane orientatiton.
+        /// Minimum dimension selects physical plane orientation.
         /// Plane is created as axis oriented.
         dx = max(dx, 0.001);
         dy = max(dy, 0.001);
@@ -612,6 +613,93 @@ public:
     }
 };
 
+/// Heightfield
+class btosgHeightfield : public btosgObject {
+public:
+    btosgHeightfield(float dx, float dy, float dz)  {
+        /// Constructs a physical infinite plane, viewable as low thickness finite box.
+        /// Viewable box has dimensions dx,dy,dz.
+        /// Minimum dimension selects physical plane orientation.
+        /// Plane is created as axis oriented.
+        dx = max(dx, 0.001);
+        dy = max(dy, 0.001);
+        dz = max(dz, 0.001);
+        osg::Geode *geo = new osg::Geode();
+        if ( geo ) {
+            osg::Shape *sp = new osg::Box( osg::Vec3(0.,0.,0.), dx, dy, dz );
+            if ( sp ) {
+                osg::ShapeDrawable *sd = new osg::ShapeDrawable(sp);
+                if ( sd )
+                    geo->addDrawable(sd);
+                else fprintf(stderr,"Error creating osg::Shape\n");
+            } else fprintf(stderr,"Error creating osg::Shape\n");
+        } else fprintf(stderr,"Error creating Geode\n");
+        if ( !model )	model = new osg::PositionAttitudeTransform;
+        model->addChild(geo);
+        model->setNodeMask(ReceivesShadowTraversalMask);
+        mass = 0;
+        btVector3 norm(0.,0.,1.);
+        if ( dx<dy && dx<dz ) 	   norm = btVector3(1.,0.,0.);
+        else if ( dy<dx && dy<dz ) norm = btVector3(0.,1.,0.);
+        // btHeightfieldTerrainShape::
+        
+        int dimX = 1000;
+        int dimY = 1000;
+        float data[dimX*dimY];
+        for( int y=0 ; y<dimY ; y++ )
+            for( int x=0 ; x<dimX ; x++ ) {
+                double xo = (double)x-(double)dimX/2.;
+                double yo = (double)y-(double)dimY/2.;
+                data[y*dimX+x] = (float)(((xo*xo)*10.+yo*yo) /(50.*50.*50.)) ;
+                if ( y==0 ) printf("d[%d] = %.3lf\n", y*dimX+x, data[y*dimX+x]);
+                if ( data[y*dimX+x] >30. ) data[y*dimX+x] = 30.;
+            }
+        btHeightfieldTerrainShape *hfShape; 
+        btScalar       heightScale = 1.;
+        btScalar       minHeight = -30.;
+        btScalar       maxHeight = 30.;
+        int 	       upAxis = 2;
+        PHY_ScalarType heightDataType = PHY_FLOAT;
+        hfShape = new btHeightfieldTerrainShape( 100, 100, data , heightScale, minHeight, maxHeight, upAxis, heightDataType , false);
+        hfShape->setUseDiamondSubdivision(true);
+        hfShape->setLocalScaling(btVector3(1.5,1.5,1.));
+        shape = hfShape;
+        //PHY_FLOAT
+        //PHY_UCHAR
+/*
+int heightStickWidth,
+int 	heightStickLength,
+const void * 	heightfieldData,
+btScalar 	heightScale,
+btScalar 	minHeight,
+btScalar 	maxHeight,
+int 	upAxis,
+PHY_ScalarType 	heightDataType,
+bool 	flipQuadEdges 
+*/
+        btTransform trans;
+        trans.setIdentity();
+        btVector3 aabbMin, aabbMax;
+        shape->getAabb(trans, aabbMin, aabbMax);
+        printf("aabbMin %f %f %f\n", aabbMin[0], aabbMin[1], aabbMin[2]);
+        printf("aabbMax %f %f %f\n", aabbMax[0], aabbMax[1], aabbMax[2]);
+        
+        if ( !shape ) fprintf(stderr,"Error creating btShape\n");
+        createRigidBody();
+    }
+    void createRigidBody() {
+        /// Creates a Rigid Body
+        btDefaultMotionState* mState = new
+        	btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0.,0.,0.)));
+        btVector3 inertia(0,0,0);
+        //shape->calculateLocalInertia(mass,inertia);
+        btRigidBody::btRigidBodyConstructionInfo cInfo(mass,mState,shape,inertia);
+        cInfo.m_restitution = 0.9f;
+        cInfo.m_friction = 0.9f;
+        body = new btRigidBody(cInfo);
+        if ( !body ) fprintf(stderr,"Error creating btBody\n");
+    }
+};
 
 /// Cone
 class btosgCone : public btosgObject {

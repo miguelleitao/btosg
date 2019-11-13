@@ -6,3 +6,4 @@
 *.orig
 backup
 obj/plane*
+vgcore.*
