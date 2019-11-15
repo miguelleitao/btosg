@@ -31,7 +31,7 @@ int main()
             myBall = new btosgSphere(0.5);
             myBall->setMass(0.01);
             myBall->setTexture("img/beachball.png");
-            myBall->setPosition((float)b*2.,(float)y*2.,15.);
+            myBall->setPosition((float)b*2.,(float)y*2.,5.);
             myBall->body->setRestitution(0.5);
             myWorld.addObject( myBall );
         }
