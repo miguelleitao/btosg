@@ -39,6 +39,14 @@ Look at provided examples. Prepare your _application.cpp_ using
     #include <btosg.h>
 
 Compile using
+    
+<pre>
+g++ -c -I path/to/btosg/dir _application.cpp_
+g++ -o <i>application</i> -L path/to/btosg/dir/lib -l btosg <i>application.o</i>
+</pre>
+
+Or, if you completed installation using make install:
+
 <pre>
 g++ -c `pkg-config --cflags btosg` <i>application.cpp</i>
 g++ -o <i>application</i> `pkg-config --libs btosg` <i>application.o</i>
@@ -61,10 +69,10 @@ Usage instructions are provided in source file.
 To compile and try the provided examples do:
 
     make examples 
-    ./ball
-    ./objects
-    ./carZ
-    ./carY
+    ./examples/ball
+    ./examples/objects
+    ./examples/carZ
+    ./examples/carY
 
 ### Referencing
 The release version can be referenced by either http://doi.org/ctz5 or doi:10.5281/zenodo.1283484.
