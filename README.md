@@ -40,8 +40,10 @@ Look at provided examples. Prepare your _application.cpp_ using
 
 Compile using
     
-> g++ -c -I path/to/btosg/dir _application.cpp_
-> g++ -o <i>application</i> -L path/to/btosg/dir/lib -l btosg <i>application.o</i>
+<pre>
+g++ -c -I path/to/btosg/dir <i>application.cpp</i>
+g++ -o <i>application</i> -L path/to/btosg/dir/lib -l btosg <i>application.o</i>
+</pre>
 
 Or, if you completed installation using make install:
 
@@ -49,11 +51,6 @@ Or, if you completed installation using make install:
 g++ -c `pkg-config --cflags btosg` <i>application.cpp</i>
 g++ -o <i>application</i> `pkg-config --libs btosg` <i>application.o</i>
 </pre>
-
-```
-g++ -c `pkg-config --cflags btosg` _application.cpp_
-g++ -o <i>application</i> `pkg-config --libs btosg` <i>application.o</i>
-```
 
 ### Documentation
 The **btosg** reference documentation can be browsed online from both:
