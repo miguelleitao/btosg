@@ -112,19 +112,28 @@ int main()
 	//btosgQuat quat = btQuaternion(btVector3(1.,1.,1.),timenow);
         //btosgQuat quat = osg::Quat(timenow,osg::Vec3d(1.,0.1,0.01));
 
-	int cycle = (int)(timenow/2./osg::PI)%3;
+	int cycle = (int)(timenow/2./osg::PI)%6;
 	// printf("cycle: %d\n", cycle);
 	btosgVec3 axis;
 	switch( cycle ) {
 	    case 0:
-		axis = btosgVec3(1.,0.,0.);
-		break;
+            axis = btosgVec3(1.,0.,0.);
+            break;
 	    case 1:
-		axis = btosgVec3(0.,1.,0.);
-		break;
+            axis = btosgVec3(0.,1.,0.);
+            break;
 	    case 2:
-		axis = btosgVec3(0.,0.,1.);
-		break;
+            axis = btosgVec3(0.,0.,1.);
+            break;
+	    case 3:
+            axis = btosgVec3(1.,1.,0.);
+            break;
+	    case 4:
+            axis = btosgVec3(0.,1.,1.);
+            break;
+	    case 5:
+            axis = btosgVec3(1.,0.,1.);
+            break;
 	}
 	btosgQuat quat = btosgQuat(axis,timenow);
         myObj1->setRotation(quat);

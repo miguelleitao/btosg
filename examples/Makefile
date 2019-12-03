@@ -4,7 +4,7 @@
 
 # Targets
 
-EXAMPLES=ball carZ carY objects heightfield
+EXAMPLES=ball carZ carY objects heightfield hpr_test
 
 
 BULLET_DIR?=/usr/local
@@ -21,7 +21,7 @@ CXXFLAGS?=-std=c++11 -Wall -Wextra -O2 -Wno-uninitialized -Wno-unused-parameter
 VERSION:=$(shell git describe --tags --long)
 
 LD_B3OBJ_IMPORT=-L ${BTOSG_DIR}/loadOBJ -lloadOBJ -l Bullet3Common
-B3_OBJ_LOADER=${BTOSG_DIR}/loadOBJ/libloadOBJ.a -l Bullet3Common
+B3_OBJ_LOADER=${BTOSG_DIR}/loadOBJ/libloadOBJ.a
 
 # Machine specific definitions can be used from local .config file
 -include .config
@@ -63,7 +63,7 @@ objects: objects.o
 	$(CXX) -O2 -o $@ $^ ${LD_B3OBJ_IMPORT} ${LD_BTOSG}  -lm
 
 hpr_test: hpr_test.o  ${B3_OBJ_LOADER}
-	$(CXX) -O2 -o $@ $^ ${LD_B3OBJ_IMPORT} ${LD_BTOSG} -lm 
+	$(CXX) -O2 -o $@ $^ ${LD_B3OBJ_IMPORT} ${LD_BTOSG} -l Bullet3Common -lm 
 
 carZ.o: car.cpp
 	$(CXX) ${CXXFLAGS} -c ${INC_BTOSG} $< -o $@ -DVERSION=${VERSION} 
@@ -81,7 +81,7 @@ heightfield.o: heightfield.cpp
 	$(CXX) ${CXXFLAGS} -c ${INC_BTOSG} -DVERSION=${VERSION} $<
 
 hpr_test.o: hpr_test.cpp 
-	$(CXX) ${CXXFLAGS} -g -c ${INC_BTOSG} -DVERSION=${VERSION} $< 
+	$(CXX) ${CXXFLAGS} -g -c ${INC_BTOSG} -DBTOSG_LOAD_OBJ=YES -DVERSION=${VERSION} $< 
 
 clean:
 	$(RM) *.o ${EXAMPLES} 
