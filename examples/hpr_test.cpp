@@ -20,9 +20,9 @@ btosgWorld myWorld;
 btosgQuat Euler2Quat(btosgVec3 v) {
 
     //return      osg::Quat::makeRotate(v[0],v[1],v[2]);
-    return 	btQuaternion(btVector3(0.,1.,0.),v[2]) * 
-    		btQuaternion(btVector3(1.,0.,0.),v[1]) *
-		btQuaternion(btVector3(0.,0.,1.),v[0]);
+    return  btQuaternion(btVector3(0.,1.,0.),v[2]) * 
+            btQuaternion(btVector3(1.,0.,0.),v[1]) *
+            btQuaternion(btVector3(0.,0.,1.),v[0]);
 }
 
 int main()
