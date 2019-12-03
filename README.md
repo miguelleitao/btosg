@@ -45,7 +45,7 @@ g++ -c -I path/to/btosg/dir <i>application.cpp</i>
 g++ -o <i>application</i> -L path/to/btosg/dir/lib -l btosg <i>application.o</i>
 </pre>
 
-Or, if you completed installation using make install:
+Or, if you completed installation using `make install`:
 
 <pre>
 g++ -c `pkg-config --cflags btosg` <i>application.cpp</i>
