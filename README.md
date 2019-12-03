@@ -40,7 +40,7 @@ Look at provided examples. Prepare your _application.cpp_ using
 
 Compile using
     
-    g++ -c -I path/to/btosg/dir _application.cpp_
+> g++ -c -I path/to/btosg/dir _application.cpp_
     g++ -o <i>application</i> -L path/to/btosg/dir/lib -l btosg <i>application.o</i>
 
 Or, if you completed installation using make install:
