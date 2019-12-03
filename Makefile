@@ -78,6 +78,7 @@ loadOBJ: ${B3_OBJ_LOADER}
 ${B3_OBJ_LOADER}:
 	make -C loadOBJ BULLET_DIR=${BULLET_DIR} OSG_DIR=${OSG_DIR} all
 
+.PRECIOUS: ${BTOSG_PC}
 ${BTOSG_PC}:
 	@echo "prefix=/usr" 				 > $@
 	@echo "exec_prefix=\$${prefix}"			>> $@
@@ -94,7 +95,7 @@ ${BTOSG_PC}:
 	@echo "Cflags: -I\$${includedir}"		>> $@
 	@echo "Libs: -L\$${libdir} -losg"		>> $@
 
-install: ${BTOSG} ${BTOSGPC}
+install: ${BTOSG} ${BTOSG_PC}
 	install -d $(DESTDIR)$(PREFIX)/lib/
 	install -m 755 ${BTOSG} $(DESTDIR)$(PREFIX)/lib/
 	install -m 755 ${B3_OBJ_LOADER} $(DESTDIR)$(PREFIX)/lib/
