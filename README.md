@@ -51,7 +51,7 @@ g++ -o <i>application</i> `pkg-config --libs btosg` <i>application.o</i>
 </pre>
 
 ```
-g++ -c `pkg-config --cflags btosg` _application.cpp_>
+g++ -c `pkg-config --cflags btosg` _application.cpp_
 g++ -o <i>application</i> `pkg-config --libs btosg` <i>application.o</i>
 ```
 
