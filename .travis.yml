@@ -4,7 +4,7 @@ sudo: false # only for faster builds
 install:
   - sudo apt update 
   - sudo apt -y install openscenegraph libopenscenegraph-dev libbullet-dev 
-  - sudo apt -y install doxygen texlive-font-utils
+  - sudo apt -y install doxygen texlive-font-utils ghostscript
 script:
   - make BTOSG_LOAD_OBJ=NO test
   - make manual
