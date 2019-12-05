@@ -60,6 +60,7 @@ manual:
 	@make documentation/html
 
 documentation/html:
+	mkdir -p $@
 	doxygen btosg.doxygen
 
 #-DBTOSG_SHADOW $<
