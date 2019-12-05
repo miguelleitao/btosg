@@ -2,7 +2,9 @@
 language: cpp
 sudo: false # only for faster builds
 install:
-  - sudo apt update && sudo apt -y install openscenegraph libopenscenegraph-dev libbullet-dev doxygen
+  - sudo apt update 
+  - sudo apt -y install openscenegraph libopenscenegraph-dev libbullet-dev 
+  - sudo apt -y install doxygen texlive-font-utils
 script:
   - make BTOSG_LOAD_OBJ=NO test
   - make manual
