@@ -2,7 +2,7 @@
 language: cpp
 sudo: false # only for faster builds
 install:
-  - sudo apt update && sudo apt -y install openscenegraph libopenscenegraph-dev libbullet-dev
+  - sudo apt update && sudo apt -y install openscenegraph libopenscenegraph-dev libbullet-dev doxygen
 script:
   - make BTOSG_LOAD_OBJ=NO test
   - make manual
