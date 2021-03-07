@@ -101,11 +101,13 @@ install: ${BTOSG} ${BTOSG_PC}
 	install -d $(DESTDIR)$(PREFIX)/lib/
 	install -m 755 ${BTOSG} $(DESTDIR)$(PREFIX)/lib/
 	install -m 755 ${B3_OBJ_LOADER} $(DESTDIR)$(PREFIX)/lib/
+	echo $(DESTDIR)$(PREFIX)/lib >/etc/ld.so.conf.d/btosg_lib.conf
 	install -d $(DESTDIR)$(PREFIX)/include/
 	install -m 644 btosg.h $(DESTDIR)$(PREFIX)/include/
 	install -m 644 btosgVehicle.h $(DESTDIR)$(PREFIX)/include/
 	install -d $(DESTDIR)$(PREFIX)/lib/pkgconfig/
 	install -m 644 ${BTOSG_PC} $(DESTDIR)$(PREFIX)/lib/pkgconfig/
+	ldconfig
 
 clean:
 	$(RM) *.o ${EXAMPLES} ${BTOSG} *.pc
