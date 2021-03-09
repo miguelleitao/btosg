@@ -107,7 +107,6 @@ int main()
         last_time = timenow;
     }
 
-    delete manipulator;
     exit(0);
 
 }
