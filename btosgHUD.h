@@ -21,7 +21,7 @@ private:
     // A geometry node for the HUD
     osg::Geode* geode;
 public:
-    void setBackground() {
+    void setBackground(char *back_fname="metal.png") {
         /// Set up geometry for the HUD and add it to the HUD
         osg::Geometry* HUDBackgroundGeometry = new osg::Geometry();
 
@@ -51,7 +51,7 @@ public:
         osg::Texture2D* HUDTexture = new osg::Texture2D;
         HUDTexture->setDataVariance(osg::Object::DYNAMIC);
         osg::Image* hudImage;
-        hudImage = osgDB::readImageFile("metal4.png");
+        hudImage = osgDB::readImageFile(back_fname);
         HUDTexture->setImage(hudImage);
         osg::Vec3Array* HUDnormals = new osg::Vec3Array;
         HUDnormals->push_back(osg::Vec3(0.0f,0.0f,1.0f));
