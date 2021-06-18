@@ -36,10 +36,7 @@ double frame_time = 0.;
 // Create World
 btosgWorld myWorld;
 
-btosgBox *myBox;
-
-
-
+// Vehicle
 btosgVehicle *myVehicle;
 
 // class to handle events
@@ -102,11 +99,6 @@ public:
             case 'i':
                 myVehicle->printInfo();
                 break;
-            case 'f':
-                std::cout << "adding force" << std::endl;
-                myBox->body->activate(true);
-                myBox->body->applyCentralImpulse(btVector3(100.,0.,0.));
-                return false;
             case 'F':
                 std::cout << "adding Force" << std::endl;
 
@@ -187,9 +179,9 @@ public:
 int main()
 {
     btosgVec3 up(0., 0., 1.);
-#ifdef _UP_
-    up = btosgVec3(_UP_);
-#endif
+    #ifdef _UP_
+        up = btosgVec3(_UP_);
+    #endif
     btosgVec3 gravity = up*-9.8;
     myWorld.dynamic->setGravity(gravity);
 
@@ -267,7 +259,6 @@ int main()
     matRamp->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
     matRamp->setShininess(osg::Material::FRONT_AND_BACK, 64);
     myRamp->setMaterial(matRamp);
-
 
     // Creating the viewer
     osgViewer::Viewer viewer ;
