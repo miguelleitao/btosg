@@ -15,7 +15,7 @@ double frame_time = 0.;
 // Create World
 btosgWorld myWorld;
 
-btosgSphere *myBall;
+
 
 
 int main()
@@ -28,7 +28,10 @@ int main()
     // Balls
     for( int y=-3 ; y<=3 ; y++ )
         for( int b=-10 ; b<=10 ; b++ ) {
-            myBall = new btosgSphere(0.5);
+            btosgSphere *myBall = new btosgSphere(0.5);
+            char oname[20];
+            sprintf(oname,"Ball_%03d",(y+3)*100+b+10);
+            myBall->setName(oname);
             myBall->setMass(0.01);
             myBall->setTexture("img/beachball.png");
             myBall->setPosition((float)b*2.,(float)y*2.,5.);
@@ -103,12 +106,13 @@ int main()
 
     while( !viewer.done() )
     {
-        myWorld.stepSimulation(frame_time,10);
+        myWorld.stepSimulation(frame_time,100);
 
         viewer.frame();
         timenow = myTimer.time_s();
         frame_time = timenow - last_time;
         last_time = timenow;
+	myWorld.listObjects();
     }
     printf("main loop exited\n");
     //delete manipulator;
