@@ -21,7 +21,7 @@ private:
     // A geometry node for the HUD
     osg::Geode* geode;
 public:
-    void setBackground(char *back_fname="metal.png") {
+    void setBackground(const char* back_fname) {
         /// Set up geometry for the HUD and add it to the HUD
         osg::Geometry* HUDBackgroundGeometry = new osg::Geometry();
 
@@ -68,7 +68,7 @@ public:
         osg::StateSet* HUDStateSet = new osg::StateSet();
         geode->setStateSet(HUDStateSet);
         HUDStateSet->
-        setTextureAttributeAndModes(0,HUDTexture,osg::StateAttribute::ON);
+            setTextureAttributeAndModes(0,HUDTexture,osg::StateAttribute::ON);
 
         // For this state set, turn blending on (so alpha texture looks right)
         HUDStateSet->setMode(GL_BLEND,osg::StateAttribute::ON);
@@ -79,6 +79,9 @@ public:
 
         // Need to make sure this geometry is draw last. Use RenderBin 11.
         HUDStateSet->setRenderBinDetails( 11, "RenderBin");
+    }
+    void setBackground() {
+    	setBackground("metal.png");
     }
     btosgHUD() {
         /// Constructs an Head Up Display.
@@ -108,9 +111,12 @@ public:
         geode = new osg::Geode();
         HUDModelViewMatrix->addChild( geode );
     }
-    virtual bool addDrawable( osg::Drawable *td ) {
-        /// Add a visual elemente to the HUD.
+    bool addDrawable( osg::Drawable *td ) {
+        /// Add a visual element to the HUD.
         return geode->addDrawable(td);
+    }
+    void setStateSet(osg::StateSet *sSet) {
+        geode->setStateSet(sSet);
     }
 };
 
