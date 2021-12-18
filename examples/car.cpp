@@ -56,8 +56,8 @@ public:
                 myVehicle->vehicle->applyEngineForce(-1500, 3);
                 return false;
             case osgGA::GUIEventAdapter::KEY_Up:
-                myVehicle->vehicle->applyEngineForce(1500, 2);
-                myVehicle->vehicle->applyEngineForce(1500, 3);
+                myVehicle->vehicle->applyEngineForce(2500, 2);
+                myVehicle->vehicle->applyEngineForce(2500, 3);
                 return false;
             case osgGA::GUIEventAdapter::KEY_Left:
                 myVehicle->vehicle->setSteeringValue(btScalar(0.4), 0);
@@ -163,7 +163,7 @@ public:
 
 class BlockBlue : public btosgBox {
 public:
-    BlockBlue(float x, float y, float z) : btosgBox( osg::Vec3(1.,0.25,1.), 10000. ) {
+    BlockBlue(float x, float y, float z) : btosgBox( osg::Vec3(1.,0.25,1.), 1000. ) {
         setPosition(btVector3(x,y,z));
         osg::ref_ptr<osg::Material> mat = new osg::Material;
         mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));

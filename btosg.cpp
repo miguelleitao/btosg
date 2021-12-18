@@ -11,9 +11,13 @@
 
 
 void btosgObject::print() {
-printf("listando object\n");
-printf("name: %s\n", name);
-    std::cout << name << "\n";
+    //printf("listando object\n");
+    //printf("name: %s\n", name);
+    std::cout << "Object: " << name << "\n";
+    btosgVec3 pos = getPosition();
+
+    std::cout << "  Position: " << pos.x() << ", " << pos.y() << ", " << pos.z() << "\n";
+    if ( isnan(pos.x() )) exit(2);    
 }
 
 btVector3 quat2Euler(const btQuaternion& q)
@@ -101,13 +105,13 @@ btosgWorld::~btosgWorld() {
 
 void btosgWorld::listObjects() {
     int n = 0;
+    printf("## Object List\n");
     for ( auto it = objects.begin() ; it != objects.end(); ++it ) {
         btosgObject *obj = *it;
 	obj->print();
 	n++;
     }
-    
-printf("listou %d objects\n",n);
+    printf("%d objects listed.\n",n);
 }
 
 void btosgWorld::addObject(btosgObject *obj)  {
