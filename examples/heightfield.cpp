@@ -15,9 +15,6 @@ double frame_time = 0.;
 // Create World
 btosgWorld myWorld;
 
-btosgSphere *myBall;
-
-
 int main()
 {
     btosgVec3 up(0., 0., 1.);
@@ -26,6 +23,7 @@ int main()
     myWorld.dynamic->setGravity(gravity);
 
     // Balls
+    btosgSphere *myBall;
     for( int y=-3 ; y<=3 ; y++ )
         for( int b=-10 ; b<=10 ; b++ ) {
             myBall = new btosgSphere(0.5);
@@ -51,7 +49,7 @@ int main()
     myRamp->setName("Ramp1");
     myRamp->body->setFriction(100.);
     myRamp->setMaterial(matRamp);
-    myWorld.addObject( myRamp );
+//    myWorld.addObject( myRamp );
 
     // Plane 2
     btosgHeightfield *myHfield;
