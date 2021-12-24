@@ -34,6 +34,10 @@ public:
         this->x2 = x2;
         this->y2 = y2;
     }
+    void setFullScreen() {	// fill the whole viewport
+        osg::ref_ptr<osg::Viewport> vp = viewer.getCamera()->getViewport();
+        setPosition( vp->x(), vp->y(), vp->x()+vp->width(), vp->y()+vp->height() );
+    }
     void setColor( osg::Vec4 &c ) {
         back_color = c;
     }

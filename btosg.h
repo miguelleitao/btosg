@@ -395,6 +395,8 @@ public:
         if (body) {
             btTransform wTrans;
             body->getMotionState()->getWorldTransform(wTrans);
+btVector3 p = wTrans.getOrigin();
+printf("p %f,%f,%f\n", p[0], p[1], p[2]);
             if ( model ) {
                 model->setAttitude(btosgQuat(wTrans.getRotation()));
                 model->setPosition(btosgVec3(wTrans.getOrigin()));
