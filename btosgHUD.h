@@ -20,6 +20,7 @@ class btosgHUD : public osg::Projection {
 private:
     // A geometry node for the HUD
     osg::Geode* geode;
+protected:
     int x1 = 0;
     int y1 = 0;
     int x2 = 1024;
@@ -33,6 +34,12 @@ public:
         this->y1 = y1;
         this->x2 = x2;
         this->y2 = y2;
+        // Initialize the projection matrix for viewing everything we
+        // will add as descendants of this node. Use screen coordinates
+        // to define the horizontal and vertical extent of the projection
+        // matrix. Positions described under this node will equate to
+        // pixel coordinates.
+        setMatrix(osg::Matrix::ortho2D(0,x2-x1,0,y2-y1));
     }
     void setFullScreen(osg::Viewport *vp) {	// fill the whole viewport
         setPosition( vp->x(), vp->y(), vp->x()+vp->width(), vp->y()+vp->height() );
@@ -147,6 +154,9 @@ public:
     bool addDrawable( osg::Drawable *td ) {
         /// Add a visual element to the HUD.
         return geode->addDrawable(td);
+    }
+    virtual bool removeDrawable( osg::Drawable *td ) {
+        return geode->removeDrawable(td);
     }
     void setStateSet(osg::StateSet *sSet) {
         geode->setStateSet(sSet);
