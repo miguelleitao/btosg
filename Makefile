@@ -105,6 +105,7 @@ install: ${BTOSG} ${BTOSG_PC}
 	install -d $(DESTDIR)$(PREFIX)/include/
 	install -m 644 btosg.h $(DESTDIR)$(PREFIX)/include/
 	install -m 644 btosgVehicle.h $(DESTDIR)$(PREFIX)/include/
+	install -m 644 btosgHUD.h $(DESTDIR)$(PREFIX)/include/
 	install -d $(DESTDIR)$(PREFIX)/lib/pkgconfig/
 	install -m 644 ${BTOSG_PC} $(DESTDIR)$(PREFIX)/lib/pkgconfig/
 	ldconfig
