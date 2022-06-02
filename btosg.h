@@ -236,7 +236,6 @@ class btosgRigidBody : public btRigidBody {
 class btosgObject {
 public:
     // Main components
-    //osg::Geode *geo;
     osg::ref_ptr<osg::PositionAttitudeTransform> model;	///< Object's graphical model
     char *name;	              ///< Object name
     btTransform init_state;   ///< Inital state. Applied on reset events.
@@ -395,8 +394,6 @@ public:
         if (body) {
             btTransform wTrans;
             body->getMotionState()->getWorldTransform(wTrans);
-btVector3 p = wTrans.getOrigin();
-printf("p %f,%f,%f\n", p[0], p[1], p[2]);
             if ( model ) {
                 model->setAttitude(btosgQuat(wTrans.getRotation()));
                 model->setPosition(btosgVec3(wTrans.getOrigin()));
