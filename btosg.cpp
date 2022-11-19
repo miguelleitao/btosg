@@ -106,7 +106,7 @@ btosgWorld::~btosgWorld() {
 
 
 void btosgWorld::listObjects() {
-    /// Outputs alist of all objects in the btosgWorld
+    /// Outputs a list of all objects in the btosgWorld
     int n = 0;
     printf("## Object List\n");
     for ( auto it = objects.begin() ; it != objects.end(); ++it ) {
