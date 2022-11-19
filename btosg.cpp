@@ -11,6 +11,7 @@
 
 
 void btosgObject::print() {
+    /// Print out objects position.
     //printf("listando object\n");
     //printf("name: %s\n", name);
     std::cout << "Object: " << name << "\n";
@@ -53,6 +54,7 @@ btosgVec3 btosgQuat::toEuler()
 }
 
 int btosgWorld::deleteAllObjects() {
+    /// Deletes all abjects from the btosgWorld
     int count = 0;
     while ( !objects.empty() )
     {
@@ -104,6 +106,7 @@ btosgWorld::~btosgWorld() {
 
 
 void btosgWorld::listObjects() {
+    /// Outputs alist of all objects in the btosgWorld
     int n = 0;
     printf("## Object List\n");
     for ( auto it = objects.begin() ; it != objects.end(); ++it ) {

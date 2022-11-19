@@ -21,44 +21,47 @@ private:
     // A geometry node for the HUD
     osg::Geode* geode;
 protected:
-    int x1 = 0;
-    int y1 = 0;
-    int x2 = 1024;
-    int y2 = 150;
-    osg::Vec4 back_color = osg::Vec4(1.f,1.f,1.f,1.0f);
-    osg::Texture2D* backgroundTexture = NULL;
-    osg::StateSet* HUDStateSet;
+    int x1 = 0;  	///< left 
+    int y1 = 0;		///< bottom
+    int x2 = 1024;	///< right
+    int y2 = 150;	///< top
+    osg::Vec4 back_color = osg::Vec4(1.f,1.f,1.f,1.0f);		///< Bachground color
+    osg::Texture2D* backgroundTexture = NULL;			///< Background Texture
+    osg::StateSet* HUDStateSet;					///< StateSet for HUD visual properties
 public:
     void setPosition( int x1, int y1, int x2, int y2) {
+        /// Positions the HUD in the display window.
+        /// x1, x2, y1, y2 are interpreted as pixel coordinates.
         this->x1 = x1;
         this->y1 = y1;
         this->x2 = x2;
         this->y2 = y2;
-        // Initialize the projection matrix for viewing everything we
-        // will add as descendants of this node. Use screen coordinates
-        // to define the horizontal and vertical extent of the projection
-        // matrix. Positions described under this node will equate to
-        // pixel coordinates.
+        // Initialize an orthographic projection matrix.
         setMatrix(osg::Matrix::ortho2D(0,x2-x1,0,y2-y1));
     }
-    void setFullScreen(osg::Viewport *vp) {	// fill the whole viewport
+    void setFullScreen(osg::Viewport *vp) {	
+        /// Fill the whole viewport
         setPosition( vp->x(), vp->y(), vp->x()+vp->width(), vp->y()+vp->height() );
     }
     void setColor( osg::Vec4 &c ) {
+        /// Define the background color
         back_color = c;
     }
     void setBackground(const char* back_fname) {
+        /// Load the image from file back_fname to be used as background
         osg::Image* hudImage;
         hudImage = osgDB::readImageFile(back_fname);
         setBackground(hudImage);
     }
     void clearBackground() {
+    	/// Clears the defined background image
         if ( backgroundTexture ) {
             HUDStateSet->
                 setTextureAttributeAndModes(0,backgroundTexture,osg::StateAttribute::OFF);
         }
     }    
     void setBackground(osg::Image* hudImage) {
+        /// Use hudImage as background image
         if ( backgroundTexture ) {
             backgroundTexture->setImage(hudImage);    
             return;
@@ -121,6 +124,7 @@ public:
         HUDStateSet->setRenderBinDetails( 11, "RenderBin");
     }
     void setBackground() {
+        /// Selects default background image
     	setBackground("metal.png");
     }
     btosgHUD() {
@@ -156,9 +160,11 @@ public:
         return geode->addDrawable(td);
     }
     virtual bool removeDrawable( osg::Drawable *td ) {
+        /// Removes Drawable element from HUD
         return geode->removeDrawable(td);
     }
     void setStateSet(osg::StateSet *sSet) {
+        /// Use StateSet to define visual properties for HUD 
         geode->setStateSet(sSet);
     }
 };

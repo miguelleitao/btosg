@@ -179,8 +179,9 @@ private:
     btSequentialImpulseConstraintSolver* solver;
 public:
     btDynamicsWorld *dynamic;	///< Pointer to btDynamicsWorld object.
+    /// \var  osg::ref_ptr<osg::Group> scene
+    ///  Pointer to osg::Group object storing the root node of the object tree.
     #ifdef BTOSG_SHADOW
-        /// Pointer to osg::Group object storing the root node of the object tree.
         osg::ref_ptr<osgShadow::ShadowedScene> scene;
     #else
         osg::ref_ptr<osg::Group> 	scene;
@@ -457,6 +458,7 @@ public:
     btosgSphere(float r, double m=1) {
         /// Constructs a Sphere object.
         /// @param r the radius of the sphere in meters units.
+        /// @param m the mass of the sphere in kg units. Defaults to 1 kg.
         radius = r;
         osg::ref_ptr<osg::Geode> geo = new osg::Geode();
         geo->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.,0.,0.),r)));
