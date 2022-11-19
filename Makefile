@@ -56,6 +56,7 @@ All:
 	make all
 
 manual:
+	git submodule init
 	git submodule update --recursive --remote
 	${RM} -rf documentation/html documentation/latex
 	@make documentation/html
