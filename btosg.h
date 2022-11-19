@@ -11,6 +11,8 @@
 #define YES 1
 #define NO  0
 
+#define _USE_MATH_DEFINES
+
 #include <osgDB/ReadFile>
 #include <osg/MatrixTransform>
 #include <osg/PositionAttitudeTransform>
@@ -47,7 +49,7 @@
 #define AVOID_DIRECT_MODEL_UPDATE
 
 #define max(a,b) \
-   ({ __typeof__ (a) _a = (a); \
+   ({  __typeof__ (a) _a = (a); \
        __typeof__ (b) _b = (b); \
      _a > _b ? _a : _b; })
 
@@ -177,15 +179,15 @@ private:
     btSequentialImpulseConstraintSolver* solver;
 public:
     btDynamicsWorld *dynamic;	///< Pointer to btDynamicsWorld object.
-#ifdef BTOSG_SHADOW
-    /// Pointer to osg::Group object storing the root node of the object tree.
-    osg::ref_ptr<osgShadow::ShadowedScene> scene;
-#else
-    osg::ref_ptr<osg::Group> 	scene;
-#endif
+    #ifdef BTOSG_SHADOW
+        /// Pointer to osg::Group object storing the root node of the object tree.
+        osg::ref_ptr<osgShadow::ShadowedScene> scene;
+    #else
+        osg::ref_ptr<osg::Group> 	scene;
+    #endif
     std::forward_list<class btosgObject*> objects; ///< List of Objects.
+    
     btosgWorld() {
-
         // Create dynamic world
         broadphase = new btDbvtBroadphase();
         collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -197,16 +199,16 @@ public:
         dynamic->setGravity(btosgVec3(0., 0., -9.8));
 
         // Creating the root node
-#ifdef BTOSG_SHADOW
-        scene = new osgShadow::ShadowedScene;
-        scene->setReceivesShadowTraversalMask(ReceivesShadowTraversalMask);
-        scene->setCastsShadowTraversalMask(CastsShadowTraversalMask);
-        osg::ref_ptr<osgShadow::ShadowMap> sm = new osgShadow::ShadowMap;
-        scene->setShadowTechnique(sm.get());
-        sm->setTextureSize(osg::Vec2s(8096,8096));
-#else
-        scene = new osg::Group;// Creating the root node
-#endif
+        #ifdef BTOSG_SHADOW
+            scene = new osgShadow::ShadowedScene;
+            scene->setReceivesShadowTraversalMask(ReceivesShadowTraversalMask);
+            scene->setCastsShadowTraversalMask(CastsShadowTraversalMask);
+            osg::ref_ptr<osgShadow::ShadowMap> sm = new osgShadow::ShadowMap;
+            scene->setShadowTechnique(sm.get());
+            sm->setTextureSize(osg::Vec2s(8096,8096));
+        #else
+            scene = new osg::Group; // Creating the root node
+        #endif
         steps = 0L;
 	nObjs = 0L;
     };
@@ -329,13 +331,13 @@ public:
             wTrans.setOrigin(p);
 	    setTransform(wTrans);
         }
-#ifdef AVOID_DIRECT_MODEL_UPDATE
+        #ifdef AVOID_DIRECT_MODEL_UPDATE
         else
-#endif
+        #endif
         {   // Not required for dynamic objects.
-#ifdef _DEBUG_
-            printf("set Position in non dynamic object\n");
-#endif
+            #ifdef _DEBUG_
+                printf("set Position in non dynamic object\n");
+            #endif
             if (model) {
                 model->setPosition(p);
             }
@@ -357,13 +359,13 @@ public:
             body->setLinearVelocity(btVector3(0,0,0));
             body->setAngularVelocity(btVector3(0,0,0));
         }
-#ifdef AVOID_DIRECT_MODEL_UPDATE
+        #ifdef AVOID_DIRECT_MODEL_UPDATE
         else
-#endif
+        #endif
         {   // Not required for dynamic objects.
-#ifdef  _DEBUG_
-            printf("setRotation in non dynamic object\n");
-#endif
+            #ifdef  _DEBUG_
+                printf("setRotation in non dynamic object\n");
+            #endif
             if (model) {
                 model->setAttitude(q);
             }
@@ -422,22 +424,22 @@ class btosgExternalObject : public btosgObject {
     
 public:
     //char *fname;
-    btosgExternalObject(const char *file_name) {
+    btosgExternalObject(const char *file_name, double m=1.) {
         /// Constructs a graphical object from an external model.
         loadObjectModel(file_name);
 
 	// Reload external model as a mesh to use as colision shape
         glmesh = LoadMeshFromObj(file_name, "");
 	if ( glmesh ) {
-		//printf("[INFO] Obj loaded: Extracted %d verticed from obj file [%s]\n", glmesh->m_numvertices, file_name);
+	    //printf("[INFO] Obj loaded: Extracted %d verticed from obj file [%s]\n", glmesh->m_numvertices, file_name);
 
-		const GLInstanceVertex& v = glmesh->m_vertices->at(0);
-		btConvexHullShape* shapeH = new btConvexHullShape((const btScalar*)(&(v.xyzw[0])), glmesh->m_numvertices, sizeof(GLInstanceVertex));
-		btVector3 scaling(.999,.999,.999);
-		shapeH->setLocalScaling(scaling);
-		shape = shapeH;
+	    const GLInstanceVertex& v = glmesh->m_vertices->at(0);
+            btConvexHullShape* shapeH = new btConvexHullShape((const btScalar*)(&(v.xyzw[0])), glmesh->m_numvertices, sizeof(GLInstanceVertex));
+	    btVector3 scaling(.999,.999,.999);
+	    shapeH->setLocalScaling(scaling);
+	    shape = shapeH;
 	}
-        mass = 1.;
+        mass = m;
         createRigidBody();
         body->setDamping(0.01,0.1);
     }
@@ -452,7 +454,7 @@ public:
 class btosgSphere : public btosgObject {
 public:
     float radius;		///< Radius
-    btosgSphere(float r) {
+    btosgSphere(float r, double m=1) {
         /// Constructs a Sphere object.
         /// @param r the radius of the sphere in meters units.
         radius = r;
@@ -462,9 +464,9 @@ public:
         model->addChild(geo);
         model->setNodeMask(CastsShadowTraversalMask);
         shape = new btSphereShape(r);
-        mass = 1.;
+        mass = m;
         createRigidBody();
-        body->setDamping(0.01,0.1);
+        body->setDamping(0.01, 0.1);
     }
 };
 
@@ -580,6 +582,10 @@ public:
 
 /// Heightfield
 class btosgHeightfield : public btosgObject {
+
+    const    int dimX = 100;
+    const    int dimY = 100;
+    float    *data = NULL;
 public:
     btosgHeightfield(float dx, float dy, float dz)  {
         /// Constructs a physical highfield.
@@ -608,9 +614,7 @@ public:
         mass = 0;
         // btHeightfieldTerrainShape::
         
-        int dimX = 100;
-        int dimY = 100;
-        float data[dimX*dimY];
+        data = new float[dimX*dimY]; 
         for( int y=0 ; y<dimY ; y++ )
             for( int x=0 ; x<dimX ; x++ ) {
                 double xo = (double)x/(double)dimX - 0.5;
@@ -672,7 +676,7 @@ private:
     float radius;
     float height;
 public:
-    btosgCone(float r=0.5, float h=1)  {
+    btosgCone(float r=0.5, float h=1., float m=1.)  {
         /// Constructs a Z axis cone.
         radius = r;
         height = h;
@@ -692,7 +696,7 @@ public:
         center_pos->addChild(geo);
         model->addChild(center_pos);
         model->setNodeMask(ReceivesShadowTraversalMask);
-        mass = 1.;
+        mass = m;
         shape = new btConeShapeZ(r, h);
         if ( !shape ) fprintf(stderr,"Error creating btShape\n");
         createRigidBody();
@@ -706,7 +710,7 @@ private:
     float radius;
     float height;
 public:
-    btosgCylinder(float r=0.5, float h=1)  {
+    btosgCylinder(float r=0.5, float h=1., float m=1.)  {
         /// Constructs a Z axis cylinder.
         radius = r;
         height = h;
@@ -726,7 +730,7 @@ public:
         center_pos->addChild(geo);
         model->addChild(center_pos);
         model->setNodeMask(ReceivesShadowTraversalMask);
-        mass = 1.;
+        mass = m;
         // btCylinderShapeZ is centered at origin
         shape = new btCylinderShapeZ(btVector3(r, r, h/2.));
         if ( !shape ) fprintf(stderr,"Error creating btShape\n");
