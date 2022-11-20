@@ -27,7 +27,7 @@ int main()
         for( int x=-3 ; x<=3 ; x++ ) {
             btosgSphere *myBall = new btosgSphere(0.5);
             char oname[20];
-            sprintf(oname,"Ball_%02d%02d", y, x);
+            sprintf(oname, "Ball_%02d%02d", y, x);
             myBall->setName(oname);
             myBall->setMass(0.01);
             myBall->setTexture("img/beachball.png");
@@ -36,28 +36,18 @@ int main()
             myWorld.addObject( myBall );
         }
 
-    // Material for base plans
+    // Material for base surface
     osg::ref_ptr<osg::Material> matRamp = new osg::Material;
     matRamp->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0., 0., 0., 1.0));
     matRamp->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.7, 0.8, 0.0, 1.0));
     matRamp->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
     matRamp->setShininess(osg::Material::FRONT_AND_BACK, 64);
-/*
-    // Plane 1
-    btosgPlane *myRamp;
-    myRamp = new btosgPlane();
-    myRamp->setRotation(osg::Quat(-osg::PI/8.,osg::Vec3(1.,0.,0.)));
-    myRamp->setPosition(0.,-5.,0.);
-    myRamp->setName("Ramp1");
-    myRamp->body->setFriction(100.);
-    myRamp->setMaterial(matRamp);
-//    myWorld.addObject( myRamp );
-*/
+
     // Curved surface defined from an HeightField
     btosgHeightfield *myHfield;
-    myHfield = new btosgHeightfield(50., 50., 0.1);
+    myHfield = new btosgHeightfield(40., 50., 60., 100, 100);
     //myHfield->setRotation(osg::Quat(osg::PI/8.,osg::Vec3(1.,0.,0.)));
-    myHfield->setPosition(0.,0.,0.);
+    myHfield->setPosition(0., 0., 0.);
     myHfield->setName("HeightField");
     myHfield->body->setFriction(100.);
     myHfield->setMaterial(matRamp);
@@ -112,9 +102,9 @@ int main()
 	//myWorld.listObjects();
     }
     printf("main loop exited\n");
-    //delete manipulator;
     
-    printf("mmanipulator deleted\n");
+    //delete manipulator;
+    //printf("manipulator deleted\n");
 
 }
 

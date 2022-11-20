@@ -246,36 +246,40 @@ void btosgObject::createRigidBody() {
 }
 
 
-   btosgHeightfield::btosgHeightfield(float dx, float dy, float dz)  {
+btosgHeightfield::btosgHeightfield(float x_size, float y_size, float z_size, int x_steps, int y_steps)
+ {
    // example https://snipplr.com/view/30974/osg-height-field-example
-   
    
         /// Constructs a physical and visual highfield with dimensions dx,dy,dz.
         /// Minimum dimension selects physical plane orientation.
         /// Physichal shape implemented from btHeightfieldTerrainShape and
         /// Graphical model implemented from osg::HeightField.
         /// HeightField is created as axis oriented.
-        dx = max(dx, 0.001);
-        dy = max(dy, 0.001);
-        dz = max(dz, 0.001);
-        btVector3 norm(0.,0.,1.);
-        if ( dx<dy && dx<dz ) 	   norm = btVector3(1.,0.,0.);
-        else if ( dy<dx && dy<dz ) norm = btVector3(0.,1.,0.);
+        xSize = max(x_size, 0.001);
+        ySize = max(y_size, 0.001);
+        zSize = max(z_size, 0.001);
         
-        data = new float[dimX*dimY]; 
-        for( int y=0 ; y<dimY ; y++ )
-            for( int x=0 ; x<dimX ; x++ ) 
-                data[y*dimX+x] = 0.;
-
+        maxHeight =  zSize/2.;
+        minHeight = -zSize/2.;
+        
+        xSteps = x_steps;
+        ySteps = y_steps;
+        
+        data = new float[xSteps*ySteps]; 
+        for( int y=0 ; y<ySteps ; y++ )
+            for( int x=0 ; x<xSteps ; x++ ) 
+                data[y*xSteps+x] = 0.;
+	
+	// Graphics
         osg::Geode *geo = new osg::Geode();
         if ( geo ) {
             //osg::Shape *sp = new osg::Box( osg::Vec3(0.,0.,0.), dx, dy, dz );
             hField = new osg::HeightField();
             if ( hField ) {
-                hField->allocate(dimX, dimY);
-                hField->setOrigin(osg::Vec3(-dx/2., -dy/2., 0));
-    		hField->setXInterval(dx/(dimX-1));
-    		hField->setYInterval(dy/(dimY-1));
+                hField->allocate(xSteps, ySteps);
+                hField->setOrigin(osg::Vec3(-xSize/2., -ySize/2., 0));
+    		hField->setXInterval(xSize/(xSteps-1));
+    		hField->setYInterval(ySize/(ySteps-1));
     		hField->setSkirtHeight(1.0f);
                 osg::ShapeDrawable *sd = new osg::ShapeDrawable(hField);
                 if ( sd )
@@ -286,32 +290,15 @@ void btosgObject::createRigidBody() {
         if ( !model )	model = new osg::PositionAttitudeTransform;
         model->addChild(geo);
         model->setNodeMask(ReceivesShadowTraversalMask);
-        mass = 0;
-        // btHeightfieldTerrainShape::
         
+        // Physics
         btHeightfieldTerrainShape *hfShape; 
-        btScalar       heightScale = 1.;
-        btScalar       minHeight = -30.;
-        btScalar       maxHeight = 30.;
-        int 	       upAxis = 2;
-        PHY_ScalarType heightDataType = PHY_FLOAT;
-        hfShape = new btHeightfieldTerrainShape( dimX, dimY, data , heightScale, minHeight, maxHeight, upAxis, heightDataType , false);
+        hfShape = new btHeightfieldTerrainShape( xSteps, ySteps, data , heightScale, minHeight, maxHeight, upAxis, heightDataType , false);
+        if ( !hfShape ) fprintf(stderr,"Error creating btShape\n");
         hfShape->setUseDiamondSubdivision(true);
-        hfShape->setLocalScaling(btVector3(dx/(dimX-1), dy/(dimY-1), 1.));
+        hfShape->setLocalScaling(btVector3(xSize/(xSteps-1), ySize/(ySteps-1), 1.));
         shape = hfShape;
-        //PHY_FLOAT
-        //PHY_UCHAR
-/*
-int heightStickWidth,
-int 	heightStickLength,
-const void * 	heightfieldData,
-btScalar 	heightScale,
-btScalar 	minHeight,
-btScalar 	maxHeight,
-int 	upAxis,
-PHY_ScalarType 	heightDataType,
-bool 	flipQuadEdges 
-*/
+
         btTransform trans;
         trans.setIdentity();
         btVector3 aabbMin, aabbMax;
@@ -319,34 +306,56 @@ bool 	flipQuadEdges
         printf("aabbMin %f %f %f\n", aabbMin[0], aabbMin[1], aabbMin[2]);
         printf("aabbMax %f %f %f\n", aabbMax[0], aabbMax[1], aabbMax[2]);
         
-        if ( !shape ) fprintf(stderr,"Error creating btShape\n");
         createRigidBody();
         
-        setHeightsParabola();
+        setHeightsParabola(10., 75.);
+        
+        osg::BoundingBox bb = geo->getBoundingBox();
+        printf("osgbb Min %f %f %f\n", bb.xMin(), bb.yMin(), bb.zMin());
+        printf("osgbb Max %f %f %f\n", bb.xMax(), bb.yMax(), bb.zMax());
     }
     
 void btosgHeightfield::setHeight(int x, int y, double height) {
-
-    //printf("    setting h[%d,%d] = %.3lf\n", y, x, height);
-    if ( height >30. ) height = 30.;
-    hField->setHeight(x, y, height );
+    /// Set Height of single sample in Heightfield.
+    /// Height if bounded to [minHeight, maxHeight]
     
-    //printf("    setting d[%d] = %.3lf\n", y*dimX+x, height);
-    data[y*dimX + x] = (float)height;
+    if ( height>maxHeight ) {
+        fprintf(stderr, "btosgHeightfield::setHeight(%d,%d,%f): height>%f\n",
+        	x, y, height, maxHeight);
+        height = maxHeight;
+    }
+    if ( height<minHeight )  {
+        fprintf(stderr, "btosgHeightfield::setHeight(%d,%d,%f): height<%f\n",
+        	x, y, height, minHeight);
+        height = minHeight;
+    }
+    hField->setHeight(x, y, height);
+    
+    data[y*xSteps + x] = (float)height;
 }
 
-void btosgHeightfield::setHeightsParabola() {
+void btosgHeightfield::setHeightsParabola(float ax, float ay, float bx, float by, float c) {
         printf("Setting Heightfield data\n");
-        for( int y=0 ; y<dimY ; y++ )
-            for( int x=0 ; x<dimX ; x++ ) {
-                double xo = (double)x/(double)dimX - 0.5;
-                double yo = (double)y/(double)dimY - 0.5;
-                double hi = (xo*xo)*10.+75.*yo*yo;
-                //if ( y==0 )
-                // printf("d[%d] = %.3lf\n", y*dimX+x, data[y*dimX+x]);
-                //if ( data[y*dimX+x] >30. ) data[y*dimX+x] = 30.;
+        for( int y=0 ; y<ySteps ; y++ )
+            for( int x=0 ; x<xSteps ; x++ ) {
+                double xo = (double)x/(double)xSteps - 0.5;
+                double yo = (double)y/(double)ySteps - 0.5;
+                double hi = ax*xo*xo + ay*yo*yo + bx*xo + by*yo + c;
                 setHeight(x, y, hi);
             }
         printf("Heightfield data defined\n");        
 }
+
+int  btosgHeightfield::loadImageHeights(const char *fname) {
+    osg::Image* heightMap = osgDB::readImageFile(fname);
+    if ( ! heightMap ) return 1;
+    for( int y=0; y<ySteps ; y++) {
+        for( int x=0; x<xSteps ; x++) {
+            setHeight(x, y, ((*heightMap->data(x, y)) / 255.f) * 60.f - 30.f);
+        }
+    }
+    return 0;
+}
+
+
 
