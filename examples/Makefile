@@ -47,23 +47,23 @@ test: ball carZ
 
 all: examples 
 
-carZ: carZ.o 
-	$(CXX) -O2 -o $@ $^  ${LD_BTOSG} -lm
+carZ: carZ.o ${BTOSG_DIR}/libbtosg.so
+	$(CXX) -O2 -o $@ $<  ${LD_BTOSG} -lm
 
 carY: carY.o 
-	$(CXX) -O2 -o $@ $^  ${LD_BTOSG} -lm
+	$(CXX) -O2 -o $@ $<  ${LD_BTOSG} -lm
 
 ball: ball.o 
-	$(CXX) -O2 -o $@ $^  ${LD_BTOSG} -lm
+	$(CXX) -O2 -o $@ $<  ${LD_BTOSG} -lm
 
-heightfield: heightfield.o
-	$(CXX) -O2 -o $@ $^  ${LD_BTOSG} -lm
+heightfield: heightfield.o ${BTOSG_DIR}/libbtosg.so
+	$(CXX) -O2 -o $@ $<  ${LD_BTOSG} -lm
 
 objects: objects.o  
-	$(CXX) -O2 -o $@ $^ ${LD_B3OBJ_IMPORT} ${LD_BTOSG}  -lm
+	$(CXX) -O2 -o $@ $< ${LD_B3OBJ_IMPORT} ${LD_BTOSG}  -lm
 
 hpr_test: hpr_test.o  ${B3_OBJ_LOADER}
-	$(CXX) -O2 -o $@ $^ ${LD_B3OBJ_IMPORT} ${LD_BTOSG} -l Bullet3Common -lm 
+	$(CXX) -O2 -o $@ $< ${LD_B3OBJ_IMPORT} ${LD_BTOSG} -l Bullet3Common -lm 
 
 carZ.o: car.cpp
 	$(CXX) ${CXXFLAGS} -c ${INC_BTOSG} $< -o $@ -DVERSION=${VERSION} 

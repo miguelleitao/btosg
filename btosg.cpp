@@ -244,3 +244,109 @@ void btosgObject::createRigidBody() {
     body = new btRigidBody(cInfo);
     if ( !body ) fprintf(stderr,"Error creating btBody\n");
 }
+
+
+   btosgHeightfield::btosgHeightfield(float dx, float dy, float dz)  {
+   // example https://snipplr.com/view/30974/osg-height-field-example
+   
+   
+        /// Constructs a physical and visual highfield with dimensions dx,dy,dz.
+        /// Minimum dimension selects physical plane orientation.
+        /// Physichal shape implemented from btHeightfieldTerrainShape and
+        /// Graphical model implemented from osg::HeightField.
+        /// HeightField is created as axis oriented.
+        dx = max(dx, 0.001);
+        dy = max(dy, 0.001);
+        dz = max(dz, 0.001);
+        btVector3 norm(0.,0.,1.);
+        if ( dx<dy && dx<dz ) 	   norm = btVector3(1.,0.,0.);
+        else if ( dy<dx && dy<dz ) norm = btVector3(0.,1.,0.);
+        
+        data = new float[dimX*dimY]; 
+        for( int y=0 ; y<dimY ; y++ )
+            for( int x=0 ; x<dimX ; x++ ) 
+                data[y*dimX+x] = 0.;
+
+        osg::Geode *geo = new osg::Geode();
+        if ( geo ) {
+            //osg::Shape *sp = new osg::Box( osg::Vec3(0.,0.,0.), dx, dy, dz );
+            hField = new osg::HeightField();
+            if ( hField ) {
+                hField->allocate(dimX, dimY);
+                hField->setOrigin(osg::Vec3(-dx/2., -dy/2., 0));
+    		hField->setXInterval(dx/(dimX-1));
+    		hField->setYInterval(dy/(dimY-1));
+    		hField->setSkirtHeight(1.0f);
+                osg::ShapeDrawable *sd = new osg::ShapeDrawable(hField);
+                if ( sd )
+                    geo->addDrawable(sd);
+                else fprintf(stderr,"Error creating osg::ShapeDrawable\n");
+            } else fprintf(stderr,"Error creating osg::HeightField\n");
+        } else fprintf(stderr,"Error creating Geode\n");
+        if ( !model )	model = new osg::PositionAttitudeTransform;
+        model->addChild(geo);
+        model->setNodeMask(ReceivesShadowTraversalMask);
+        mass = 0;
+        // btHeightfieldTerrainShape::
+        
+        btHeightfieldTerrainShape *hfShape; 
+        btScalar       heightScale = 1.;
+        btScalar       minHeight = -30.;
+        btScalar       maxHeight = 30.;
+        int 	       upAxis = 2;
+        PHY_ScalarType heightDataType = PHY_FLOAT;
+        hfShape = new btHeightfieldTerrainShape( dimX, dimY, data , heightScale, minHeight, maxHeight, upAxis, heightDataType , false);
+        hfShape->setUseDiamondSubdivision(true);
+        hfShape->setLocalScaling(btVector3(dx/(dimX-1), dy/(dimY-1), 1.));
+        shape = hfShape;
+        //PHY_FLOAT
+        //PHY_UCHAR
+/*
+int heightStickWidth,
+int 	heightStickLength,
+const void * 	heightfieldData,
+btScalar 	heightScale,
+btScalar 	minHeight,
+btScalar 	maxHeight,
+int 	upAxis,
+PHY_ScalarType 	heightDataType,
+bool 	flipQuadEdges 
+*/
+        btTransform trans;
+        trans.setIdentity();
+        btVector3 aabbMin, aabbMax;
+        shape->getAabb(trans, aabbMin, aabbMax);
+        printf("aabbMin %f %f %f\n", aabbMin[0], aabbMin[1], aabbMin[2]);
+        printf("aabbMax %f %f %f\n", aabbMax[0], aabbMax[1], aabbMax[2]);
+        
+        if ( !shape ) fprintf(stderr,"Error creating btShape\n");
+        createRigidBody();
+        
+        setHeightsParabola();
+    }
+    
+void btosgHeightfield::setHeight(int x, int y, double height) {
+
+    //printf("    setting h[%d,%d] = %.3lf\n", y, x, height);
+    if ( height >30. ) height = 30.;
+    hField->setHeight(x, y, height );
+    
+    //printf("    setting d[%d] = %.3lf\n", y*dimX+x, height);
+    data[y*dimX + x] = (float)height;
+}
+
+void btosgHeightfield::setHeightsParabola() {
+        printf("Setting Heightfield data\n");
+        for( int y=0 ; y<dimY ; y++ )
+            for( int x=0 ; x<dimX ; x++ ) {
+                double xo = (double)x/(double)dimX - 0.5;
+                double yo = (double)y/(double)dimY - 0.5;
+                double hi = (xo*xo)*10.+75.*yo*yo;
+                //if ( y==0 )
+                // printf("d[%d] = %.3lf\n", y*dimX+x, data[y*dimX+x]);
+                //if ( data[y*dimX+x] >30. ) data[y*dimX+x] = 30.;
+                setHeight(x, y, hi);
+            }
+        printf("Heightfield data defined\n");        
+}
+

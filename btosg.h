@@ -587,11 +587,32 @@ class btosgHeightfield : public btosgObject {
 
     const    int dimX = 100;
     const    int dimY = 100;
-    float    *data = NULL;
+    // From btHeightfieldTerrainShape: 
+    //	"The caller is responsible for maintaining the heightfield array; this class does not make a copy."
+    //	"The heightfield can be dynamic so long as the min/max height values capture the extremes (heights must always be in that range)."
+    float    *data = NULL;  /// <Heights array 
+    /*
+	int heightStickWidth,
+	int 	heightStickLength,
+	const void * 	heightfieldData,
+	btScalar 	heightScale,
+	btScalar 	minHeight,
+	btScalar 	maxHeight,
+	int 	upAxis,
+	PHY_ScalarType 	heightDataType,
+	bool 	flipQuadEdges 
+    */
+private:
+    osg::HeightField* hField;
 public:
+    btosgHeightfield(float dx, float dy, float dz);
+    void setHeight(int x, int y, double height);
+    void setHeightsParabola();
+  
+/*
     btosgHeightfield(float dx, float dy, float dz)  {
         /// Constructs a physical highfield.
-        /// Viewable box has dimensions dx,dy,dz.
+        /// Viewable as an osg::heightField dx,dy,dz.
         /// Minimum dimension selects physical plane orientation.
         /// Plane is created as axis oriented.
         dx = max(dx, 0.001);
@@ -600,15 +621,40 @@ public:
         btVector3 norm(0.,0.,1.);
         if ( dx<dy && dx<dz ) 	   norm = btVector3(1.,0.,0.);
         else if ( dy<dx && dy<dz ) norm = btVector3(0.,1.,0.);
+        
+        data = new float[dimX*dimY]; 
+        for( int y=0 ; y<dimY ; y++ )
+            for( int x=0 ; x<dimX ; x++ ) {
+                double xo = (double)x/(double)dimX - 0.5;
+                double yo = (double)y/(double)dimY - 0.5;
+                data[y*dimX+x] = (float)((xo*xo)*75.+25.*yo*yo) ;
+                //if ( y==0 )
+                 printf("d[%d] = %.3lf\n", y*dimX+x, data[y*dimX+x]);
+                if ( data[y*dimX+x] >30. ) data[y*dimX+x] = 30.;
+            }
+            
         osg::Geode *geo = new osg::Geode();
         if ( geo ) {
-            osg::Shape *sp = new osg::Box( osg::Vec3(0.,0.,0.), dx, dy, dz );
-            if ( sp ) {
-                osg::ShapeDrawable *sd = new osg::ShapeDrawable(sp);
-                if ( sd )
-                    geo->addDrawable(sd);
-                else fprintf(stderr,"Error creating osg::Shape\n");
-            } else fprintf(stderr,"Error creating osg::Shape\n");
+            //osg::Shape *sp = new osg::Box( osg::Vec3(0.,0.,0.), dx, dy, dz );
+            osg::HeightField* hField = new osg::HeightField();
+            if ( hField ) {
+                hField->allocate(dimX, dimY);
+                hField->setOrigin(osg::Vec3(-dx, -dy, 0));
+    		hField->setXInterval(1.0f);
+    		hField->setYInterval(1.0f);
+    		hField->setSkirtHeight(1.0f);
+    		
+    		for (int r = 0; r < hField->getNumRows(); r++) {
+                    for (int c = 0; c < hField->getNumColumns(); c++) {
+                        hField->setHeight(c, r, data[c*dimX + r] );
+                    }
+                }
+    		
+                osg::ShapeDrawable *sd = new osg::ShapeDrawable(hField);
+                //if ( sd )
+                  //  geo->addDrawable(sd);
+                //else fprintf(stderr,"Error creating osg::ShapeDrawable\n");
+            } else fprintf(stderr,"Error creating osg::HeightField\n");
         } else fprintf(stderr,"Error creating Geode\n");
         if ( !model )	model = new osg::PositionAttitudeTransform;
         model->addChild(geo);
@@ -616,15 +662,7 @@ public:
         mass = 0;
         // btHeightfieldTerrainShape::
         
-        data = new float[dimX*dimY]; 
-        for( int y=0 ; y<dimY ; y++ )
-            for( int x=0 ; x<dimX ; x++ ) {
-                double xo = (double)x/(double)dimX - 0.5;
-                double yo = (double)y/(double)dimY - 0.5;
-                data[y*dimX+x] = (float)((xo*xo)*15.+5.*yo*yo) ;
-                if ( y==0 ) printf("d[%d] = %.3lf\n", y*dimX+x, data[y*dimX+x]);
-                if ( data[y*dimX+x] >30. ) data[y*dimX+x] = 30.;
-            }
+        printf("Heightfield data defined\n");
         btHeightfieldTerrainShape *hfShape; 
         btScalar       heightScale = 1.;
         btScalar       minHeight = -30.;
@@ -637,17 +675,7 @@ public:
         shape = hfShape;
         //PHY_FLOAT
         //PHY_UCHAR
-/*
-int heightStickWidth,
-int 	heightStickLength,
-const void * 	heightfieldData,
-btScalar 	heightScale,
-btScalar 	minHeight,
-btScalar 	maxHeight,
-int 	upAxis,
-PHY_ScalarType 	heightDataType,
-bool 	flipQuadEdges 
-*/
+
         btTransform trans;
         trans.setIdentity();
         btVector3 aabbMin, aabbMax;
@@ -657,7 +685,7 @@ bool 	flipQuadEdges
         
         if ( !shape ) fprintf(stderr,"Error creating btShape\n");
         createRigidBody();
-    }
+    }*/
     void createRigidBody() {
         /// Creates a Rigid Body
         btDefaultMotionState* mState = new
@@ -669,6 +697,9 @@ bool 	flipQuadEdges
         cInfo.m_friction = 0.9f;
         body = new btRigidBody(cInfo);
         if ( !body ) fprintf(stderr,"Error creating btBody\n");
+    }
+    ~btosgHeightfield() {
+        delete []data;
     }
 };
 
@@ -700,7 +731,7 @@ public:
         model->setNodeMask(ReceivesShadowTraversalMask);
         mass = m;
         shape = new btConeShapeZ(r, h);
-        if ( !shape ) fprintf(stderr,"Error creating btShape\n");
+        if ( !shape ) fprintf(stderr, "Error creating btShape\n");
         createRigidBody();
         body->setDamping(0.01,0.2);
     }

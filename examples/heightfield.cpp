@@ -23,16 +23,15 @@ int main()
     myWorld.dynamic->setGravity(gravity);
 
     // Balls
-    btosgSphere *myBall;
-    for( int y=-3 ; y<=3 ; y++ )
-        for( int b=-10 ; b<=10 ; b++ ) {
+    for( int y=-10 ; y<=10 ; y++ )
+        for( int x=-3 ; x<=3 ; x++ ) {
             btosgSphere *myBall = new btosgSphere(0.5);
             char oname[20];
-            sprintf(oname,"Ball_%03d",(y+3)*100+b+10);
+            sprintf(oname,"Ball_%02d%02d", y, x);
             myBall->setName(oname);
             myBall->setMass(0.01);
             myBall->setTexture("img/beachball.png");
-            myBall->setPosition((float)b*2.,(float)y*2.,5.);
+            myBall->setPosition((float)x*2, (float)y*2, 15.);
             myBall->body->setRestitution(0.5);
             myWorld.addObject( myBall );
         }
@@ -43,7 +42,7 @@ int main()
     matRamp->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.7, 0.8, 0.0, 1.0));
     matRamp->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0, 0, 0, 1.0));
     matRamp->setShininess(osg::Material::FRONT_AND_BACK, 64);
-
+/*
     // Plane 1
     btosgPlane *myRamp;
     myRamp = new btosgPlane();
@@ -53,13 +52,13 @@ int main()
     myRamp->body->setFriction(100.);
     myRamp->setMaterial(matRamp);
 //    myWorld.addObject( myRamp );
-
-    // Plane 2
+*/
+    // Curved surface defined from an HeightField
     btosgHeightfield *myHfield;
     myHfield = new btosgHeightfield(50., 50., 0.1);
     //myHfield->setRotation(osg::Quat(osg::PI/8.,osg::Vec3(1.,0.,0.)));
     myHfield->setPosition(0.,0.,0.);
-    myHfield->setName("Ramp2");
+    myHfield->setName("HeightField");
     myHfield->body->setFriction(100.);
     myHfield->setMaterial(matRamp);
     myWorld.addObject( myHfield );
@@ -88,7 +87,7 @@ int main()
     osg::ref_ptr<osgGA::TrackballManipulator> manipulator = new osgGA::TrackballManipulator;
     viewer.setCameraManipulator( manipulator );
     // Set the desired home coordinates for the manipulator
-    osg::Vec3d eye(osg::Vec3(-45., 0., -5.)+up*20.);
+    osg::Vec3d eye(osg::Vec3(-45., 0., 0.)+up*30.);
     osg::Vec3d center(0., 0., 0.);
     // Make sure that OSG is not overriding our home position
     manipulator->setAutoComputeHomePosition(false);
@@ -110,7 +109,7 @@ int main()
         timenow = myTimer.time_s();
         frame_time = timenow - last_time;
         last_time = timenow;
-	myWorld.listObjects();
+	//myWorld.listObjects();
     }
     printf("main loop exited\n");
     //delete manipulator;
