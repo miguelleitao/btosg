@@ -17,8 +17,8 @@ btosgWorld myWorld;
 
 int main(int argc, char **argv)
 {
-    btosgVec3 up(0., 0., 1.);
-    btosgVec3 gravity = up*-9.8;
+    const btosgVec3 up(0., 0., 1.);
+    const btosgVec3 gravity = up*-9.8;
     myWorld.dynamic->setGravity(gravity);
 
     // Balls
