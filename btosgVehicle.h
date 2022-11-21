@@ -49,10 +49,10 @@ private:
 public:
     float dx;			///< Vehicle x dimension.
     float dy;			///< Vehicle y dimension.
-    float dz;			///< Vehicle < dimension.
-    btosgVec3 dim;			///< Vehicle's dimensions in world coordinates.
-    btosgVec3 up;			///< Vehicle's up vector. Usually, up=-gravity
-    btosgVec3 front;		///< Vehicle's up vector.
+    float dz;			///< Vehicle z dimension.
+    btosgVec3 dim;		///< Vehicle's dimensions in world coordinates.
+    btosgVec3 up;		///< Vehicle's up vector. Usually, up=-gravity
+    btosgVec3 front;		///< Vehicle's front vector.
     btRaycastVehicle *vehicle;	///< A btRaycastVehicle object.
     osg::ref_ptr<osg::PositionAttitudeTransform> wheel[4]; 	///< Transformation from vehicle's referential to wheel position.
     double wheelRotation[4];				///< Wheels' rotation angles.
@@ -89,17 +89,17 @@ public:
                 osg::ref_ptr<osg::ShapeDrawable> sd = new osg::ShapeDrawable(sp);
                 if ( sd )
                     geo->addDrawable(sd);
-                else fprintf(stderr,"Error creating osg::Shape\n");
-            } else fprintf(stderr,"Error creating osg::Shape\n");
-        } else fprintf(stderr,"Error creating Geode\n");
+                else fprintf(stderr, "Error creating osg::Shape\n");
+            } else fprintf(stderr, "Error creating osg::Shape\n");
+        } else fprintf(stderr, "Error creating Geode\n");
         if ( !model )	model = new osg::PositionAttitudeTransform;
         model->addChild(geo);
         model->setNodeMask(CastsShadowTraversalMask);
 
         osg::ref_ptr<osg::Material> mat = new osg::Material;
-        mat->setAmbient (osg::Material::FRONT_AND_BACK, osg::Vec4(0.4, 0.3, 0., 1.0));
-        mat->setDiffuse (osg::Material::FRONT_AND_BACK, osg::Vec4(0.8, 0.7, 0.0, 1.0));
-        mat->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0.1, 0.1, 0, 1.0));
+        mat->setAmbient  (osg::Material::FRONT_AND_BACK, osg::Vec4(0.4, 0.3, 0., 1.0));
+        mat->setDiffuse  (osg::Material::FRONT_AND_BACK, osg::Vec4(0.8, 0.7, 0.0, 1.0));
+        mat->setSpecular (osg::Material::FRONT_AND_BACK, osg::Vec4(0.1, 0.1, 0, 1.0));
         mat->setShininess(osg::Material::FRONT_AND_BACK, 12);
         setMaterial(mat);
 
@@ -123,7 +123,7 @@ public:
         world->dynamic->addVehicle(this->vehicle);
 
         //Adds the wheels to the vehicle
-        btVector3 halfExtents = btVector3(dim[0]/2.,dim[1]/2.,dim[2]/2.);
+        btVector3 halfExtents = btVector3(dim[0]/2., dim[1]/2., dim[2]/2.);
         addWheels(&halfExtents, this->vehicle, tuning);
 
         printf("vehicle body created\n");
@@ -224,9 +224,9 @@ public:
 
         osg::PositionAttitudeTransform *gen_wheel = new  osg::PositionAttitudeTransform;
         gen_wheel->setPosition(osg::Vec3(0.,0.,0.));
-        gen_wheel->setAttitude(osg::Quat(-osg::PI/2.,osg::Vec3(0.,1.,0.)));
+        gen_wheel->setAttitude(osg::Quat(-osg::PI/2., osg::Vec3(0.,1.,0.)));
         gen_wheel->addChild(geo);
-        printf( "num wheels %d\n",vehicle->getNumWheels());
+        printf( "num wheels %d\n", vehicle->getNumWheels());
 
         // Configures each wheel of our vehicle, setting its friction, damping compression, etc.
         // For more details on what each parameter does, refer to the docs
