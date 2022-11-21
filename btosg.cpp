@@ -295,6 +295,13 @@ void btosgHeightfield::physicSetup() {
         createRigidBody();
 }
 
+/** HeightField constructor
+ *     @param x_size X dimension
+ *     @param y_size Y dimension
+ *     @param z_size Z dimension
+ *     @param x_steps Number of samples (heights) in X direction
+ *     @param y_steps Number of samples (heights) in Y direction
+ */
 btosgHeightfield::btosgHeightfield(float x_size, float y_size, float z_size, int x_steps, int y_steps) {
    // example https://snipplr.com/view/30974/osg-height-field-example 
    
@@ -320,6 +327,12 @@ btosgHeightfield::btosgHeightfield(float x_size, float y_size, float z_size, int
 }
 
 
+/** HeightField constructor from external imagemap file
+ * 	@param x_size X dimension
+ * 	@param y_size Y dimension
+ * 	@param z_size Z dimension
+ * 	@param fname ImageMap filename
+ */
 btosgHeightfield::btosgHeightfield(float x_size, float y_size, float z_size, const char *fname) {
    printf("constructor\n");
    printf("    fname='%s'\n", fname);
@@ -349,7 +362,10 @@ btosgHeightfield::btosgHeightfield(float x_size, float y_size, float z_size, con
         setHeightsImage(heightMap); 
 }
     
+    
+
 void btosgHeightfield::printAABB() {
+	/// Print HeightFiled Axis Aligned Bounding Boxes
         btTransform trans;
         trans.setIdentity();
         btVector3 aabbMin, aabbMax;
@@ -364,7 +380,7 @@ void btosgHeightfield::printAABB() {
     
 void btosgHeightfield::setHeight(int x, int y, double height) {
     /// Set Height of single sample in Heightfield.
-    /// Height if bounded to [minHeight, maxHeight]
+    /// Height is bounded to `[minHeight, maxHeight]`
     
     if ( height>maxHeight ) {
         fprintf(stderr, "btosgHeightfield::setHeight(%d,%d,%f): height>%f\n",
@@ -385,6 +401,16 @@ void btosgHeightfield::setHeight(int x, int y, double height) {
     data[y*xSteps + x] = (float)height;
 }
 
+/** Populate HeightField using a second order bi-polynomial function.
+ *	@param ax Second order `x` coeficient. Coeficient to x²
+ *	@param ay Second order `y` coeficient. Coeficient to y²
+ *	@param bx First order `x` coeficient. Coeficient to x
+ *	@param by First order `y` coeficient. Coeficient to y
+ *	@param c Order zero coeficient. Constant term
+ *
+ *  Each height [h(x,y)] is calculated through expression:
+ *       `h(x,y)=ax*x²+ay*y²+bx*x+by*y+c`
+ */
 int btosgHeightfield::setHeightsParabola(float ax, float ay, float bx, float by, float c) {
     // printf("Setting Heightfield data\n");
     for( int y=0 ; y<ySteps ; y++ )
@@ -398,6 +424,11 @@ int btosgHeightfield::setHeightsParabola(float ax, float ay, float bx, float by,
     return 0;    
 }
 
+/** Populate HeightField from a loaded HeightMap.
+ *	@param heightMap Pointer to already loaded osg::Image containing the HeighMap
+ *
+ *  This function can only be used when sizes (numbers os samples) of HeightField and HeighMap matches.  
+ */
 int  btosgHeightfield::setHeightsImage(osg::Image* heightMap) {
     if ( ! heightMap ) return 1;
     //printf("Setting Heightfield data from file(%d,%d)\n",xSteps,ySteps);
@@ -411,7 +442,11 @@ int  btosgHeightfield::setHeightsImage(osg::Image* heightMap) {
     return 0;
 }
 
-
+/** Populate HeightField from an HeightMap file.
+ *	@param fname ImageMap filename
+ *
+ *  This function can only be used when sizes (numbers os samples) of HeightField and HeighMap matches.  
+ */
 int  btosgHeightfield::loadImageHeights(const char *fname) {
     osg::Image* heightMap = osgDB::readImageFile(fname);
     return setHeightsImage(heightMap);
