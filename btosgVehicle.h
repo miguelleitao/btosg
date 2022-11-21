@@ -55,14 +55,14 @@ public:
     btosgVec3 front;		///< Vehicle's front vector.
     btRaycastVehicle *vehicle;	///< A btRaycastVehicle object.
     osg::ref_ptr<osg::PositionAttitudeTransform> wheel[4]; 	///< Transformation from vehicle's referential to wheel position.
-    double wheelRotation[4];				///< Wheels' rotation angles.
+    double wheelRotation[4];					///< Wheels' rotation angles.
     btosgVehicle(btosgWorld *world, btosgVec3 dimLocal = btosgVec3(2.,0.4,4.), double m=1000. ) {
         /// btosgVehicle constructor.
         btVector3 grav = world->dynamic->getGravity();
         int grav_axis = grav.minAxis();
         switch ( grav_axis ) {
         case 0:
-            fprintf(stderr,"Gravity direction %d (%f,%f,%f) not supported\n",grav_axis,grav[0],grav[1],grav[2]);
+            fprintf(stderr,"Gravity direction %d (%f,%f,%f) not supported\n", grav_axis,grav[0], grav[1],grav[2]);
             break;
         case 1:
             up = btosgVec3(0., 1., 0.);
@@ -255,14 +255,8 @@ public:
             wheel[i] = new  osg::PositionAttitudeTransform;
             if ( wheel[i] ) {
                 wheel[i]->addChild(gen_wheel);
-                //wheel[i]->setPosition(osg::Vec3(bt2osg_Vec3(*halfExtents)));
-                /*
-                                osg::Vec3 iPos = bt2osg_Vec3(iWheel.m_chassisConnectionPointCS);
-                                wheel[i]->setPosition(iPos);
-                */
                 btosgVec3 iPos = iWheel.m_chassisConnectionPointCS;
                 wheel[i]->setPosition(iPos);
-
                 //printf("  Wheel %d, %f %f %f\n",i,iPos[0],iPos[1],iPos[2]);
                 model->addChild( wheel[i] );
             }
