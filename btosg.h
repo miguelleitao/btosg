@@ -179,7 +179,7 @@ private:
     btSequentialImpulseConstraintSolver* solver;
 public:
     btDynamicsWorld *dynamic;	///< Pointer to btDynamicsWorld object.
-    /// \var  osg::ref_ptr<osg::Group> scene
+    ///  \var  osg::ref_ptr<osg::Group> scene
     ///  Pointer to osg::Group object storing the root node of the object tree.
     #ifdef BTOSG_SHADOW
         osg::ref_ptr<osgShadow::ShadowedScene> scene;
@@ -497,7 +497,7 @@ class btosgBox : public btosgObject {
                     geo->addDrawable(sd);
                 else fprintf(stderr,"Error creating osg::Shape\n");
             } else fprintf(stderr,"Error creating osg::Shape\n");
-        } else fprintf(stderr,"Error creating Geode\n");
+        } else fprintf(stderr,"Error creating osg::Geode\n");
         if (  !model)	model = new osg::PositionAttitudeTransform;
         model->addChild(geo);
         model->setNodeMask(CastsShadowTraversalMask);
@@ -509,10 +509,11 @@ class btosgBox : public btosgObject {
         //printf("box created\n");
     }
     btosgBox(float x, float y, float z) : btosgBox( btosgVec3(x,y,z) ) {
-        /// Constructs an axis oriented box.
+        /// Constructs an axis oriented box from 3 dimensions
     };
     btosgBox(float r)                   : btosgBox( btosgVec3(r,r,r) ) {
-        /// Constructs an axis oriented box.
+        /// Constructs an axis oriented cube.
+        /// @param r Side length
     };
 };
 
@@ -585,9 +586,9 @@ public:
 /// Heightfield
 class btosgHeightfield : public btosgObject {
 
-    float xSize, ySize, zSize;
-    int xSteps = 100;
-    int ySteps = 100;
+    double xSize, ySize, zSize;
+    int xSteps;
+    int ySteps;
     
     // From btHeightfieldTerrainShape: 
     //	"The caller is responsible for maintaining the heightfield array; this class does not make a copy."
@@ -601,6 +602,10 @@ class btosgHeightfield : public btosgObject {
     const PHY_ScalarType heightDataType = PHY_FLOAT;
        		     			// PHY_FLOAT
         				// PHY_UCHAR
+    double   xInterval;
+    double   yInterval;
+    
+    osg::Geode *geode;
     /*
 	int heightStickWidth,
 	int 	heightStickLength,
@@ -614,24 +619,18 @@ class btosgHeightfield : public btosgObject {
     */
 private:
     osg::HeightField* hField;
+    //btosgHeightfield(float x_size, float y_size, float z_size);
+    void sizeSetup(float x_size, float y_size, float z_size);
+    void graphicSetup();
+    void physicSetup();
 public:
     btosgHeightfield(float dx, float dy, float dz, int x_steps=100, int y_steps=100);
+    btosgHeightfield(float dx, float dy, float dz, const char *fname);
     void setHeight(int x, int y, double height);
-    void setHeightsParabola(float ax=10., float ay=10., float bx=0., float by=0., float c=0.);
+    int setHeightsParabola(float ax=10., float ay=10., float bx=0., float by=0., float c=0.);
+    int setHeightsImage(osg::Image* heightMap);
     int  loadImageHeights(const char *fname);
-  
-    void createRigidBody() {
-        /// Creates a Rigid Body
-        btDefaultMotionState* mState = new
-        	btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0.,0.,0.)));
-        btVector3 inertia(0,0,0);
-        //shape->calculateLocalInertia(mass,inertia);
-        btRigidBody::btRigidBodyConstructionInfo cInfo(mass,mState,shape,inertia);
-        cInfo.m_restitution = 0.9f;
-        cInfo.m_friction = 0.9f;
-        body = new btRigidBody(cInfo);
-        if ( !body ) fprintf(stderr,"Error creating btBody\n");
-    }
+    void printAABB();
     ~btosgHeightfield() {
         delete []data;
     }
@@ -665,9 +664,9 @@ public:
         model->setNodeMask(ReceivesShadowTraversalMask);
         mass = m;
         shape = new btConeShapeZ(r, h);
-        if ( !shape ) fprintf(stderr, "Error creating btShape\n");
+        if ( ! shape ) fprintf(stderr, "Error creating btShape\n");
         createRigidBody();
-        body->setDamping(0.01,0.2);
+        body->setDamping(0.01, 0.2);
     }
 };
 
