@@ -12,8 +12,6 @@
 
 void btosgObject::print() {
     /// Print out objects position.
-    //printf("listando object\n");
-    //printf("name: %s\n", name);
     std::cout << "Object: " << name << "\n";
     btosgVec3 pos = getPosition();
 
@@ -103,8 +101,6 @@ btosgWorld::~btosgWorld() {
     //scene->unref();
 }
 
-
-
 void btosgWorld::listObjects() {
     /// Outputs a list of all objects in the btosgWorld
     int n = 0;
@@ -125,7 +121,7 @@ void btosgWorld::addObject(btosgObject *obj)  {
     //printf("adding object to World\n");
     if ( obj->model ) scene->addChild(obj->model);
     else if ( _DEBUG_ ) fprintf(stderr,"Adding object without visual model\n");
-};
+}
 
 void btosgWorld::removeObject(btosgObject *obj)  {
     /// Unregisters the object obj from the simulation world.
@@ -138,7 +134,7 @@ void btosgWorld::removeObject(btosgObject *obj)  {
     // Remove from the list.
     // This also calls de the destructor for obj.
     objects.remove(obj); 
-};
+}
 
 void btosgWorld::stepSimulation(btScalar timeStep, int maxSubSteps) {
     /// Performs a simulation step.
@@ -156,7 +152,7 @@ void btosgWorld::stepSimulation(btScalar timeStep, int maxSubSteps) {
         obj->update();
     }
     steps += 1;
-};
+}
 
 void btosgWorld::reset() {
     /// Reset all registered objects.
@@ -164,7 +160,7 @@ void btosgWorld::reset() {
         btosgObject *obj = *it;
         obj->reset();
     }
-};
+}
 
 void btosgObject::loadObjectModel(char const *fname) {
     /// Loads an object model from a Wavefront OBJ file.
@@ -275,9 +271,9 @@ void btosgHeightfield::graphicSetup() {
                 osg::ShapeDrawable *sd = new osg::ShapeDrawable(hField);
                 if ( sd )
                     geode->addDrawable(sd);
-                else fprintf(stderr,"Error creating osg::ShapeDrawable\n");
-            } else fprintf(stderr,"Error creating osg::HeightField\n");
-        } else fprintf(stderr,"Error creating Geode\n");
+                else fprintf(stderr, "Error creating osg::ShapeDrawable\n");
+            } else fprintf(stderr, "Error creating osg::HeightField\n");
+        } else fprintf(stderr, "Error creating Geode\n");
         if ( !model )	model = new osg::PositionAttitudeTransform;
         model->addChild(geode);
         model->setNodeMask(ReceivesShadowTraversalMask);
@@ -287,7 +283,7 @@ void btosgHeightfield::physicSetup() {
         // Physics
         btHeightfieldTerrainShape *hfShape; 
         hfShape = new btHeightfieldTerrainShape( xSteps, ySteps, data , heightScale, minHeight, maxHeight, upAxis, heightDataType , false);
-        if ( !hfShape ) fprintf(stderr,"Error creating btShape\n");
+        if ( !hfShape ) fprintf(stderr, "Error creating btShape\n");
         hfShape->setUseDiamondSubdivision(true);
         hfShape->setLocalScaling(btVector3(xInterval, yInterval, 1.));
         shape = hfShape;
@@ -431,7 +427,7 @@ int btosgHeightfield::setHeightsParabola(float ax, float ay, float bx, float by,
  */
 int  btosgHeightfield::setHeightsImage(osg::Image* heightMap) {
     if ( ! heightMap ) return 1;
-    //printf("Setting Heightfield data from file(%d,%d)\n",xSteps,ySteps);
+    //printf("Setting Heightfield data from file(%d,%d)\n", xSteps, ySteps);
     for( int y=0; y<ySteps ; y++) {
         for( int x=0; x<xSteps ; x++) {
             unsigned char v = *(heightMap->data(x, y));
