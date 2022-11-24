@@ -71,6 +71,8 @@ To compile and try the provided examples do:
     make examples 
     ./examples/ball
     ./examples/objects
+    ./examples/heightfield
+    ./examples/heightfield img/spiral_c.png
     ./examples/carZ
     ./examples/carY
 
