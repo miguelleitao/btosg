@@ -70,7 +70,7 @@ Usage instructions are provided in source file.
 
 To compile and try the provided examples do:
 
-    make examples 
+    make Examples 
     ./examples/ball
     ./examples/objects
     ./examples/hpr_test
