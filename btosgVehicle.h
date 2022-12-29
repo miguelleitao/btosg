@@ -111,7 +111,7 @@ public:
         btCompoundShape* chassisShape = new btCompoundShape();
         chassisShape->addChildShape(shift, boxShape);
         shape = chassisShape;
-        if ( !shape ) fprintf(stderr,"Error creating btShape\n");
+        if ( !shape ) fprintf(stderr, "Error creating btShape\n");
 
         createRigidBody();
 
@@ -125,9 +125,8 @@ public:
         //Adds the wheels to the vehicle
         btVector3 halfExtents = btVector3(dim[0]/2., dim[1]/2., dim[2]/2.);
         addWheels(&halfExtents, this->vehicle, tuning);
-
-        printf("vehicle body created\n");
-
+        
+        //printf("vehicle body created\n");
         vehicle->setCoordinateSystem( 0, btVector3(up).maxAxis(), btVector3(front).maxAxis() );
         return;
     }
@@ -219,14 +218,14 @@ public:
                 }
                 stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
                 sd->setStateSet( stateset );
-            }   else fprintf(stderr,"Error creating osg::Shape\n");
-        } else fprintf(stderr,"Error creating osg::Shape\n");
+            }   else fprintf(stderr, "Error creating osg::Shape\n");
+        } else fprintf(stderr, "Error creating osg::Shape\n");
 
         osg::PositionAttitudeTransform *gen_wheel = new  osg::PositionAttitudeTransform;
         gen_wheel->setPosition(osg::Vec3(0.,0.,0.));
         gen_wheel->setAttitude(osg::Quat(-osg::PI/2., osg::Vec3(0.,1.,0.)));
         gen_wheel->addChild(geo);
-        printf( "num wheels %d\n", vehicle->getNumWheels());
+        //printf("num wheels %d\n", vehicle->getNumWheels());
 
         // Configures each wheel of our vehicle, setting its friction, damping compression, etc.
         // For more details on what each parameter does, refer to the docs
@@ -292,7 +291,7 @@ public:
             for( int i=0 ; i<4 ; i++ ) {
                 btWheelInfo& iWheel = vehicle->getWheelInfo(i);
                 std::cout << "  whell " << i << ", contact: " << iWheel.m_raycastInfo.m_isInContact ;
-                printf("  rotation %f\n", iWheel.m_rotation);
+                std::cout << "  rotation " << iWheel.m_rotation << std::endl;
             }
         }
     }
@@ -303,7 +302,7 @@ public:
         /// This function is called automatically from World::setpSimulation() for each registered vehicle.
         /// Positions graphical vehicle and wheels from their physhical states.
 
-        // updateVehicle() implemente in Bullet is Not required.
+        // updateVehicle(), implemented in Bullet, is Not required.
         // Vehicle dynamics are updated in stepSimulation();
         // updateVehicle requires frame_time that may not be available.
         // vehicle->updateVehicle(frame_time);
@@ -325,10 +324,10 @@ public:
                                  iWheel.m_raycastInfo.m_suspensionLength * iWheel.m_wheelDirectionCS;
                 wheel[i]->setPosition(iPos);
 
-                btQuaternion steeringOrn(iWheel.m_wheelDirectionCS,-iWheel.m_steering);
+                btQuaternion steeringOrn(iWheel.m_wheelDirectionCS, -iWheel.m_steering);
                 btMatrix3x3 steeringMat(steeringOrn);
 
-                btQuaternion rotatingOrn(iWheel.m_wheelAxleCS,-iWheel.m_rotation);
+                btQuaternion rotatingOrn(iWheel.m_wheelAxleCS, -iWheel.m_rotation);
                 btMatrix3x3 rotatingMat(rotatingOrn);
 
                 btMatrix3x3 fullMat = steeringMat*rotatingMat;

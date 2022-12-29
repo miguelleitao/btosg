@@ -64,6 +64,8 @@ The **btosg** reference documentation can be browsed online from both:
 * **ball.cpp** implements a simple simulation of a ball with two planes.
 * **objects.cpp** provides an example for creating a complete object (graphical and physical) from loading an external Wavefront OBJ file. 
 * **car.cpp** implements a basic vehicle with four wheels and suspensions. It can be compiled using a Z or Y pointing up vector.
+* **hpr_test.cpp** test object orientation methods
+* **heighfiled** simple simulation using a heightfiled colision structure.
 Usage instructions are provided in source file.
 
 To compile and try the provided examples do:
@@ -71,10 +73,15 @@ To compile and try the provided examples do:
     make examples 
     ./examples/ball
     ./examples/objects
+    ./examples/hpr_test
     ./examples/heightfield
     ./examples/heightfield img/spiral_c.png
     ./examples/carZ
     ./examples/carY
+    
+Set LD_LIBRARY_PATH if you did not install btosg libraries previously with `make install`. Example:
+
+    LD_LIBRARY_PATH=. ./examples/ball
 
 ### Referencing
 The release version can be referenced by either http://doi.org/ctz5 or doi:10.5281/zenodo.1283484.

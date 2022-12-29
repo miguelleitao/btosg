@@ -69,11 +69,14 @@ documentation/html:
 
 btosg.o: btosg.cpp btosg.h
 	$(CXX) ${CXXFLAGS} -g -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} -fPIC $<
+	
+btosgHeightfield.o: btosgHeightfield.cpp btosg.h
+	$(CXX) ${CXXFLAGS} -g -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} -fPIC $<
 
-libbtosg.a: btosg.o
+libbtosg.a: btosg.o btosgHeightfield.o
 	$(AR) cr $@ $^
 
-libbtosg.so: btosg.o
+libbtosg.so: btosg.o btosgHeightfield.o
 	$(CXX) -shared $^ -o $@
 
 loadOBJ: ${B3_OBJ_LOADER}

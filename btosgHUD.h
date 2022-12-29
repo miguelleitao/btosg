@@ -17,18 +17,18 @@
 
 /// Head Up Display
 class btosgHUD : public osg::Projection {
-private:
+  private:
     // A geometry node for the HUD
     osg::Geode* geode;
-protected:
+  protected:
     int x1 = 0;  	///< left 
     int y1 = 0;		///< bottom
     int x2 = 1024;	///< right
     int y2 = 150;	///< top
-    osg::Vec4 back_color = osg::Vec4(1.f,1.f,1.f,1.0f);		///< Bachground color
+    osg::Vec4 back_color = osg::Vec4(1.f, 1.f, 1.f, 1.0f);		///< Bachground color
     osg::Texture2D* backgroundTexture = NULL;			///< Background Texture
     osg::StateSet* HUDStateSet;					///< StateSet for HUD visual properties
-public:
+  public:
     void setPosition( int x1, int y1, int x2, int y2) {
         /// Positions the HUD in the display window.
         /// x1, x2, y1, y2 are interpreted as pixel coordinates.
@@ -37,7 +37,7 @@ public:
         this->x2 = x2;
         this->y2 = y2;
         // Initialize an orthographic projection matrix.
-        setMatrix(osg::Matrix::ortho2D(0,x2-x1,0,y2-y1));
+        setMatrix(osg::Matrix::ortho2D(0, x2-x1, 0, y2-y1));
     }
     void setFullScreen(osg::Viewport *vp) {	
         /// Fill the whole viewport
@@ -57,7 +57,7 @@ public:
     	/// Clears the defined background image
         if ( backgroundTexture ) {
             HUDStateSet->
-                setTextureAttributeAndModes(0,backgroundTexture,osg::StateAttribute::OFF);
+                setTextureAttributeAndModes(0, backgroundTexture, osg::StateAttribute::OFF);
         }
     }    
     void setBackground(osg::Image* hudImage) {
@@ -90,14 +90,14 @@ public:
         HUDcolors->push_back(back_color);
 
         osg::Vec2Array* texcoords = new osg::Vec2Array(4);
-        (*texcoords)[0].set(0.0f,0.0f);
-        (*texcoords)[1].set(1.0f,0.0f);
-        (*texcoords)[2].set(1.0f,1.0f);
-        (*texcoords)[3].set(0.0f,1.0f);
-        HUDBackgroundGeometry->setTexCoordArray(0,texcoords);
+        (*texcoords)[0].set(0.0f, 0.0f);
+        (*texcoords)[1].set(1.0f, 0.0f);
+        (*texcoords)[2].set(1.0f, 1.0f);
+        (*texcoords)[3].set(0.0f, 1.0f);
+        HUDBackgroundGeometry->setTexCoordArray(0, texcoords);
 
         osg::Vec3Array* HUDnormals = new osg::Vec3Array;
-        HUDnormals->push_back(osg::Vec3(0.0f,0.0f,1.0f));
+        HUDnormals->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
         HUDBackgroundGeometry->setNormalArray(HUDnormals);
         HUDBackgroundGeometry->setNormalBinding(osg::Geometry::BIND_OVERALL);
         HUDBackgroundGeometry->addPrimitiveSet(HUDBackgroundIndices);
@@ -111,17 +111,17 @@ public:
         HUDStateSet = new osg::StateSet();
         geode->setStateSet(HUDStateSet);
         HUDStateSet->
-            setTextureAttributeAndModes(0,backgroundTexture,osg::StateAttribute::ON);
+            setTextureAttributeAndModes(0, backgroundTexture, osg::StateAttribute::ON);
 
         // For this state set, turn blending on (so alpha texture looks right)
-        HUDStateSet->setMode(GL_BLEND,osg::StateAttribute::ON);
+        HUDStateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
 
         // Disable depth testing so geometry is always drawn.
-        HUDStateSet->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
-        //HUDStateSet->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
+        HUDStateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+        //HUDStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
         // Need to make sure this geometry is draw last. Use RenderBin 11.
-        HUDStateSet->setRenderBinDetails( 11, "RenderBin");
+        HUDStateSet->setRenderBinDetails(11, "RenderBin");
     }
     void setBackground() {
         /// Selects default background image
@@ -135,7 +135,7 @@ public:
         // to define the horizontal and vertical extent of the projection
         // matrix. Positions described under this node will equate to
         // pixel coordinates.
-        setMatrix(osg::Matrix::ortho2D(0,1024,0,768));
+        setMatrix(osg::Matrix::ortho2D(0, 1024, 0, 768));
 
         // For the HUD model view matrix use an identity matrix:
         osg::MatrixTransform* HUDModelViewMatrix = new osg::MatrixTransform;
