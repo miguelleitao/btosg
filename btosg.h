@@ -593,7 +593,7 @@ class btosgHeightfield : public btosgObject {
     // From btHeightfieldTerrainShape: 
     //	"The caller is responsible for maintaining the heightfield array; this class does not make a copy."
     //	"The heightfield can be dynamic so long as the min/max height values capture the extremes (heights must always be in that range)."
-    float    *data = NULL;  /// <Heights array 
+    float    *data = NULL;  /// <Heights array used by btHeightfieldTerrainShape.
     
     const btScalar     heightScale = 1.;
           btScalar     minHeight;
@@ -623,6 +623,7 @@ private:
     void sizeSetup(float x_size, float y_size, float z_size);
     void graphicSetup();
     void physicSetup();
+    void graphicSetup2();
 public:
     btosgHeightfield(float dx, float dy, float dz, int x_steps=100, int y_steps=100);
     btosgHeightfield(float dx, float dy, float dz, const char *fname);
@@ -631,6 +632,7 @@ public:
     int setHeightsImage(osg::Image* heightMap);
     int  loadImageHeights(const char *fname);
     void printAABB();
+    
     ~btosgHeightfield() {
         delete []data;
     }

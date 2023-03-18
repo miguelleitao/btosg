@@ -33,15 +33,23 @@ void btosgHeightfield::graphicSetup() {
     		hField->setXInterval(xInterval);
     		hField->setYInterval(yInterval);
     		hField->setSkirtHeight(1.0f);
+    		/*
                 osg::ShapeDrawable *sd = new osg::ShapeDrawable(hField);
                 if ( sd )
                     geode->addDrawable(sd);
                 else fprintf(stderr, "Error creating osg::ShapeDrawable\n");
+                */
             } else fprintf(stderr, "Error creating osg::HeightField\n");
         } else fprintf(stderr, "Error creating Geode\n");
         if ( !model )	model = new osg::PositionAttitudeTransform;
         model->addChild(geode);
         model->setNodeMask(ReceivesShadowTraversalMask);
+}
+void btosgHeightfield::graphicSetup2() {
+        osg::ShapeDrawable *sd = new osg::ShapeDrawable(hField);
+                if ( sd )
+                    geode->addDrawable(sd);
+                else fprintf(stderr, "Error creating osg::ShapeDrawable\n");
 }
 
 void btosgHeightfield::physicSetup() {
@@ -119,8 +127,11 @@ btosgHeightfield::btosgHeightfield(float x_size, float y_size, float z_size, con
         
         // Physics
         physicSetup();
+
+        setHeightsImage(heightMap);
         
-        setHeightsImage(heightMap); 
+        //graphicSetup2();
+        
 }
     
     
@@ -182,13 +193,14 @@ int btosgHeightfield::setHeightsParabola(float ax, float ay, float bx, float by,
 	    setHeight(x, y, hi);
         }
     // printf("Heightfield data defined\n");    
+    graphicSetup2();
     return 0;    
 }
 
 /** Populate HeightField from a loaded HeightMap.
- *	@param heightMap Pointer to already loaded osg::Image containing the HeighMap
+ *	@param heightMap Pointer to already loaded osg::Image containing the HeightMap
  *
- *  This function can only be used when sizes (numbers os samples) of HeightField and HeighMap matches.  
+ *  This function can only be used when sizes (numbers os samples) of HeightField and HeightMap matches.  
  */
 int  btosgHeightfield::setHeightsImage(osg::Image* heightMap) {
     if ( ! heightMap ) return 1;
@@ -199,17 +211,24 @@ int  btosgHeightfield::setHeightsImage(osg::Image* heightMap) {
             setHeight(x, y, v / 255.f * zSize + minHeight);
         }
     }
-    printf("Heightfield data defined\n");
+    printf("Heightfield data defined\n"); 
+    graphicSetup2();
     return 0;
 }
 
 /** Populate HeightField from an HeightMap file.
  *	@param fname ImageMap filename
  *
- *  This function can only be used when sizes (numbers os samples) of HeightField and HeighMap matches.  
+ *  This function can only be used when sizes (numbers os samples) of HeightField and HeighMap matches.
+ *  Similar to osgDB::readRefHieghtFieldFile(), bu also keep heights in private data array.
  */
 int  btosgHeightfield::loadImageHeights(const char *fname) {
     osg::Image* heightMap = osgDB::readImageFile(fname);
+    // consider using osgDB::readRefImageFile() instead.
+    if ( ! heightMap ) {
+        fprintf(stderr, "Image '%s' could not be loaded.\n", fname);
+        return 1;
+    }   
     return setHeightsImage(heightMap);
 }
 
