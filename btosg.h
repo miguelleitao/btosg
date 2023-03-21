@@ -21,6 +21,7 @@
 #include <osg/Plane>
 #include <osg/LightSource>
 #include <osg/Material>
+#include <osg/Texture2D>
 
 #include <btBulletDynamicsCommon.h>
 #include "BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"

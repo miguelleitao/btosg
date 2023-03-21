@@ -28,7 +28,7 @@ int main(int argc, char **argv)
             char oname[20];
             sprintf(oname, "Ball_%02d%02d", y, x);
             myBall->setName(oname);
-            myBall->setMass(0.01);
+            myBall->setMass(100);
             myBall->setTexture("img/beachball.png");
             myBall->setPosition((float)x*2, (float)y*2, 15.);
             myBall->body->setRestitution(0.5);
@@ -58,8 +58,9 @@ int main(int argc, char **argv)
     myHfield->setPosition(0., 0., 0.);
     myHfield->setName("HeightField");
     myHfield->printAABB();
-    myHfield->body->setFriction(100.);
+    myHfield->body->setFriction(10.);
     myHfield->setMaterial(mat);
+    myHfield->setTexture("img/beachball.png");
     myWorld.addObject( myHfield );
 
     // Creating the viewer
