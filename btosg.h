@@ -22,6 +22,10 @@
 #include <osg/LightSource>
 #include <osg/Material>
 #include <osg/Texture2D>
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
+
 
 #include <btBulletDynamicsCommon.h>
 #include "BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"
@@ -218,6 +222,10 @@ public:
     void stepSimulation(btScalar timeStep, int maxSubSteps);
     void addObject(class btosgObject *obj);
     void removeObject(class btosgObject *obj);
+    int  loadUrdf(const char *fname);
+    void getUrdfElement(xmlNode *a_node);
+    void getUrdfLink(xmlNode *a_node);
+    void getUrdfJoint(xmlNode *a_node);
     void listObjects();
     int  deleteAllObjects();
     void reset();
@@ -240,7 +248,8 @@ class btosgRigidBody : public btRigidBody {
 class btosgObject {
 public:
     // Main components
-    osg::ref_ptr<osg::PositionAttitudeTransform> model;	///< Object's graphical model
+    osg::ref_ptr<osg::PositionAttitudeTransform> model;		///< Object's graphical model
+    osg::ref_ptr<osg::PositionAttitudeTransform> origin;	///< Object's origin for graphical model
     char *name;	              ///< Object name
     btTransform init_state;   ///< Inital state. Applied on reset events.
     btRigidBody *body;	      ///< object's rigid body
@@ -249,6 +258,7 @@ public:
     float mass;		            ///< Mass of object
     btosgObject() {
         model = NULL;
+        origin = NULL;
         body = NULL;
         shape = NULL;
         mass = 0.;
@@ -383,6 +393,28 @@ public:
         /// Sets the material properties for the object.
         model->getOrCreateStateSet()->setAttributeAndModes(mat, osg::StateAttribute::ON);
     }
+    void setVisualGeometry(osg::Shape *sp) {
+        osg::Geode *geo = new osg::Geode();
+        if ( geo ) {
+            if ( sp) {
+                osg::ShapeDrawable *sd = new osg::ShapeDrawable(sp);
+                if ( sd )
+                    geo->addDrawable(sd);
+                else fprintf(stderr,"Error creating osg::Shape\n");
+            } else fprintf(stderr,"Error creating osg::Shape\n");
+        } else fprintf(stderr,"Error creating osg::Geode\n");
+        if ( !model )	model  = new osg::PositionAttitudeTransform;
+        if ( !origin)   origin = new osg::PositionAttitudeTransform;
+        //model->addChild(geo);
+        model->addChild(origin);
+        origin->addChild(geo);
+        model->setNodeMask(CastsShadowTraversalMask);
+    };
+    void setVisualOrigin(btosgVec3 pos, btosgVec3 hpr) {
+    //return;
+        if ( !origin)   origin = new osg::PositionAttitudeTransform; 
+        origin->setPosition(pos);
+    }
     void logPosition() {
         /// Outputs object's position.
         btosgVec3 pos = getPosition();
@@ -417,6 +449,8 @@ public:
     }
     void createRigidBody();
     void loadObjectModel(char const *fname);
+    void getUrdfLinkVisual(xmlNode*);
+    void getUrdfLinkVisualGeometry(xmlNode*);
 };
 
 #if BTOSG_LOAD_OBJ
@@ -461,17 +495,13 @@ public:
         /// @param r the radius of the sphere in meters units.
         /// @param m the mass of the sphere in kg units. Defaults to 1 kg.
         radius = r;
-        osg::ref_ptr<osg::Geode> geo = new osg::Geode();
-        geo->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.,0.,0.),r)));
-        if ( !model )	model = new osg::PositionAttitudeTransform;
-        model->addChild(geo);
-        model->setNodeMask(CastsShadowTraversalMask);
+        setVisualGeometry(new osg::Sphere(osg::Vec3(0.,0.,0.), r)); 
         shape = new btSphereShape(r);
         mass = m;
         createRigidBody();
         body->setDamping(0.01, 0.1);
     }
-};
+}; 
 
 
 //!  Axis oriented box..
@@ -489,19 +519,7 @@ class btosgBox : public btosgObject {
         dx = dim[0];
         dy = dim[1];
         dz = dim[2];
-        osg::Geode *geo = new osg::Geode();
-        if ( geo ) {
-            osg::Shape *sp = new osg::Box( osg::Vec3(0.,0.,0.), dim[0], dim[1], dim[2] );
-            if ( sp) {
-                osg::ShapeDrawable *sd = new osg::ShapeDrawable(sp);
-                if ( sd )
-                    geo->addDrawable(sd);
-                else fprintf(stderr,"Error creating osg::Shape\n");
-            } else fprintf(stderr,"Error creating osg::Shape\n");
-        } else fprintf(stderr,"Error creating osg::Geode\n");
-        if (  !model)	model = new osg::PositionAttitudeTransform;
-        model->addChild(geo);
-        model->setNodeMask(CastsShadowTraversalMask);
+        setVisualGeometry( new osg::Box( osg::Vec3(0.,0.,0.), dim[0], dim[1], dim[2] ));
         mass = m;
         shape = new btBoxShape( btosgVec3(dim/2.) );
         if ( !shape ) fprintf(stderr,"Error creating btShape\n");
@@ -515,7 +533,7 @@ class btosgBox : public btosgObject {
     btosgBox(float r)                   : btosgBox( btosgVec3(r,r,r) ) {
         /// Constructs an axis oriented cube.
         /// @param r Side length
-    };
+    };   
 };
 
 
@@ -548,6 +566,7 @@ public:
         dz = max(dz, 0.001);
         osg::Geode *geo = new osg::Geode();
         if ( geo ) {
+            
             osg::Shape *sp = new osg::Box( osg::Vec3(0.,0.,0.), dx, dy, dz );
             if ( sp ) {
                 osg::ShapeDrawable *sd = new osg::ShapeDrawable(sp);
@@ -627,7 +646,7 @@ private:
     void graphicSetup2();
 public:
     btosgHeightfield(float dx, float dy, float dz, int x_steps=100, int y_steps=100);
-    btosgHeightfield(float dx, float dy, float dz, const char *fname);
+    btosgHeightfield(float dx, float dy, float dz, const char *fname);      
     void setHeight(int x, int y, double height);
     int setHeightsParabola(float ax=10., float ay=10., float bx=0., float by=0., float c=0.);
     int setHeightsImage(osg::Image* heightMap);
@@ -649,22 +668,7 @@ public:
         /// Constructs a Z axis cone.
         radius = r;
         height = h;
-        osg::Geode *geo = new osg::Geode();
-        if ( geo ) {
-            osg::Shape *sp = new osg::Cone( osg::Vec3(0.,0.,0.), r, h);
-            if ( sp ) {
-                osg::ShapeDrawable *sd = new osg::ShapeDrawable(sp);
-                if ( sd )
-                    geo->addDrawable(sd);
-                else fprintf(stderr,"Error creating osg::Shape\n");
-            } else fprintf(stderr,"Error creating osg::Shape\n");
-        } else fprintf(stderr,"Error creating Geode\n");
-        if ( !model )	model = new osg::PositionAttitudeTransform;
-        osg::PositionAttitudeTransform *center_pos = new osg::PositionAttitudeTransform;
-        center_pos->setPosition(osg::Vec3(0.,0.,-height/4.));
-        center_pos->addChild(geo);
-        model->addChild(center_pos);
-        model->setNodeMask(ReceivesShadowTraversalMask);
+        setVisualGeometry(new osg::Cone( osg::Vec3(0.,0.,-h/4.), r, h));
         mass = m;
         shape = new btConeShapeZ(r, h);
         if ( ! shape ) fprintf(stderr, "Error creating btShape\n");
@@ -683,29 +687,13 @@ public:
         /// Constructs a Z axis cylinder.
         radius = r;
         height = h;
-        osg::Geode *geo = new osg::Geode();
-        if ( geo ) {
-            osg::Shape *sp = new osg::Cylinder( osg::Vec3(0.,0.,0.), r, h);
-            if ( sp ) {
-                osg::ShapeDrawable *sd = new osg::ShapeDrawable(sp);
-                if ( sd )
-                    geo->addDrawable(sd);
-                else fprintf(stderr,"Error creating osg::Shape\n");
-            } else fprintf(stderr,"Error creating osg::Shape\n");
-        } else fprintf(stderr,"Error creating Geode\n");
-        if ( !model )	model = new osg::PositionAttitudeTransform;
-        osg::PositionAttitudeTransform *center_pos = new osg::PositionAttitudeTransform;
-        center_pos->setPosition(osg::Vec3(0.,0., 0.));
-        center_pos->addChild(geo);
-        model->addChild(center_pos);
-        model->setNodeMask(ReceivesShadowTraversalMask);
+        setVisualGeometry(new osg::Cylinder( osg::Vec3(0.,0.,0.), r, h));
         mass = m;
         // btCylinderShapeZ is centered at origin
         shape = new btCylinderShapeZ(btVector3(r, r, h/2.));
         if ( !shape ) fprintf(stderr,"Error creating btShape\n");
         createRigidBody();
         body->setDamping(0.01,0.2);
-        //printf("cylinder created\n");
     }
 };
 

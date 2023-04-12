@@ -55,7 +55,7 @@ void btosgHeightfield::graphicSetup2() {
 void btosgHeightfield::physicSetup() {
         // Physics
         btHeightfieldTerrainShape *hfShape; 
-        hfShape = new btHeightfieldTerrainShape(xSteps, ySteps, data , heightScale, minHeight, maxHeight, upAxis, heightDataType, false);
+        hfShape = new btHeightfieldTerrainShape(xSteps, ySteps, data, heightScale, minHeight, maxHeight, upAxis, heightDataType, false);
         if ( !hfShape ) fprintf(stderr, "Error creating btShape\n");
         hfShape->setUseDiamondSubdivision(true);
         hfShape->setLocalScaling(btVector3(xInterval, yInterval, 1.));
@@ -129,9 +129,6 @@ btosgHeightfield::btosgHeightfield(float x_size, float y_size, float z_size, con
         physicSetup();
 
         setHeightsImage(heightMap);
-        
-        //graphicSetup2();
-        
 }
     
     
@@ -169,7 +166,6 @@ void btosgHeightfield::setHeight(int x, int y, double height) {
         return;
     }
     hField->setHeight(x, y, height);
-    
     data[y*xSteps + x] = (float)height;
 }
 
@@ -206,7 +202,7 @@ int  btosgHeightfield::setHeightsImage(osg::Image* heightMap) {
     if ( ! heightMap ) return 1;
     //printf("Setting Heightfield data from file(%d,%d)\n", xSteps, ySteps);
     for( int y=0; y<ySteps ; y++) {
-        for( int x=0; x<xSteps ; x++) {
+        for( int x=0; x<xSteps ; x++) {       
             unsigned char v = *(heightMap->data(x, y));
             setHeight(x, y, v / 255.f * zSize + minHeight);
         }
@@ -219,7 +215,7 @@ int  btosgHeightfield::setHeightsImage(osg::Image* heightMap) {
 /** Populate HeightField from an HeightMap file.
  *	@param fname ImageMap filename
  *
- *  This function can only be used when sizes (numbers os samples) of HeightField and HeighMap matches.
+ *  This function can only be used when sizes (numbers of samples) of HeightField and HeighMap matches.
  *  Similar to osgDB::readRefHieghtFieldFile(), bu also keep heights in private data array.
  */
 int  btosgHeightfield::loadImageHeights(const char *fname) {

@@ -49,11 +49,12 @@ int main(int argc, char **argv)
     	// Generate bi-quadratic map with 100x100 samples. 
         myHfield = new btosgHeightfield(40., 50., 60., 100, 100);
         myHfield->setHeightsParabola(10., 75.);
-        
     }
     else {
     	// Build HeightField from given Image Map. 
-        myHfield = new btosgHeightfield(100., 100., 40., argv[1]);
+        float zScale = 40;
+        if ( argc>2 && argv[2] && argv[2][0] ) zScale = atof(argv[2]);
+        myHfield = new btosgHeightfield(100., 100., zScale, argv[1]);
     }
     myHfield->setPosition(0., 0., 0.);
     myHfield->setName("HeightField");

@@ -65,8 +65,8 @@ The **btosg** reference documentation can be browsed online from both:
 * **objects.cpp** provides an example for creating a complete object (graphical and physical) from loading an external Wavefront OBJ file. 
 * **car.cpp** implements a basic vehicle with four wheels and suspensions. It can be compiled using a Z or Y pointing up vector.
 * **hpr_test.cpp** test object orientation methods
-* **heighfiled** simple simulation using a heightfiled colision structure.
-Usage instructions are provided in source file.
+* **heighfield** simple simulation using a heightfield colision structure.
+Usage instructions are provided in source files.
 
 To compile and try the provided examples do:
 
