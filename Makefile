@@ -10,9 +10,10 @@ BULLET_DIR?=/usr/local
 OSG_DIR?=/usr
 INC_BULLET?=$(shell pkg-config --silence-errors --cflags-only-I bullet) -I /usr/local/include/bullet
 INC_OSG?=$(shell pkg-config --silence-errors --cflags-only-I openscenegraph-osg)
-INC_XML?=$(shell xml2-config --cflags)
+INC_XML?=$(shell xml2-config --cflags )
 LIB_BULLET_DIR?=$(shell pkg-config --silence-errors --libs-only-L bullet)
 LIB_OSG_DIR=$(shell pkg-config --silence-errors --libs-only-L openscenegraph-osg)
+LIB_XML_DIR=$(shell xml2-config --libs)
 BTOSG_LOAD_OBJ?=YES
 CXXFLAGS?=-std=c++11 -Wall -Wextra -O2 -Wno-uninitialized -Wno-unused-parameter -DBTOSG_LOAD_OBJ=${BTOSG_LOAD_OBJ}
 VERSION:=$(shell git describe --tags --long)
@@ -78,10 +79,10 @@ btosgURDF.o: btosgURDF.cpp btosg.h
 	$(CXX) ${CXXFLAGS} -g -c ${INC_BULLET} ${INC_OSG} ${INC_XML} -DVERSION=${VERSION} -fPIC $<
 
 libbtosg.a: btosg.o btosgHeightfield.o btosgURDF.o
-	$(AR) cr $@ $^
+	$(AR) cr $@ $^ 
 
 libbtosg.so: btosg.o btosgHeightfield.o btosgURDF.o
-	$(CXX) -shared $^ -o $@
+	$(CXX) -shared $^ -o $@ -lxml2
 
 loadOBJ: ${B3_OBJ_LOADER}
 
