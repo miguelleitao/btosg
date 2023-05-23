@@ -12,8 +12,9 @@ OSG_DIR?=/usr
 BTOSG_DIR?=..
 INC_BULLET?=$(shell pkg-config --silence-errors --cflags-only-I bullet) -I ${BULLET_DIR}/include/bullet
 INC_OSG?=$(shell pkg-config --silence-errors --cflags-only-I openscenegraph-osg)
-INC_BTOSG?=-I ${BTOSG_DIR} ${INC_BULLET} ${INC_OSG} ${INC_XML}
-INC_XML?=$(shell xml2-config --cflags)
+INC_BTOSG?=-I ${BTOSG_DIR} ${INC_BULLET} ${INC_OSG} 
+#${INC_XML}
+INC_XML?=$(shell xml2-config --cflags) -D USE_XML2_LIB
 LIB_BULLET_DIR?=$(shell pkg-config --silence-errors --libs-only-L bullet) -L ${BULLET_DIR}/lib
 LIB_OSG_DIR=$(shell pkg-config --silence-errors --libs-only-L openscenegraph-osg)
 LIB_BTOSG_DIR=-L ${BTOSG_DIR} ${LIB_BULLET_DIR} ${LIB_OSG_DIR}

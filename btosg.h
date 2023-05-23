@@ -22,8 +22,10 @@
 #include <osg/LightSource>
 #include <osg/Material>
 #include <osg/Texture2D>
+#ifdef USE_XML2_LIB
 #include <libxml/parser.h>
 #include <libxml/tree.h>
+#endif
 
 
 
@@ -223,9 +225,11 @@ public:
     void addObject(class btosgObject *obj);
     void removeObject(class btosgObject *obj);
     int  loadUrdf(const char *fname);
+    #ifdef USE_XML2_LIB
     void getUrdfElement(xmlNode *a_node);
     void getUrdfLink(xmlNode *a_node);
     void getUrdfJoint(xmlNode *a_node);
+    #endif
     void listObjects();
     int  deleteAllObjects();
     void reset();
@@ -449,8 +453,10 @@ public:
     }
     void createRigidBody();
     void loadObjectModel(char const *fname);
+    #ifdef USE_XML2_LIB
     void getUrdfLinkVisual(xmlNode*);
     void getUrdfLinkVisualGeometry(xmlNode*);
+    #endif
 };
 
 #if BTOSG_LOAD_OBJ

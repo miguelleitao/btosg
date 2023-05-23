@@ -22,7 +22,9 @@ int main(int argc, char **argv)
     myWorld.dynamic->setGravity(btVector3(up)*-9.8);
 
     while( argc>1 ) {
+        #ifdef USE_XML2_LIB
         myWorld.loadUrdf(argv[1]);
+        #endif
         argc--;
         argv++;
     }

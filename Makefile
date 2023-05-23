@@ -5,12 +5,14 @@
 # Targets
 BTOSG=libbtosg.a libbtosg.so
 BTOSG_PC=btosg.pc
+BTOSG_OBJS=btosg.o btosgHeightfield.o
+# btosgURDF.o
 
 BULLET_DIR?=/usr/local
 OSG_DIR?=/usr
 INC_BULLET?=$(shell pkg-config --silence-errors --cflags-only-I bullet) -I /usr/local/include/bullet
 INC_OSG?=$(shell pkg-config --silence-errors --cflags-only-I openscenegraph-osg)
-INC_XML?=$(shell xml2-config --cflags )
+INC_XML?=$(shell xml2-config --cflags ) -D USE_XML2_LIB
 LIB_BULLET_DIR?=$(shell pkg-config --silence-errors --libs-only-L bullet)
 LIB_OSG_DIR=$(shell pkg-config --silence-errors --libs-only-L openscenegraph-osg)
 LIB_XML_DIR=$(shell xml2-config --libs)
@@ -70,18 +72,18 @@ documentation/html:
 #-DBTOSG_SHADOW $<
 
 btosg.o: btosg.cpp btosg.h
-	$(CXX) ${CXXFLAGS} -g -c ${INC_BULLET} ${INC_OSG} ${INC_XML} -DVERSION=${VERSION} -fPIC $<
+	$(CXX) ${CXXFLAGS} -g -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} -fPIC $<
 	
 btosgHeightfield.o: btosgHeightfield.cpp btosg.h
-	$(CXX) ${CXXFLAGS} -g -c ${INC_BULLET} ${INC_OSG} ${INC_XML} -DVERSION=${VERSION} -fPIC $<
+	$(CXX) ${CXXFLAGS} -g -c ${INC_BULLET} ${INC_OSG} -DVERSION=${VERSION} -fPIC $<
 
 btosgURDF.o: btosgURDF.cpp btosg.h
 	$(CXX) ${CXXFLAGS} -g -c ${INC_BULLET} ${INC_OSG} ${INC_XML} -DVERSION=${VERSION} -fPIC $<
 
-libbtosg.a: btosg.o btosgHeightfield.o btosgURDF.o
+libbtosg.a: ${BTOSG_OBJS}
 	$(AR) cr $@ $^ 
 
-libbtosg.so: btosg.o btosgHeightfield.o btosgURDF.o
+libbtosg.so: ${BTOSG_OBJS}
 	$(CXX) -shared $^ -o $@ -lxml2
 
 loadOBJ: ${B3_OBJ_LOADER}
