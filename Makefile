@@ -15,7 +15,7 @@ INC_OSG?=$(shell pkg-config --silence-errors --cflags-only-I openscenegraph-osg)
 INC_XML?=$(shell xml2-config --cflags ) -D USE_XML2_LIB
 LIB_BULLET_DIR?=$(shell pkg-config --silence-errors --libs-only-L bullet)
 LIB_OSG_DIR=$(shell pkg-config --silence-errors --libs-only-L openscenegraph-osg)
-LIB_XML_DIR=$(shell xml2-config --libs)
+LIB_XML_DIR:=$(shell xml2-config --libs 2>/dev/null)
 BTOSG_LOAD_OBJ?=YES
 CXXFLAGS?=-std=c++11 -Wall -Wextra -O2 -Wno-uninitialized -Wno-unused-parameter -DBTOSG_LOAD_OBJ=${BTOSG_LOAD_OBJ}
 VERSION:=$(shell git describe --tags --long)
@@ -84,7 +84,8 @@ libbtosg.a: ${BTOSG_OBJS}
 	$(AR) cr $@ $^ 
 
 libbtosg.so: ${BTOSG_OBJS}
-	$(CXX) -shared $^ -o $@ -lxml2
+	$(CXX) -shared $^ -o $@ ${LIB_XML_DIR}
+#-lxml2
 
 loadOBJ: ${B3_OBJ_LOADER}
 
