@@ -25,7 +25,7 @@ Dependencies can be installed on Fedora Linux using:
 
 Dependencies can be installed on Ubuntu using:
 
-    apt install bullet openscenegraph-osg openscenegraph-osgViewer openscenegraph-osgSim openscenegraph-osgDB openscenegraph-osgGA openscenegraph-osgShadow
+    apt install libbullet-dev openscenegraph libopenscenegraph-dev
 
 ### Build
     git clone https://github.com/miguelleitao/btosg.git
