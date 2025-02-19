@@ -299,7 +299,7 @@ public:
         mass = m;
         bool isDynamic = (mass != 0.f);
 
-        btVector3 localInertia(0, 0, 0);
+        btVector3 localInertia(0., 0., 0.);
         if (isDynamic && shape)
             shape->calculateLocalInertia(mass, localInertia);
         if ( body ) body->setMassProps(m, localInertia);
@@ -322,7 +322,7 @@ public:
             return wTrans.getRotation();
         }
         if (model) return model->getAttitude();
-        return btosgQuat(0.,0.,0.,1.);
+        return btosgQuat(0., 0., 0., 1.);
     }
     btosgVec3 getEuler() {
         /// Returns object's attitude as HPR Euler angles.
@@ -470,24 +470,24 @@ public:
         /// Constructs a graphical object from an external model.
         loadObjectModel(file_name);
 
-	// Reload external model as a mesh to use as colision shape
+	    // Reload external model as a mesh to use as colision shape
         glmesh = LoadMeshFromObj(file_name, "");
-	if ( glmesh ) {
-	    //printf("[INFO] Obj loaded: Extracted %d verticed from obj file [%s]\n", glmesh->m_numvertices, file_name);
+		if ( glmesh ) {
+			//printf("[INFO] Obj loaded: Extracted %d verticed from obj file [%s]\n", glmesh->m_numvertices, file_name);
 
-	    const GLInstanceVertex& v = glmesh->m_vertices->at(0);
-            btConvexHullShape* shapeH = new btConvexHullShape((const btScalar*)(&(v.xyzw[0])), glmesh->m_numvertices, sizeof(GLInstanceVertex));
-	    btVector3 scaling(.999,.999,.999);
-	    shapeH->setLocalScaling(scaling);
-	    shape = shapeH;
-	}
+			const GLInstanceVertex& v = glmesh->m_vertices->at(0);
+				btConvexHullShape* shapeH = new btConvexHullShape((const btScalar*)(&(v.xyzw[0])), glmesh->m_numvertices, sizeof(GLInstanceVertex));
+			btVector3 scaling(.999, .999, .999);
+			shapeH->setLocalScaling(scaling);
+			shape = shapeH;
+		}
         mass = m;
         createRigidBody();
         body->setDamping(0.01,0.1);
     }
 
     ~btosgExternalObject() {
-	if ( glmesh ) btgDeleteGraphicsShape(glmesh);
+		if ( glmesh ) btgDeleteGraphicsShape(glmesh);
     }
 };
 #endif
@@ -528,10 +528,8 @@ class btosgBox : public btosgObject {
         setVisualGeometry( new osg::Box( osg::Vec3(0.,0.,0.), dim[0], dim[1], dim[2] ));
         mass = m;
         shape = new btBoxShape( btosgVec3(dim/2.) );
-        if ( !shape ) fprintf(stderr,"Error creating btShape\n");
-
+        if ( ! shape ) fprintf(stderr,"Error creating btShape\n");
         createRigidBody();
-        //printf("box created\n");
     }
     btosgBox(float x, float y, float z) : btosgBox( btosgVec3(x,y,z) ) {
         /// Constructs an axis oriented box from 3 dimensions

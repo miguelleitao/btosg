@@ -23,7 +23,7 @@ btosgSphere *myBall;
 int main()
 {
     btosgVec3 up(0., 0., 1.);
-    myWorld.dynamic->setGravity(btVector3(up)*-9.8);
+    myWorld.dynamic->setGravity(btVector3(0.,0.,0.));
 
     // Beach Ball
     myBall = new btosgSphere(0.2);
@@ -39,7 +39,7 @@ int main()
     myObj->setRotation(btQuaternion(btVector3(1.,0.,0.),osg::PI/2.));
     myObj->setPosition(0.5,-4.5,3);
     myWorld.addObject( myObj );
-    myObj = new btosgExternalObject("obj/cone.obj");
+    myObj = new btosgExternalObject("obj/pyramid.obj");
     myObj->setMass(1.6);
     myObj->setRotation(btQuaternion(btVector3(1.,0.,0.),osg::PI));
     myObj->setPosition(0.5,-4.5,3);

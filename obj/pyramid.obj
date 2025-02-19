@@ -1,0 +1,14 @@
+# Octahedron
+mtllib solids.mtl
+v  1.  0.  -1.
+v -1.  0.  -1.
+v  -1.  0.  1.
+v  1.  0.  1.
+v  0.  3.  0.
+s off
+usemtl OctaMat
+f 5 1 2
+f 5 2 3
+f 5 3 4
+f 5 4 1
+f 1 2 3 4
