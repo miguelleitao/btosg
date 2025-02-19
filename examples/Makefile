@@ -4,7 +4,7 @@
 
 # Targets
 
-EXAMPLES=ball carZ carY objects heightfield hpr_test btosgviewer
+EXAMPLES=ball carZ carY objects heightfield hpr_test btosgviewer rtt_show
 
 
 BULLET_DIR?=/usr/local
@@ -61,8 +61,10 @@ ball: ball.o
 heightfield: heightfield.o ${BTOSG_DIR}/libbtosg.so
 	$(CXX) -O2 -o $@ $<  ${LD_BTOSG} -lm
 
-objects: objects.o  
-	$(CXX) -O2 -o $@ $< ${LD_B3OBJ_IMPORT} ${LD_BTOSG}  -lm
+objects: objects.o
+rtt_show: rtt_show.o
+objects rtt_show: 
+	$(CXX) -O2 -o $@ $@.o ${LD_B3OBJ_IMPORT} ${LD_BTOSG}  -lm
 
 hpr_test: hpr_test.o  ${B3_OBJ_LOADER}
 	$(CXX) -O2 -o $@ $< ${LD_B3OBJ_IMPORT} ${LD_BTOSG} -l Bullet3Common -lm 
@@ -79,7 +81,9 @@ carY.o: car.cpp
 ball.o: ball.cpp 
 	$(CXX) ${CXXFLAGS} -c ${INC_BTOSG} -DVERSION=${VERSION} $<
 
-objects.o: objects.cpp 
+objects.o: objects.cpp
+rtt_show.o: rtt_show.cpp
+objects.o rtt_show.o:
 	$(CXX) ${CXXFLAGS} -c ${INC_BTOSG} -DVERSION=${VERSION} $< 
 
 heightfield.o: heightfield.cpp
