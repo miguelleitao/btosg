@@ -33,6 +33,12 @@ int main()
     myBall->setPosition(0.,-4.,5.);
     myWorld.addObject( myBall );
 
+    btosgCylinder *greatWheel = new btosgCylinder();
+    
+    greatWheel->setMass(0.);
+    greatWheel->setTexture("img/beachball.png");
+    greatWheel->setPosition(0.,0.,5.);
+    myWorld.addObject( greatWheel );
 
     btosgExternalObject *myObj;
     myObj = new btosgExternalObject("obj/cone.obj");
