@@ -1,8 +1,8 @@
-# Octahedron
+# Square Pyramid
 mtllib solids.mtl
-v  1.  0.  -1.
-v -1.  0.  -1.
-v  -1.  0.  1.
+v  1.  0. -1.
+v -1.  0. -1.
+v -1.  0.  1.
 v  1.  0.  1.
 v  0.  3.  0.
 s off
