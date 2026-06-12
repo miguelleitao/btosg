@@ -66,39 +66,12 @@ int btosgWorld::deleteAllObjects() {
 }
 
 btosgWorld::~btosgWorld() {
-/*
-    for ( auto it = objects.begin() ; it != objects.end(); ++it ) {
-        btosgObject *obj = *it;
-	removeObject(obj);
-	//delete obj;
-    }
-*/
     deleteAllObjects();
-/*
-    std::forward_list<btosgObject*>::iterator it = objects.begin();
-    while (it != objects.end())
-    {
-	std::forward_list<btosgObject*>::iterator next = it;
-	next++;
-	btosgObject *obj = *it;
-        removeObject(obj);  // alternatively, i = items.erase(i);
-	delete(obj);
-	it = next;
-    }
- */   
-
-    delete dynamic; // ????
+    delete dynamic;
     delete solver;
     delete dispatcher;
     delete collisionConfiguration;
-    delete broadphase;
-    /*
-    while (!objects.empty())
-    {
-        objects.pop_front();
-    }
-    */
-    //scene->unref();
+    delete broadphase;  
 }
 
 void btosgWorld::listObjects() {
