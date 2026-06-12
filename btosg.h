@@ -560,14 +560,14 @@ public:
         /// Minimum dimension selects physical plane orientatiton.
         /// Plane is created as axis oriented.
     };
-    btosgPlane(float dx, float dy, float dz)  {
+    btosgPlane(float x, float y, float z)  {
         /// Constructs a physical infinite plane, viewable as low thickness finite box.
         /// Viewable box has dimensions dx,dy,dz.
         /// Minimum dimension selects physical plane orientation.
         /// Plane is created as axis oriented.
-        dx = max(dx, 0.001);
-        dy = max(dy, 0.001);
-        dz = max(dz, 0.001);
+        dx = max(x, 0.001);
+        dy = max(y, 0.001);
+        dz = max(z, 0.001);
         osg::Geode *geo = new osg::Geode();
         if ( geo ) {
             
