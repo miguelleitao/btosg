@@ -53,15 +53,33 @@ btosgVec3 btosgQuat::toEuler()
 
 int btosgWorld::deleteAllObjects() {
     /// Deletes all abjects from the btosgWorld
+	/// @return The number of objects deleted.
     int count = 0;
-    while ( !objects.empty() )
-    {
-	btosgObject *obj = objects.front();
-	removeObject(obj);
-	delete(obj);
-        //std::cout << ' ' << mylist.front();
-        count++;
+
+    // Collect all objects first to avoid iterator invalidation during removal
+    std::vector<btosgObject*> objectsToDelete;
+    for (auto it = objects.begin(); it != objects.end(); ++it) {
+        objectsToDelete.push_back(*it);
     }
+    
+    // Delete in reverse order (last added, first deleted)
+    for (auto it = objectsToDelete.rbegin(); it != objectsToDelete.rend(); ++it) {
+        btosgObject* obj = *it;
+        if (obj != nullptr) {
+            try {
+                removeObject(obj);
+                delete obj;
+                count++;
+            } catch (const std::exception& e) {
+                std::cerr << "Error deleting object: " << e.what() << std::endl;
+            }
+        }
+    }
+    
+    // Verify the list is now empty
+    if (!objects.empty()) {
+        std::cerr << "Warning: objects list not empty after deleteAllObjects()..." << std::endl;
+    } 
     return count;
 }
 
